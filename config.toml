@@ -1,0 +1,5 @@
+baseURL = 'https://küçükaslan.com/'
+languageCode = 'tr-tr'
+title = 'Muhammed Can Küçükaslan'
+
+theme = 'lugo'
