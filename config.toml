@@ -1,5 +1,6 @@
-baseURL = 'https://küçükaslan.com/'
+baseURL = 'https://xn--kkaslan-uxa2qb.com/'
 languageCode = 'tr-tr'
 title = 'Muhammed Can Küçükaslan'
 
+publishDir="docs"
 theme = 'lugo'

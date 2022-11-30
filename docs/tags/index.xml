@@ -1,31 +1,37 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>https://k%C3%BC%C3%A7%C3%BCkaslan.com/tags/</link>
+	<link>https://xn--kkaslan-uxa2qb.com/tags/</link>
 	<description>Recent content in Tags on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
 	<lastBuildDate>Sat, 30 Jul 2022 00:41:29 +0300</lastBuildDate>
     
-        <atom:link href="https://k%C3%BC%C3%A7%C3%BCkaslan.com/tags/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://xn--kkaslan-uxa2qb.com/tags/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
-		<title>not-ready</title>
-		<link>https://k%C3%BC%C3%A7%C3%BCkaslan.com/tags/not-ready/</link>
+		<title>Neden Yazı Yazılır?</title>
+		<link>https://xn--kkaslan-uxa2qb.com/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>https://k%C3%BC%C3%A7%C3%BCkaslan.com/tags/not-ready/</guid>
-		<description></description>
+		<guid>https://xn--kkaslan-uxa2qb.com/neden_yazariz/</guid>
+		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:
+1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var; 
+2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?
+Sanıyorum ki ilkine cevap olarak Schopenhauer’in dediğine benzer şekilde şöyle yanıt verebiliriz: Bir fikrin bana ait olması, o fikri dillendir(ebil)memden ibaret değildir. O fikrin ‑ekstra bir çaba sarf etmeme gerek kalmaksızın- düşünüşümü, davranışımı yönlendirmesini de kapsar. Basit bir örnek olarak, nedense herkesin hemfikir olduğu, “yalan söylemek kötüdür” savını ele alalım. Hepimiz yalan söylemenin kötü olduğuna inanırız fakat yine de yalan söyleriz? Belki de yalan söylemenin kötü olduğuna inanmıyoruzdur, yoksa yalan söylemenin kötü olduğuna inandığımızın farkında mı değiliz? Bkz. [buraya başka bir yazının linki gelecek].
+Peki ya ikincisi? Soruyu daha açıkça soralım “ben kim köpeğim de nice saygın insanın zaten anlattığı şeyleri farklı bir şekilde anlatmaya cüret ediyorum”? Bilmiyorum. Bir şeyler anlatmaya çalıştığımdan da emin sayılmam. Düşüncelerimi yazmam vardığım mutlak doğruyu henüz aydınlanamamış insanlara lütfetmek gibi değil, ya da bu fikirleri duyurup insanları ikna etmek bir nevi propaganda yapmak da değil. Fark etmişsinizdir, cümlelerimdeki tereddüdü. Emin değilim ne düşündüğümden, neye inandığımdan, neyi savunduğumdan, neyi inkâr ettiğimden. Yazmak düşüncelerimi bir şekil almaya zorlamamı, yani ne düşündüğümü öğrenmemi sağlıyor bir nebze. Bu zorlama iyi bir şey mi ondan da emin değilim, nitekim Sokrates de düşünceleri yazıya dökmeyi onlara sınır çizmek gördüğünden düşüncelerini yazmazmış. Öte yandan zihnimde dağınık hâlde bulunan bu nedenle ne olduklarını bilmediğim düşüncelere sahip olduğumu nasıl iddia edebilirim ki? Bir yazardan okumuştum şu soruyu: “Düşüncelerimizi ifade edip, başkaları tarafından değerlendirilip eleştirilmesine izin vermezsek düşüncelerimizin doğruluğundan nasıl emin olabiliriz” (o yazar Ataç da olabilir, Schopenhauer de, net hatırlamıyorum). Ben biraz daha ileri gidip düşüncelerimizin ne olduğundan da emin olamayacağımızı iddia ediyorum. Bu yüzden de bizden daha akıllı, daha tecrübeli insanların bizden daha iyi ifade ettiği şeyleri kendimizce söylemeye çalışırız ki gerçekten ne düşündüğümüzü anlayabilelim. Kendimizden başka kime ne zararı olabilir ki? (Bunları yazdığım bilgisayara elektrik sağlayacak hidroelektrik santralini dikmek için mahvettiğimiz doğadan habersizmişçesine…)&lt;/p&gt;
+</description>
 	</item>
 	
 	<item>
-		<title>personal</title>
-		<link>https://k%C3%BC%C3%A7%C3%BCkaslan.com/tags/personal/</link>
-		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
+		<title>About</title>
+		<link>https://xn--kkaslan-uxa2qb.com/about/</link>
+		<pubDate>Sat, 30 Jul 2022 00:35:22 +0300</pubDate>
 		
-		<guid>https://k%C3%BC%C3%A7%C3%BCkaslan.com/tags/personal/</guid>
-		<description></description>
+		<guid>https://xn--kkaslan-uxa2qb.com/about/</guid>
+		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan.&lt;/p&gt;
+</description>
 	</item>
 	
 	</channel>
