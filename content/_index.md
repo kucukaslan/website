@@ -3,8 +3,7 @@ title: "Homepage"
 date: 2022-07-30T00:49:51+03:00
 draft: false
 ---
-This is somewhat personal website. URL is [küçükaslan.com](https://küçükaslan.com/) with
- "Turkish" characters `ü` and `ç`.
+This is somewhat personal website of Muhammed Can Küçükaslan
 
 This website is WIP, like every other thing I do. 
 In fact, I doubt that it is impossible to complete anything.
