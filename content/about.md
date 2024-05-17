@@ -6,13 +6,15 @@ tags: ['personal']
 ---
 I'm Muhammed Can Küçükaslan. Yet another fellow _human_.
 
-I'm a senior CS (and Math as second major) student at Bilkent University (Ankara, Turkey)
+I graduated from Department of Computer Engineering (and Math as second major)
+ at Bilkent University (Ankara, Turkey) in January 2024 with high honours.
 
-My interests (tendency) of study is _engineering_ that is to say building reliable systems that
+My interests (tendency) of study is _engineering_ 
+that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.
  
-This is aligned with the main goals of Parallel Computing, Distributed Systems,
- Backend Engineering, Big Data Engineering(?) and so on.
+Consequently I'm interested in the subfields of Computer Science
+that are aligned with this goal such as Parallel Computing, Distributed Systems...
 
 See my cv at [kucukaslan.com.tr/cv.pdf](/cv.pdf).
 
