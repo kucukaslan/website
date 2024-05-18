@@ -180,8 +180,8 @@ Madem te li min nagerînin \
 
 ## Bişar Zaxoyî
 ## Min Nezani
-Min nezanî rêka min hoye bi zehmet e \
-Min nezanî min ne ceng e ne teqet e \
+Min nezanî rêka min ho ye bi zehmet e \
+Min nezanî min ne çeng e ne teqet e \
 {{< youtube  I-Rm_5R5Dz4>}}
 
 # Mihemed Taha Akreyî
@@ -198,10 +198,12 @@ Min nezanî min ne ceng e ne teqet e \
 
 ## Homer Dizeyi
 ## Çendî Geram Le Şaran 
-Çendî geram le şaran \
-Nem dî kes wek to ciwan bê \
-Kîjole neşmîlekey caran \
-Çon debê nêwanman wabê \
+چەندی گەڕام لە شاران \
+نەمدی کەس وەك تۆ جوان بێت \
+کیژۆڵە نەشمیلانەکەی جاران \
+چۆن دەبێت نێوانمان وابێت گیانە \
+بە یادی سەیرانەکەی ناو داران \
+بریندارم …….بریندارم \
 {{< youtube vDCXIsJJQqM >}}
 
 ## Abdulwahid zaxoyi
