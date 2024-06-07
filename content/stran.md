@@ -12,7 +12,7 @@ bloga xwe û nizanim çi. Bes e ev zexeltî.
 Serekayê lîsta min e. Bal min pir bi qedr û qîmet e. 
 Him stranên li ser evînê (ew tişta ku me bextreşan tehm nekiriye)
  him li ser welatparezî û hemiyyetperwerî.
-Êwilî min plan dikir ku ez stranek ji her stranbêjêkî 
+Ewilî min plan dikir ku ez stranek ji her stranbêjêkî 
 ve hilbijêrim lê hê di dêstpêkê de xuya ye ez nikarim.
 
 ### Ez Bûm Ferar
@@ -34,7 +34,7 @@ Jîn bê serbestî \
 Bila wêran bit  
 {{< youtube HP0tmuCAx8k >}}
 
-Allah wekîl dilê'm dixwaze çend stranên din jî binivîsim
+Allah wekîl dilê'm dixwaze çendin stranên din jî binivîsim
  lê gerek ez xwe bigrim û bisekinim.
 
 ## Erdewan Zaxolî (Zaxoyî)
@@ -153,7 +153,7 @@ Kirin gewher e
 {{< youtube  JMzMxnc5Lao>}}
 
 ### Bila Çav Kore Bibin
-Bila Çav Kore Bibin \
+Bila çav kore bibin \
 Madem êdî te nebînin \
 Ma rondikên min bo çi ne \
 Madem te li min nagerînin \
@@ -179,25 +179,25 @@ Madem te li min nagerînin \
 ## Çend stranbêjên din yê ez carna guhdarî dikim
 
 ### Bişar Zaxoyî
-### Min Nezani
+#### Min Nezani
 Min nezanî rêka min ho ye bi zehmet e \
 Min nezanî min ne çeng e ne teqet e \
 {{< youtube  I-Rm_5R5Dz4>}}
 
-## Mihemed Taha Akreyî
-### Çi Hişyar Çi Xew De
+### Mihemed Taha Akreyî
+#### Çi Hişyar Çi Xew De
 {{< youtube  EP7iSRLvc-U>}}
 
 ### Alend Hazim
-### Şerê Hesen Qela
+#### Şerê Hesen Qela
 {{< youtube  VMOr85SwWcM>}}
 
 ### Nasir Rezazi
-### Paytext
+#### Paytext
 {{< youtube  zJL6Nj2DvAw>}}
 
 ### Homer Dizeyi
-### Çendî Geram Le Şaran 
+#### Çendî Geram Le Şaran 
 چەندی گەڕام لە شاران \
 نەمدی کەس وەك تۆ جوان بێت \
 کیژۆڵە نەشمیلانەکەی جاران \
@@ -207,50 +207,54 @@ Min nezanî min ne çeng e ne teqet e \
 {{< youtube vDCXIsJJQqM >}}
 
 ### Abdulwahid zaxoyi
-### Mixabin
+#### Mixabin
 {{< youtube  1VTI1Q8BqRg>}}
 
 ### Sefqan Orkeş
 {{< youtube  uhsTNwQiYJw>}}
 
 ### Şivan Perwer
-### Kî Ne Em
+#### Kî Ne Em
 {{< youtube  qAZ_nW5psa8>}}
 
 ### Nishtiman
-### Ûrmiye	
+#### Ûrmiye	
 {{< youtube  8uh-onqHOjk>}}
 
 ### Yunus Dişkaye
-### Elegez
+#### Elegez
 {{< youtube  cxUcOYwMrgw>}}
 ### Ez Tune Me
 {{< youtube l3R7FXn9hh8>}}
 
 ###  Nizamettin Arîç
-###  Ez Şah im Delala Min
+####  Ez Şah im Delala Min
 {{< youtube  0_vt90PFjHQ>}}
 
 ###  Baran Kendeş
-###  Jiyan
+####  Jiyan
 {{< youtube  -crbl8ClZjY>}}
 
 ### Temo 
-### Aferîn Qazî Mihemed
+#### Aferîn Qazî Mihemed
 {{< youtube  9PDqWpPRmeA>}}
 
 ### Aram Dîkran 
-### Gelo Ew Kî Bu?
+#### Gelo Ew Kî Bu?
 {{< youtube  L8N5DgmMZng>}}
 
 ### Nojdar M.Tahir
-### Kes Bi Derdê Min Nizanit
+#### Kes Bi Derdê Min Nizanit
 {{< youtube  MS56apsuQdg>}}
 
 ### Osman Faris 
-### Textor & Haya Min ji Te Nebû
+#### Textor & Haya Min ji Te Nebû
 {{< youtube  Of1bwJuIHWo>}}
 
 ### Zendin
-### Ya Reb Te Bo Kê Hêlaye?
+#### Ya Reb Te Bo Kê Hêlaye?
 {{< youtube  mTrNJVBipRs>}}
+
+### Diyar
+#### Dinyayê
+{{< youtube  >}}
