@@ -71,6 +71,9 @@ Kirin gewher e
 ### Semîra
 {{< youtube oveqUqQNzZU >}}	
 
+### Bêsozê
+{{< youtube ByzfnB4eWTE >}}
+
 ## Ivan Libnan
 ### Min Viya
 {{< youtube BtGgbqJpoyU >}}
@@ -221,7 +224,7 @@ Min nezanî min ne çeng e ne teqet e \
 #### Ûrmiye	
 {{< youtube  8uh-onqHOjk>}}
 
-### Yunus Dişkaye
+### Yunus Dişkaya
 #### Elegez
 {{< youtube  cxUcOYwMrgw>}}
 ### Ez Tune Me
@@ -243,6 +246,18 @@ Min nezanî min ne çeng e ne teqet e \
 #### Gelo Ew Kî Bu?
 {{< youtube  L8N5DgmMZng>}}
 
+### Zendin
+#### Ya Reb Te Bo Kê Hêlaye?
+{{< youtube  mTrNJVBipRs>}}
+
+### Diyar
+#### Dinyayê
+{{< youtube  >}}
+
+### Mehmet Atlı
+####  Pêşiya Malê
+{{< youtube  HAhueW3XhNE>}}
+
 ### Nojdar M.Tahir
 #### Kes Bi Derdê Min Nizanit
 {{< youtube  MS56apsuQdg>}}
@@ -251,10 +266,7 @@ Min nezanî min ne çeng e ne teqet e \
 #### Textor & Haya Min ji Te Nebû
 {{< youtube  Of1bwJuIHWo>}}
 
-### Zendin
-#### Ya Reb Te Bo Kê Hêlaye?
-{{< youtube  mTrNJVBipRs>}}
 
-### Diyar
-#### Dinyayê
-{{< youtube  >}}
+### Karapetê Xaço
+####  Dêresorê
+{{< youtube  hENUrGVaR4Y>}}
