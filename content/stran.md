@@ -1,5 +1,5 @@
 ---
-title: "Çend Stranbêj û Stranên Wan"
+title: "Guldesteyek Stranbêj û Stranên Kurdewarî"
 date: 2023-05-19T02:56:00+03:00
 tags: ['personal', 'kurdî', 'stranbêj', 'stran']
 draft: false
@@ -252,7 +252,7 @@ Min nezanî min ne çeng e ne teqet e \
 
 ### Diyar
 #### Dinyayê
-{{< youtube  >}}
+{{< youtube  51JWVLcjjw8>}}
 
 ### Mehmet Atlı
 ####  Pêşiya Malê
