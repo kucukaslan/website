@@ -3,7 +3,7 @@ title: "Homepage"
 date: 2022-07-30T00:49:51+03:00
 draft: false
 ---
-This is somewhat personal website of Muhammed Can Küçükaslan
+This is somewhat personal website of Muhammed Can Küçükaslan, see the [about](./about) section and the [CV](/cv.pdf).
 
 This website is WIP, like many other thing I do. 
 In fact, I doubt that it is possible to ***complete*** anything.
