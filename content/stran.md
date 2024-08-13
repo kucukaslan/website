@@ -1,6 +1,6 @@
 ---
-title: "Guldesteyek Stranbêj û Stranên Kurdewarî"
-date: 2023-05-19T02:56:00+03:00
+title: "Guldesteyek Ji Stranbêj û Stranên Kurdewarî"
+date: 2024-05-19T02:56:00+03:00
 tags: ['personal', 'kurdî', 'stranbêj', 'stran']
 draft: false
 ---
@@ -21,7 +21,7 @@ ve hilbijêrim lê hê di dêstpêkê de xuya ye ez nikarim.
 ### Şêrmin e Dil
 {{< youtube r7dROzWSSM4 >}}
 
-### Dil Kuştî ye Awirên Çawên Te
+### Dil Kuştiye Awirên Çawên Te
 {{< youtube m2sszIprUaA >}}
 
 ### Xwedê Çawa Gul Wer Çêkir
