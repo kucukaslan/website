@@ -19,16 +19,27 @@
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
 talent hunters/recruiters also it would amaze my colleagues.&lt;/p&gt;
-&lt;p&gt;Personally I like this &lt;a href=&#34;https://mcagridurgut.com/&#34;&gt;M. Çağrı Durgut&lt;/a&gt;&amp;rsquo;s website. It is fancy, displays his wit, its blog even has dark mode. What more do people want?&lt;/p&gt;
+&lt;p&gt;Personally I like &lt;a href=&#34;https://mcagridurgut.com/&#34;&gt;M. Çağrı Durgut&lt;/a&gt;&amp;rsquo;s website. It is fancy, displays his wit, its blog even
+has dark mode. What more do people want?&lt;/p&gt;
 &lt;p&gt;Anyway.&lt;/p&gt;
-&lt;p&gt;Previously I used a Wordpress based website hosted on Digital Ocean or &lt;a href=&#34;https://webhosting.com.tr&#34;&gt;webhosting&lt;/a&gt; or somewhere. But as it is obvious I don&amp;rsquo;t actively maintain this website. So I don&amp;rsquo;t need the extra features provided by wordpress at the cost/burden of hosting a server.&lt;/p&gt;
-&lt;p&gt;I wanted to have my own domain, have a fancy &lt;a href=&#34;mailto:name@surname.com.tr&#34;&gt;name@surname.com.tr&lt;/a&gt; e-mail, to turn &lt;a href=&#34;https://landchad.net/#:~:text=into%20Internet%20Landlords&#34;&gt;into Internet Landlord&lt;/a&gt; instead of being internet peasant.&lt;/p&gt;
-&lt;p&gt;Moreover I wanted to do this at minimal cost, at minimal effort.
-This simple website is just a bunch of markdown file that are transformed to html files with Hugo. I host the content on a GitHub Repository, updates to website are just &lt;code&gt;git push&lt;/code&gt;es (or PRs) to master. A GitHub Action is triggered and the update is deployed. Who is hosting it? Not me, thanks to &lt;a href=&#34;https://pages.github.com/&#34;&gt;GitHub Pages&lt;/a&gt;. Not so surprisingly, I have zero concern for uptime, zero concern for DDoS attacks, zero concern for vertical or horizontal or diagonal scaling, zero concern for billing.&lt;/p&gt;
-&lt;p&gt;Similarly, I added SSL to my domain with &lt;a href=&#34;https://cloudflare.com&#34;&gt;Cloudflare&lt;/a&gt; for free. I don&amp;rsquo;t have to worry about renewing the certificate etc.&lt;/p&gt;
+&lt;p&gt;Previously I used a Wordpress based website hosted on Digital Ocean or &lt;a href=&#34;https://webhosting.com.tr&#34;&gt;webhosting&lt;/a&gt; or
+somewhere. But as it is obvious I don&amp;rsquo;t actively maintain this website. So I don&amp;rsquo;t need the extra features provided by
+wordpress at the cost/burden of hosting a server.&lt;/p&gt;
+&lt;p&gt;I wanted to have my own domain, have a fancy &lt;a href=&#34;mailto:name@surname.com.tr&#34;&gt;name@surname.com.tr&lt;/a&gt; e-mail, to
+turn &lt;a href=&#34;https://landchad.net/#:~:text=into%20Internet%20Landlords&#34;&gt;into Internet Landlord&lt;/a&gt; instead of being internet
+peasant.&lt;/p&gt;
+&lt;p&gt;Moreover, I wanted to do this at minimal cost, at minimal effort.
+This simple website is just a bunch of markdown files that are transformed to html files with Hugo. I host the content
+on a GitHub Repository, updates to website are just &lt;code&gt;git push&lt;/code&gt;es (or PRs) to master. A GitHub Action is triggered and
+the update is deployed. Who is hosting it? Not me, thanks to &lt;a href=&#34;https://pages.github.com/&#34;&gt;GitHub Pages&lt;/a&gt;. Not so
+surprisingly, I have zero concern for uptime, zero concern for DDoS attacks, zero concern for vertical or horizontal or
+diagonal scaling, zero concern for billing.&lt;/p&gt;
+&lt;p&gt;Similarly, I added SSL to my domain with &lt;a href=&#34;https://cloudflare.com&#34;&gt;Cloudflare&lt;/a&gt; for free. I don&amp;rsquo;t have to worry about
+renewing the certificate etc.&lt;/p&gt;
 &lt;p&gt;See also another similar website: &lt;a href=&#34;https://motherfuckingwebsite.com/&#34;&gt;click here on you own risk&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;why-dont-you-have-ssl-https-on-your-website&#34;&gt;Why don&amp;rsquo;t you have SSL (https) on your website?&lt;/h3&gt;
-&lt;p&gt;I do have SSL if you type &lt;code&gt;https://&lt;/code&gt; before &lt;a href=&#34;https://kucukaslan.com.tr&#34;&gt;kucukaslan.com.tr&lt;/a&gt;. However, it is true that I do not force redirects to &lt;code&gt;https&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I do have SSL if you type &lt;code&gt;https://&lt;/code&gt; before &lt;a href=&#34;https://kucukaslan.com.tr&#34;&gt;kucukaslan.com.tr&lt;/a&gt;. However, it is true that I
+do not force redirects to &lt;code&gt;https&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;I will appeal to authority &amp;ldquo;Paul Graham&amp;rdquo; didn&amp;rsquo;t either (at least for a long time).
 See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate&lt;/a&gt; article.&lt;/p&gt;
 </description>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<title>A Commentary on Go Webserver Benchmarks | Muhammed Can Küçükaslan</title>
+	<link rel="canonical" href="http://localhost:1313/">
+	<link rel='alternate' type='application/rss+xml' title="Muhammed Can Küçükaslan RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="TLDR is TLDR: Fiber is not going to be that faster for you.
+TLDR: Fiber is not going to be that faster in your case unless you can explain what particular feature of fiber will be advantageous for your specific use case.
+Let&rsquo;s start with the famous graph from its homepage: This graph obviously1 proves that fiber can serve 10 times of the requests that net/http (&ldquo;default&rdquo;), chi, gin etc.">
+	<meta name="keywords" content="go, en, benchmarks, technical">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+</head>
+<body>
+<main>
+<header><h1 id="tag_A Commentary on Go Webserver Benchmarks">A Commentary on Go Webserver Benchmarks</h1></header>
+<article>
+
+<blockquote>
+<p>TLDR is TLDR: <a href="https://github.com/gofiber/fiber">Fiber</a> is not going to be that faster for you.</p>
+</blockquote>
+<blockquote>
+<p>TLDR: <a href="https://github.com/gofiber/fiber">Fiber</a> is not going to be that faster in your case unless
+you can explain what particular feature of fiber will be advantageous
+for your specific use case.</p>
+</blockquote>
+<p>Let&rsquo;s start with the famous graph from  its <a href="https://gofiber.io/assets/images/benchmark-pipeline.png">homepage</a>:
+<img src="/img/benchmark-pipeline.png" alt="Benchmark Graph with HTTP Pipelining where fiber is by far superior to the most of the alternatives even with 500ms jobs"></p>
+<p>This graph obviously<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> proves that fiber can serve 10 times of the requests
+that net/http (&ldquo;default&rdquo;), chi, gin etc. can, and this is not affected by
+how much &ldquo;business logic&rdquo; takes (i.e. time spend for each request).</p>
+<p>Then what is the problem?</p>
+<p>This article is dedicated to relentless proponents of <a href="https://github.com/gofiber/fiber">Fiber</a>,
+and <a href="https://letmegooglethat.com/?q=Cunningham%27s+Law">Cunningham&rsquo;s Law</a>.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>I reserve my right to retract the acknowledgements above, since they simulated
+time spent on the business logic with <a href="https://github.com/smallnest/go-web-framework-benchmark/blob/b07cebd150aa2458ba2df1726a284ea4fd36fad4/server.go#L407">time.Sleep</a>.
+The <code>time.Sleep</code> does not block CPU AFAIK.
+So sleeping 500 ms and using CPU for 500 ms are different things <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>I benchmarked and it takes &ldquo;3194 ns/op&rdquo; per 500 ms sleep.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkSleep</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">wg</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>{}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">N</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Sleep</span>(<span style="color:#ae81ff">500</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Millisecond</span>)
+</span></span><span style="display:flex;"><span>        }()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></li>
+</ol>
+</div>
+
+
+<div id="nextprev">
+<a href="/faq/"><div id="prevart">Previous:<br>Frequently Asked Questions</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_go" href="http://localhost:1313/tags/go">Go</a> &middot; <a id="tag_en" href="http://localhost:1313/tags/en">En</a> &middot; <a id="tag_benchmarks" href="http://localhost:1313/tags/benchmarks">Benchmarks</a> &middot; <a id="tag_technical" href="http://localhost:1313/tags/technical">Technical</a></div>
+</article>
+</main>
+
+<footer>
+	<a href="http://localhost:1313/">http://localhost:1313/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+</footer>
+
+</body>
+</html>
