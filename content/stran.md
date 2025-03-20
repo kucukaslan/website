@@ -125,8 +125,8 @@ Kirin gewher e
 {{< youtube  dMJjQdDIdNE>}}
 
 ## Eyaz Yusif (Zaxoyî)
-<!-- ### Xelkêt Bajêrê Canê
-{{< youtube  2ARUwXhS1vY>}} -->
+### Xelkêt Bajêrê Canê
+{{< youtube  2ARUwXhS1vY>}}
 
 ### Keziya Vehîne 
 {{< youtube  Mw-mjdJgfhQ>}}
@@ -137,6 +137,10 @@ Kirin gewher e
 ### Eger Dinya Hemi Gul Bit
 {{< youtube  UaKZjoz7S24>}}
 <!-- ### Dadê landik#e 7JpTApuD2WI -->
+
+### Deşt û Çiya
+
+{{< youtube  -ySCC066dgo>}}
 
 ## Seîd Gabarî
 ### Lê Ciwanê (Feryad û Sed Ax û Eman)
@@ -270,3 +274,12 @@ Min nezanî min ne çeng e ne teqet e \
 ### Karapetê Xaço
 ####  Dêresorê
 {{< youtube  hENUrGVaR4Y>}}
+
+
+### Araz Berwarî
+####  Gerdenzer
+{{< youtube  -xaZ66tFY6c>}}
+
+### Karwan Kamil
+#### Bê Sozê
+{{< youtube  vlgsD5WApi0>}}
