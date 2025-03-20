@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<title>MongoDB Migration | Muhammed Can Küçükaslan</title>
+	<link rel="canonical" href="http://localhost:1313/">
+	<link rel='alternate' type='application/rss+xml' title="Muhammed Can Küçükaslan RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="Since the dawn of (hu)mankind, authors wasted countless hours on writing first a few words of the things they intended to share. Forgive me for avoiding the struggle.
+I want to take notes on of a few alternative path to migrate a mongodb database from one server to another. The database may be residing on MongoDB Atlas or be a self-managed deployment, it may be a standalone instance or a replica set or a sharded cluster.">
+	<meta name="keywords" content="personal, en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+</head>
+<body>
+<main>
+<header><h1 id="tag_MongoDB Migration">MongoDB Migration</h1></header>
+<article>
+
+<p>Since the dawn of (hu)mankind, authors wasted countless hours on writing first a few words of the things they intended to share. Forgive me for avoiding the struggle.</p>
+<p>I want to take notes on of a few alternative path to migrate a mongodb database from one server to another. The database may be residing on <a href="https://www.mongodb.com/products/platform/atlas-database">MongoDB Atlas</a> or be a self-managed deployment, it may be a standalone instance or a replica set or a sharded cluster. Some of the methods will work for some and some will not.</p>
+<h2 id="creating-the-source-database">Creating the Source Database</h2>
+<p>I am not your ordinary 10x engineer, and this is just a blog so I will start by simply orchestrating my multicloud K8s cluster using terraform which somehow also integrates to MongoDB Atlas. You may talk to <a href="https://x.com/i/grok/share/RajuEeC4zcsP2rsdNYWoCwMFh">grok</a> for the details,<br>
+&hellip; but it is time to do business! So let&rsquo;s open the <a href="https://cloud.mongodb.com">MongoDB Atlas</a> and use the clicky-gui interface to create a new cluster. It is also trivial to (up/down?)load the sample data from the <a href="https://www.mongodb.com/developer/products/atlas/atlas-sample-datasets/">Atlas Sample Data</a>.<br>
+You can do most of it without touching the keyboard! Personally, I love working without keyboard while sitting next to my colleague who <em><a href="https://camo.githubusercontent.com/b531f093ee846ede8ac35b76366245a52984dac05ca30e304acd086182eb3736/68747470733a2f2f76696d776179732e6f72672f323031382f726f6d61696e6c2d646f6e742d7573652d76696d2f7572696e616c2d6574697175657474652e6a7067">uses</a> <a href="https://xkcd.com/378/">vim</a> <a href="https://xkcd.com/1823/">btw</a></em>. Seeing the spark in his eyes is priceless.</p>
+<h2 id="how">How?</h2>
+<p>If you are willing to tolerate some downtime or can you afford to lose some data, you can use good old export and import methods. If you want to minimize or possibly eliminate the downtime, you can use the live migration tools provided by MongoDB, afaiu mongosync may also allow live migration.</p>
+<h3 id="export-and-import-dump-and-restore">Export and Import (Dump and Restore)</h3>
+<!-- raw HTML omitted -->
+<p><img src="../static/img/importer-exporter.gif" alt="Export Import">
+It is quite easy to export and import data using the <a href="https://www.mongodb.com/products/compass">MongoDB Compass</a>. You can also use <a href="https://www.mongodb.com/docs/database-tools/mongoimport/">mongoimport</a> and <a href="https://www.mongodb.com/docs/database-tools/mongoexport/">mongoexport</a> command line tools to export the <em><strong>data</strong></em>.</p>
+<p>The catch is that you can only export the data, not the indexes, users, or other metadata.</p>
+<p>Fortunately, there are alternatives: <a href="https://www.mongodb.com/docs/database-tools/mongodump/">mongodump</a> and <a href="https://www.mongodb.com/docs/database-tools/mongorestore/">mongorestore</a>. <em>mongodump</em> dumps</p>
+<blockquote>
+<ul>
+<li>Collection documents, metadata, and options.</li>
+<li>Index definitions.</li>
+<li>Writes that occur during the export, if run with the mongodump &ndash;oplog option.<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</li>
+</ul>
+</blockquote>
+<p>So, we can recover indices and metadata using <em>mongorestore</em>. DB users and roles are not included in the dump, unfortunately.<br>
+Tough luck, unless you <a href="https://en.wikipedia.org/wiki/RTFM#:~:text=the%20fine%20manual%22%2C%20%22-,read%20the%20friendly%20manual,-%22%2C%20%22read%20the%20%5Bpause">read the friendly manual</a> and see the <a href="https://www.mongodb.com/docs/database-tools/mongodump/#std-option-mongodump.--dumpDbUsersAndRoles">dumpDbUsersAndRoles</a> flag.</p>
+<p>Obtain standalone instance dump with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mongodump --archive<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cluster-dump.mongodump&#34;</span> --uri <span style="color:#e6db74">&#34;mongodb+srv://USERNAME:&lt;PASSWORD&gt;@source.cbker.mongodb.net/&#34;</span>
+</span></span></code></pre></div><p>obviously, <a href="https://www.mongodb.com/docs/database-tools/mongodump/#std-option-mongodump.--uri"><code>--uri</code></a> is the connection string to the source database.</p>
+<blockquote>
+<p>⚠️ Mandatory disclaimers: It is not recommended to use the password in the command line as the command history are stored in <code>~/.*sh_history</code> files.<br>
+You can omit the password and provide it interactively or you can use config file with <a href="https://www.mongodb.com/docs/database-tools/mongodump/#std-option-mongodump.--config"><code>--config</code></a> flag.</p>
+</blockquote>
+<p><code>--archive</code> flag is used to make dump in a single file. Default behavior is to <a href="https://www.mongodb.com/docs/database-tools/mongodump/#dump-data-to-a-directory">dump to a directory</a> with a mix of data and metadata files.</p>
+<p>preliminary setup
+creating local MongoDB replica set</p>
+<p>mongodump &amp; mongorestore
+live migration of MongoDB data from one server to another</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mongodump --archive<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cluster-dump.mongodump&#34;</span> --uri <span style="color:#e6db74">&#34;mongodb+srv://USERNAME:&lt;PASSWORD&gt;@source.cbker.mongodb.net/&#34;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mongodump --uri <span style="color:#e6db74">&#34;mongodb+srv://muhammedcankucukaslan:***REMOVED***@source-cluster.cbker.mongodb.net/&#34;</span> --out ./tmp/mongodump
+</span></span><span style="display:flex;"><span> 
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mongosync --cluster0 <span style="color:#e6db74">&#34;mongodb+srv://muhammedcankucukaslan:***REMOVED***@source-cluster.cbker.mongodb.net/&#34;</span> --cluster1 <span style="color:#e6db74">&#34;mongodb://localhost:27017&#34;</span>
+</span></span></code></pre></div><p><a href="https://www.mydbops.com/blog/mongodb-7-0-cluster-to-cluster-sync-simplifying-data-synchronization">https://www.mydbops.com/blog/mongodb-7-0-cluster-to-cluster-sync-simplifying-data-synchronization</a></p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.mongodb.com/docs/database-tools/mongodump/#:~:text=mongodump%20dumps%3A,%2D%2Doplog%20option.">MongoDB Documentation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+<div id="nextprev">
+<a href="/go_benchmarks/"><div id="prevart">Previous:<br>A Commentary on Go Webserver Benchmarks</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_personal" href="http://localhost:1313/tags/personal">Personal</a> &middot; <a id="tag_en" href="http://localhost:1313/tags/en">En</a></div>
+</article>
+</main>
+
+<footer>
+	<a href="http://localhost:1313/">http://localhost:1313/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+</footer>
+
+</body>
+</html>
