@@ -4,4 +4,3 @@ title = 'Muhammed Can Küçükaslan'
 
 publishDir="docs"
 theme = 'lugo'
-paginate = 5
