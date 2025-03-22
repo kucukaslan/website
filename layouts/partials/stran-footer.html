@@ -3,16 +3,20 @@
   {{ partial "footer.html" . }}
   
   <style>
-    .youtube-lazy-container {
+    /* Container styling */
+    .youtube-container {
       width: 100%;
       max-width: 640px;
       margin: 0 auto 20px auto;
+      position: relative;
     }
+    
+    /* YouTube lazy load styling */
     .youtube-lazy {
       position: relative;
       width: 100%;
       height: 0;
-      padding-bottom: 56.25%;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
       cursor: pointer;
       border-radius: 8px;
       overflow: hidden;
@@ -20,88 +24,26 @@
       background-color: #000;
       user-select: none;
     }
-    .youtube-lazy:hover .thumbnail {
-      transform: scale(1.05);
-      filter: brightness(0.85);
-    }
-    .youtube-lazy .thumbnail {
+    
+    /* Fix for image fitting */
+    .youtube-lazy img {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* This ensures the image covers the entire container */
       transition: transform 0.3s ease, filter 0.3s ease;
-      cursor: pointer;
-    }
-    .play-button {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 68px;
-      height: 48px;
-      background-color: rgba(0,0,0,0.7);
-      border-radius: 14px;
-      z-index: 1;
-      transition: background-color 0.3s;
-      pointer-events: none;
-    }
-    .youtube-lazy:hover .play-button {
-      background-color: rgba(230, 33, 23, 0.8);
-    }
-    .play-button::after {
-      content: "";
-      display: block;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 10px 0 10px 20px;
-      border-color: transparent transparent transparent #fff;
-      margin-left: 5px;
-    }
-    .youtube-lazy iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-    .youtube-lazy.active .thumbnail,
-    .youtube-lazy.active .play-button {
-      display: none;
     }
     
-    /* Custom styling for the stran page */
-    .youtube-container {
-      width: 100%;
-      max-width: 640px;
-      margin: 0 auto 20px auto;
-    }
-    .youtube-placeholder {
-      position: relative;
-      width: 100%;
-      padding-bottom: 56.25%;
-      background-color: #000;
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .youtube-placeholder img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease, filter 0.3s ease;
-    }
-    .youtube-placeholder:hover img {
+    /* Hover effects */
+    .youtube-lazy:hover img {
       transform: scale(1.05);
       filter: brightness(0.85);
     }
-    .youtube-placeholder::after {
+    
+    /* Play button styling */
+    .youtube-lazy::after {
       content: "";
       position: absolute;
       top: 50%;
@@ -113,11 +55,14 @@
       border-radius: 14px;
       z-index: 1;
       pointer-events: none;
+      transition: background-color 0.3s;
     }
-    .youtube-placeholder:hover::after {
+    
+    .youtube-lazy:hover::after {
       background-color: rgba(230, 33, 23, 0.8);
     }
-    .youtube-placeholder::before {
+    
+    .youtube-lazy::before {
       content: "";
       position: absolute;
       top: 50%;
@@ -130,6 +75,22 @@
       border-color: transparent transparent transparent #fff;
       z-index: 2;
       pointer-events: none;
+    }
+    
+    /* Iframe styling (when video is played) */
+    .youtube-lazy iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    
+    /* Active state (when video is playing) */
+    .youtube-lazy.active::before,
+    .youtube-lazy.active::after {
+      display: none;
     }
   </style>
 
@@ -151,28 +112,21 @@
         container.classList.add('active');
       }
       
-      // Add click event to the container
+      // Add click event to the containers
       lazyVideos.forEach(function(video) {
         video.addEventListener('click', function(e) {
           e.preventDefault();
           createYouTubeEmbed(this);
         });
-      });
-      
-      // Add click events to thumbnails and play buttons specifically
-      document.querySelectorAll('.youtube-lazy .thumbnail, .youtube-lazy .play-button').forEach(function(element) {
-        element.addEventListener('click', function(e) {
-          e.stopPropagation(); // Prevent double triggering
-          createYouTubeEmbed(this.closest('.youtube-lazy'));
-        });
-      });
-      
-      // Check if thumbnails failed to load and replace with a placeholder
-      document.querySelectorAll('.youtube-lazy .thumbnail, .youtube-container img').forEach(function(img) {
-        img.addEventListener('error', function() {
-          this.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22450%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20450%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1887ea5a3a7%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1887ea5a3a7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22450%22%20fill%3D%22%23373940%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22289.71875%22%20y%3D%22243.9%22%3EYouTube%20Video%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
-          this.style.objectFit = 'contain';
-        });
+        
+        // Handle image error events
+        const img = video.querySelector('img');
+        if (img) {
+          img.addEventListener('error', function() {
+            this.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22450%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20450%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1887ea5a3a7%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1887ea5a3a7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22450%22%20fill%3D%22%23373940%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22289.71875%22%20y%3D%22243.9%22%3EYouTube%20Video%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E';
+            this.style.objectFit = 'contain';
+          });
+        }
       });
     });
   </script>
