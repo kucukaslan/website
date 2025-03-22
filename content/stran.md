@@ -180,7 +180,8 @@ Madem te li min nagerînin \
 
 ## Mehmûd Ezîz Şakir
 ### Ber Dilê Min Pir Şêrîn e
-{{< youtube-lazy  ET_Qz4j-mu4>}}
+<!-- {{< youtube-lazy  ET_Qz4j-mu4>}} -->
+{{< youtube-lazy  stOPyzVvlFI>}}
 
 ### Hebs û Zindan
 {{< youtube-lazy  u_oy7EWoVaI>}}	
