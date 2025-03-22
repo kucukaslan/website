@@ -1,0 +1,7 @@
+<!-- ...existing code... -->
+{{ $ytLazyCSS := resources.Get "css/youtube-lazy.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $ytLazyCSS.RelPermalink }}" integrity="{{ $ytLazyCSS.Data.Integrity }}">
+
+{{ $ytLazyJS := resources.Get "js/youtube-lazy.js" | minify | fingerprint }}
+<script src="{{ $ytLazyJS.RelPermalink }}" integrity="{{ $ytLazyJS.Data.Integrity }}"></script>
+<!-- ...existing code... -->
