@@ -283,3 +283,15 @@ Min nezanî min ne çeng e ne teqet e \
 ### Karwan Kamil
 #### Bê Sozê
 {{< youtube  vlgsD5WApi0>}}
+
+### Fuad Ehmed
+#### Peyman (Biro Biro)
+پەیمان ئەدەی لە بیر ئەکەی  
+دڵی شادم زویر ئەکەی  
+ئێستەش چۆن بڕوات پێ بکەم  
+بڕۆ بڕۆ درۆ ئەکەی[^gotin-peyman]  
+{{< youtube  E5kUx6YoOL8>}}
+
+
+# Çavkanî
+[^gotin-peyman]: https://www.goranikurdi.com/ck/track/5052
