@@ -1,5 +1,5 @@
 ---
-title: "Guldesteyek Ji Stranbêj û Stranên Kurdewarî"
+title: "Guldesteyek Ji Stran û Stranbêjên Kurdewarî"
 date: 2024-05-19T02:56:00+03:00
 tags: ['personal', 'kurdî', 'stranbêj', 'stran']
 draft: false
