@@ -206,6 +206,11 @@ Min nezanî min ne çeng e ne teqet e \
 #### Paytext
 {{< youtube-lazy  zJL6Nj2DvAw>}}
 
+#### Çareyî Xemî Min Mey Nîye
+پێم وا نییە لەم غەدرەوە فریام بکەوێ کەس \
+ئەو دۆست بوو وەفای بۆم نەبوو بێگانە بڵێ چی[^careyi-xemi]
+{{< youtube-lazy  sbHgCqD41pI>}}
+
 ### Homer Dizeyi
 #### Çendî Geram Le Şaran 
 چەندی گەڕام لە شاران \
@@ -297,7 +302,7 @@ Min nezanî min ne çeng e ne teqet e \
 
 # Çavkanî
 [^gotin-peyman]: https://www.goranikurdi.com/ck/track/5052
-
+[^careyi-xemi]: https://www.goranikurdi.com/ck/track/2156
 
 
 <script>
