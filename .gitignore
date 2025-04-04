@@ -3,3 +3,5 @@
 *.log
 pg
 tmp
+static/code
+docs/code
