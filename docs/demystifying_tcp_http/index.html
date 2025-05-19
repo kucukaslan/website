@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Demystifying Network Requests: TCP, HTTP and More | Muhammed Can Küçükaslan</title>
+	<link rel="canonical" href="https://kucukaslan.com.tr/">
+	<link rel='alternate' type='application/rss+xml' title="Muhammed Can Küçükaslan RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="Draft Notice:
+This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. Please let me know what you think via muhammed@kucukaslan.com.tr! Beware that I can deal with harsh comments, but I expect you to tolerate if I reject some of your suggestions.
+In the recent weeks, I had the chance to work on a web server project that I need to go through a bit lower level than usual.">
+	<meta name="keywords" content="professional, en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+</head>
+<body>
+<main>
+<header><h1 id="tag_Demystifying Network Requests: TCP, HTTP and More">Demystifying Network Requests: TCP, HTTP and More</h1></header>
+<article>
+
+<blockquote>
+<p><strong>Draft Notice:</strong><br>
+This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. <br>
+Please let me know what you think via <a href="mailto:muhammed@kucukaslan.com.tr">muhammed@kucukaslan.com.tr</a>! <br>
+Beware that I can deal with harsh comments,
+but I expect you to tolerate if I reject some of your suggestions.</p>
+</blockquote>
+<p>In the recent weeks,
+I had the chance to work on a web server project
+that I need to go through a bit lower level than usual.
+Usually, our web servers serve &ldquo;modern&rdquo; RESTful APIs,
+and occasionally some other cool sounding protocols like GraphQL, gRPC or WebSockets.</p>
+<h2 id="what-do-we-usually-have">What Do We Usually Have</h2>
+<p>There are so many frameworks and built-in
+supports for them that handles more or less everything for you.</p>
+<p>With Java Spring, it is, practically,
+as simple as writing a Class annotated with <code>@RestController</code>
+and writing a method with <code>@GetMapping</code> or <code>@PostMapping</code> annotations
+to serve a RESTful API.</p>
+<p>With Go, it is just writing <a href="https://github.com/kucukaslan/go-network/blob/96c5a1369fcfe7ee6281d86f75815acede70deb4/bare/main.go#L10-L15">this</a><sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Handle</span>(<span style="color:#e6db74">&#34;/bare&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandlerFunc</span>(<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">w</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ResponseWriter</span>, <span style="color:#a6e22e">r</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Request</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Fprintf</span>(<span style="color:#a6e22e">w</span>, <span style="color:#e6db74">&#34;Hello, %q&#34;</span>, <span style="color:#a6e22e">html</span>.<span style="color:#a6e22e">EscapeString</span>(<span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">URL</span>.<span style="color:#a6e22e">Path</span>))
+</span></span><span style="display:flex;"><span>	}))
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#66d9ef">nil</span>))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>no libraries, no frameworks, no annotations, no nothing.</p>
+<h2 id="what-was-different-this-time">What was Different This Time</h2>
+<p>But, in this project, we needed to serve some IoT devices using custom communication protocols.
+Luckily<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> there were no <em>official</em> drivers whatsoever for them.
+Only me and the reference manual 😋.</p>
+<p>Don&rsquo;t get too excited though, we did not fall below the safe hills of TCP, yet.
+The simplified architecture of the system is as follows:</p>
+<pre class="mermaid">
+  sequenceDiagram
+    participant IoT as IoT Device
+    participant Server
+    IoT-&gt;&gt;Server: Sends connection request over TCP
+    Server-&gt;&gt;IoT: Accepts/Rejects connection over same TCP socket
+    loop 
+        IoT-&gt;&gt;Server: Sends data in the custom format
+        Server-&gt;&gt;Server: Processes data
+        Server-&gt;&gt;IoT: Acknowledges data
+    end
+    IoT-&gt;&gt;Server: Closes connection
+    Server-&gt;&gt;Server: Crashes (just kidding)
+</pre>
+
+<p>In short, I couldn&rsquo;t use any of the fancy libraries or frameworks
+as I needed to process the raw data coming from the IoT devices.</p>
+<p>So I started listening to the TCP socket and reading the data.
+Roughly like this (omitted <code>if err != nil</code> checks for brevity<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">listener</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Listen</span>(<span style="color:#e6db74">&#34;tcp&#34;</span>, <span style="color:#e6db74">&#34;:8080&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">conn</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">listener</span>.<span style="color:#a6e22e">Accept</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">c</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">Conn</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// read &amp; process data and respond
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }(<span style="color:#a6e22e">conn</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>It might not be so surprising (or exciting?) for you,
+but as I was reading from the connection,
+I realized that I could just as easily be reading an ordinary HTTP request.</p>
+<h2 id="listening-to-http-requests">Listening to HTTP Requests</h2>
+<p>So, I decided to give it a try and see how a usual HTTP request looks like in the raw TCP socket.
+I prototyped a simple RPL (Read Print Loop) program
+that merely reads the data from the TCP socket and prints it to the console.
+See <a href="https://github.com/kucukaslan/go-network/tree/main/rpl">github.com/kucukaslan/go-network/tree/main/rpl</a>.</p>
+<p>I ran the program and started sending HTTP requests:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl http://localhost:8080/my/complex/path?with<span style="color:#f92672">=</span>query&amp;params<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>And the output was:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">GET</span> /my/complex/path?with=query&amp;params=1 <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">localhost:8080</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">curl/8.7.1</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">*/*</span>
+</span></span></code></pre></div><p>The first two lines contain the URL I used as well as the inferred request method: <code>GET</code>.
+That is something.
+Following lines appears to be the headers.</p>
+<p>Let&rsquo;s make it a bit more complex by using another method and adding some headers:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>curl -X POST <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     -H <span style="color:#e6db74">&#34;My-Custom-Header: My-Custom-Value&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     -d <span style="color:#e6db74">&#39;{&#34;key&#34;:&#34;value &#34;}&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     http://localhost:8080/my/complex/path?with<span style="color:#f92672">=</span>query&amp;params<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>and the new output has &lsquo;My-Custom-Header&rsquo; header, different method and a body following the blank line:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /my/complex/path?with=query&amp;params=1 <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">localhost:8080</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">curl/8.7.1</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">*/*</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/json</span>
+</span></span><span style="display:flex;"><span>My-Custom-Header<span style="color:#f92672">:</span> <span style="color:#ae81ff">My-Custom-Value</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">16</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>{<span style="color:#f92672">&#34;key&#34;</span>:<span style="color:#e6db74">&#34;value&#34;</span>}
+</span></span></code></pre></div><p>Let&rsquo;s try with a different type of body, using <a href="https://www.postman.com/">Postman</a>
+I issued a <code>POST</code> request with <code>form-data</code> body. With two key-value pair:</p>
+<pre tabindex="0"><code class="language-dotenv" data-lang="dotenv">name=Muhammed
+url=kucukaslan.com.tr
+</code></pre><p>The server program printed:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /lolmol <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">PostmanRuntime/7.43.4</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">*/*</span>
+</span></span><span style="display:flex;"><span>Cache-Control<span style="color:#f92672">:</span> <span style="color:#ae81ff">no-cache</span>
+</span></span><span style="display:flex;"><span>Postman-Token<span style="color:#f92672">:</span> <span style="color:#ae81ff">30cb89d1-f2d8-41ae-9061-d4758c50d737</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">localhost:8080</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate, br</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">keep-alive</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">multipart/form-data; boundary=--------------------------127929364679488579321066</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">286</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>----------------------------127929364679488579321066
+</span></span><span style="display:flex;"><span>Content-Disposition: form-data; name=&#34;name&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Muhammed
+</span></span><span style="display:flex;"><span>----------------------------127929364679488579321066
+</span></span><span style="display:flex;"><span>Content-Disposition: form-data; name=&#34;url&#34;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>kucukaslan.com.tr
+</span></span><span style="display:flex;"><span>----------------------------127929364679488579321066--
+</span></span></code></pre></div><p>Apparantly, <code>Content-Type</code> header defines some sort of separator, the <code>boundary</code>.
+That boundary splits the body into multiple parts,
+each of which starts with the <code>Content-Disposition</code> declaration
+defining the data type and the name of the field.
+The value of that field is the content between blank line and the next boundary.</p>
+<p>These examples must have given some idea about how the HTTP requests look like.
+Obviously, there are more to it: compressions, encryptions, TLS etc.</p>
+<h2 id="listening-other-common-protocols">Listening Other Common Protocols</h2>
+<p>It is time to test non-HTTP<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> requests such as WebSockets, gRPC, GraphQL, and even<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup> SOAP</p>
+<h3 id="websockets">WebSockets</h3>
+<p>When I attempt to initiate a WebSocket connection, the RPL program prints:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">GET</span> / <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Sec-WebSocket-Version<span style="color:#f92672">:</span> <span style="color:#ae81ff">13</span>
+</span></span><span style="display:flex;"><span>Sec-WebSocket-Key<span style="color:#f92672">:</span> <span style="color:#ae81ff">K601x1z6ko0266Ajx3QB5A==</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">Upgrade</span>
+</span></span><span style="display:flex;"><span>Upgrade<span style="color:#f92672">:</span> <span style="color:#ae81ff">websocket</span>
+</span></span><span style="display:flex;"><span>Sec-WebSocket-Extensions<span style="color:#f92672">:</span> <span style="color:#ae81ff">permessage-deflate; client_max_window_bits</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">localhost:8080</span>
+</span></span></code></pre></div><p>this looks very similar to a usual HTTP request with some WebSocket specific headers.
+However, the most crucial headers are the <code>Connection: Upgrade</code> and <code>Upgrade: websocket</code> headers.
+These headers signal the server to switch the protocol from HTTP to WebSocket.
+If the server were to respond with <code>101 Switching Protocols</code> status code,
+then the rest of the communication would be in the WebSocket protocol.</p>
+<pre class="mermaid">
+  sequenceDiagram
+    participant Client
+    participant Server
+    Client-&gt;&gt;Server: Upgrade request in HTTP compatible format
+    Server-&gt;&gt;Client: 101 Switching Protocols
+    loop
+        Client&lt;&lt;-&gt;&gt;Server: Websocket Dataframes
+    end
+    Client&lt;&lt;-&gt;&gt;Server: Closing Frame
+</pre>
+
+<p>See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Upgrade">Upgrade - HTTP | MDN</a>
+for some more details on Upgrade.</p>
+<p>See <a href="https://www.rfc-editor.org/rfc/rfc2616#section-14.42">RFC 2616 14.42 Upgrade</a> for RFC documentation of Upgrade.</p>
+<p>See <a href="https://datatracker.ietf.org/doc/html/rfc6455">RFC 6455 - The WebSocket Protocol</a> for WebSocket protocol RFC,
+and in particular <a href="https://datatracker.ietf.org/doc/html/rfc6455#section-5.2">Section 5.2 - Data Framing</a> for the data frame format.</p>
+<h3 id="grpc">gRPC</h3>
+<p>Trying this is a bit tricky since we need a <code>.proto</code> file to initiate the request.
+I found <a href="https://gist.githubusercontent.com/agreatfool/5e3a41052c6dd2f6d04b30901fc0269b/raw/b4e0f82f73843a79ecdbde31c1294952df3855c6/book.proto">this</a>
+one on the wild and used it send the request.</p>
+<p>After all the hard work (downloading random file from the internet and using it without checking),</p>
+<p>This ugly thing was what I got:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>PRI <span style="color:#f92672">*</span> HTTP<span style="color:#f92672">/</span><span style="color:#ae81ff">2.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SM
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&amp;=</span>LMed<span style="color:#f92672">@</span><span style="color:#960050;background-color:#1e0010"></span>te<span style="color:#960050;background-color:#1e0010">�</span>M<span style="color:#960050;background-color:#1e0010">�</span><span style="color:#ae81ff">5</span><span style="color:#960050;background-color:#1e0010">�</span>z<span style="color:#960050;background-color:#1e0010">���</span>ȵG<span style="color:#960050;background-color:#1e0010">��</span>tC<span style="color:#960050;background-color:#1e0010"></span>\<span style="color:#960050;background-color:#1e0010">!</span>\Vt<span style="color:#f92672">&amp;</span><span style="color:#960050;background-color:#1e0010">�</span>Ը<span style="color:#960050;background-color:#1e0010"></span>
+</span></span></code></pre></div><p>You may have noticed that the first line still looks familiar except for the <code>PRI</code> method.
+It turns out that HTTP/2 defines a new method called <code>PRI</code> which is used to initiate the connection.
+Moreover, every HTTP/2 &ldquo;connection preface starts with the string &ldquo;<code>PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n</code>&rdquo;).  This sequence MUST be followed by a
+SETTINGS frame (<a href="https://datatracker.ietf.org/doc/html/rfc7540#section-6.5">Section 6.5</a>)&rdquo;<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>.</p>
+<p>So the gibberish-like line was the so-called SETTINGS frame.</p>
+<p>See <a href="https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md">gRPC over HTTP2</a> for more details on gRPC protocol<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>.</p>
+<p>See <a href="https://datatracker.ietf.org/doc/html/rfc7540#section-6.5">RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)</a> for more details on HTTP/2.</p>
+<h3 id="graphql">GraphQL</h3>
+<p>This was similar to gRPC as it usually expects a scheme. I used <a href="https://www.geeksforgeeks.org/variables-in-graphql/">geeksforgeeks</a>
+example query and received the following output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> / <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">*/*</span>
+</span></span><span style="display:flex;"><span>content-type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/json</span>
+</span></span><span style="display:flex;"><span>user-agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">PostmanClient/11.44.6 (AppId=10ae2050-5bdb-4706-97c5-394d76d2ae59)</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">localhost:8080</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">167</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">keep-alive</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>{<span style="color:#f92672">&#34;query&#34;</span>:<span style="color:#e6db74">&#34;query GetPerson($id: ID!) {\n    person(id: $id) {\n        name\n        age\n        address\n    }\n}\n&#34;</span>,<span style="color:#f92672">&#34;operationName&#34;</span>:<span style="color:#e6db74">&#34;GetPerson&#34;</span>,<span style="color:#f92672">&#34;variables&#34;</span>:{<span style="color:#f92672">&#34;id&#34;</span>:<span style="color:#ae81ff">7</span>}}
+</span></span></code></pre></div><p>It is quite similar to a usual HTTP request with a JSON body.
+It seems, unlike gRPC and the WebSockets,
+it uses post request bodies as the communication medium instead of defining a new protocol.
+I want to s**t talk about it, but I cannot even bother myself doing it as I don&rsquo;t really care.
+See <a href="https://spec.graphql.org/">spec.graphql.org/</a> for GraphQL specs.
+See <em>Jens Neuse</em>&rsquo;s <a href="https://wundergraph.com/blog/six-year-graphql-recap">reflections on GraphQL</a>.</p>
+<h3 id="simple-object-access-protocol">Simple Object Access Protocol</h3>
+<p>This protocol, whose common name is intentionally not uttered,
+differs from previous ones by not depending on any specific application or transport layer.
+I prefer not to have it used on my computer,
+so see the <a href="https://en.wikipedia.org/wiki/SOAP#Example_message_(encapsulated_in_HTTP)">wiki page</a>
+for an example HTTP request over TCP.</p>
+<h2 id="before-the-end">Before the End</h2>
+<p>In the HTTP examples I used <code>curl</code> to issue requests.
+<code>curl</code> has a <a href="https://curl.se/docs/manpage.html#-v">&ndash;verbose</a> flag that logs a lot of things,
+including the raw http requests. <br>
+Moreover, it also logs DNS resolutions, TLS handshakes etc. <br>
+So, I could&rsquo;ve used it all this time instead of writing a Read Print Loop,
+but it wouldn&rsquo;t have been as much fun.
+Try the <code>--verbose</code> flag yourself:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>curl --verbose https://kucukaslan.com.tr
+</span></span></code></pre></div><h2 id="last-words">Last words</h2>
+<p>As a side benefit of working on IoT protocol,
+we had a chance to unbox some of the common communication protocols.
+We recognized the structure of HTTP requests,
+use of the Upgrade header for WebSockets,
+the HTTP/2 preface for gRPC etc.</p>
+<p>I intend to write a follow-up article focusing on the HTTP Request Message format
+alongside the corresponding RFC documents. But no promises.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>ps. imports are added automatically by the IDEs even by the text editors like VSCode (via Plugins 🤞🏻).&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>I pronounce that word as <a href="https://letmegooglethat.com/?q=%22%2F%CA%8Cn%CB%88f%C9%94%CB%90r.t%CA%83%C9%99n.%C9%99t.li%2F%22">/ʌnˈfɔːr.tʃən.ət.li/</a> to my manager&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>or maybe because I hate it 🤫&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>non-RESTful if you are as pedantic as <a href="https://i.redd.it/1ef5ylxhmvx71.jpg">the 20 year old proover</a>.&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p>may Allah forgive me for uttering this word&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p><a href="https://datatracker.ietf.org/doc/html/rfc7540#section-3.5">RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p>trust me this was the least beginner-friendly document I could find sorry for any convenience invoked.&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+<div id="nextprev">
+<a href="/faq/"><div id="prevart">Previous:<br>Frequently Asked Questions</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_professional" href="https://kucukaslan.com.tr/tags/professional">Professional</a> &middot; <a id="tag_en" href="https://kucukaslan.com.tr/tags/en">En</a></div>
+</article>
+</main>
+
+<footer>
+	<a href="https://kucukaslan.com.tr/">https://kucukaslan.com.tr/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+</footer>
+
+
+
+
+<script type="module">
+	import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+	mermaid.initialize({ startOnLoad: true });
+</script>
+
+</body>
+</html>
