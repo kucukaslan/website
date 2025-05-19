@@ -1,9 +1,15 @@
 ---
 title: "Demystifying Network Requests: TCP, HTTP and More"
-date: 2025-05-14T00:00:00+03:00
+date: 2025-05-19T00:00:00+03:00
 tags: ['professional', 'en']
 draft: false
 ---
+
+> **Draft Notice:**  
+> This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. \
+> Please let me know what you think via muhammed@kucukaslan.com.tr! \
+> Beware that I can deal with harsh comments, 
+> but I expect you to tolerate if I reject some of your suggestions.
 
 In the recent weeks, 
 I had the chance to work on a web server project 
@@ -130,9 +136,6 @@ name=Muhammed
 url=kucukaslan.com.tr
 ```
 The server program printed:
-```http request
-```sh
-
 ```http request
 POST /lolmol HTTP/1.1
 User-Agent: PostmanRuntime/7.43.4
