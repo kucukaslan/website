@@ -1,19 +1,19 @@
 ---
-title: "Demystifying Network Requests: TCP and HTTP"
+title: "Demystifying Network Requests: TCP, HTTP and More"
 date: 2025-05-14T00:00:00+03:00
 tags: ['professional', 'en']
 draft: false
 ---
 
 In the recent weeks, 
-I had a chance to work on a web server project 
+I had the chance to work on a web server project 
 that I need to go through a bit lower level than usual.
 Usually, our web servers serve "modern" RESTful APIs, 
 and occasionally some other cool sounding protocols like GraphQL, gRPC or WebSockets.
 
 ## What Do We Usually Have
 There are so many frameworks and built-in
-supports for that handles more or less everything for you.
+supports for them that handles more or less everything for you.
 
 With Java Spring, it is, practically, 
 as simple as writing a Class annotated with `@RestController` 
@@ -76,15 +76,15 @@ func main() {
 
 It might not be so surprising (or exciting?) for you, 
 but as I was reading from the connection,
-I realized that I could as well be reading an ordinary HTTP request.
+I realized that I could just as easily be reading an ordinary HTTP request.
 
 ## Listening to HTTP Requests
-So, I decided to give it a try and see how the usual HTTP request looks like in the raw TCP socket.
+So, I decided to give it a try and see how a usual HTTP request looks like in the raw TCP socket.
 I prototyped a simple RPL (Read Print Loop) program 
 that merely reads the data from the TCP socket and prints it to the console.
 See [github.com/kucukaslan/go-network/tree/main/rpl](https://github.com/kucukaslan/go-network/tree/main/rpl).
 
-I runned the program and started sending HTTP requests:
+I ran the program and started sending HTTP requests:
 ```sh
 curl http://localhost:8080/my/complex/path?with=query&params=1
 ```
@@ -97,11 +97,11 @@ User-Agent: curl/8.7.1
 Accept: */*
 
 ```
-First two lines are contains the URL I used and inferred request method `GET`. 
+The first two lines contain the URL I used as well as the inferred request method: `GET`. 
 That is something. 
-Following lines seems to be the headers.
+Following lines appears to be the headers.
 
-Let's make it a bit more complex by using another a:
+Let's make it a bit more complex by using another method and adding some headers:
 ```sh
 curl -X POST \
      -H "Content-Type: application/json" \
@@ -120,7 +120,7 @@ Content-Type: application/json
 My-Custom-Header: My-Custom-Value
 Content-Length: 16
 
-{"key":"value "}
+{"key":"value"}
 ```
 
 Let's try with a different type of body, using [Postman](https://www.postman.com/)
@@ -171,7 +171,7 @@ It is time to test non-HTTP[^pedantic] requests such as WebSockets, gRPC, GraphQ
 [^may]: may Allah forgive me for uttering this word
 
 ### WebSockets
-When I attempt to initiate a WebSocket connection RPL program prints:
+When I attempt to initiate a WebSocket connection, the RPL program prints:
 ```http request
 GET / HTTP/1.1
 Sec-WebSocket-Version: 13
@@ -181,7 +181,7 @@ Upgrade: websocket
 Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
 Host: localhost:8080
 ```
-this looks very similar to usual HTTP request with some web socket specific headers.
+this looks very similar to a usual HTTP request with some WebSocket specific headers.
 However, the most crucial headers are the `Connection: Upgrade` and `Upgrade: websocket` headers.
 These headers signal the server to switch the protocol from HTTP to WebSocket. 
 If the server were to respond with `101 Switching Protocols` status code,
@@ -221,7 +221,7 @@ SM
 
 &=LMed@te�M�5�z���ȵG��tC\!\Vt&�Ը
 ```
-You may have noticed that the first line still looks familiar except the `PRI` method.
+You may have noticed that the first line still looks familiar except for the `PRI` method.
 It turns out that HTTP/2 defines a new method called `PRI` which is used to initiate the connection.
 Moreover, every HTTP/2 "connection preface starts with the string "`PRI *
 HTTP/2.0\r\n\r\nSM\r\n\r\n`").  This sequence MUST be followed by a
@@ -233,11 +233,11 @@ So the gibberish-like line was the so-called SETTINGS frame.
 See [gRPC over HTTP2](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md) for more details on gRPC protocol[^trust-me].
 [^trust-me]: trust me this was the least beginner-friendly document I could find sorry for any convenience invoked.
 
-See [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)](https://datatracker.ietf.org/doc/html/rfc7540#section-6.5) for more details on HTTP 2.
+See [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)](https://datatracker.ietf.org/doc/html/rfc7540#section-6.5) for more details on HTTP/2.
 
 ### GraphQL
 This was similar to gRPC as it usually expects a scheme. I used [geeksforgeeks](https://www.geeksforgeeks.org/variables-in-graphql/)
-example query and received the following response:
+example query and received the following output:
 ```http request
 POST / HTTP/1.1
 accept: */*
@@ -249,10 +249,10 @@ Connection: keep-alive
 
 {"query":"query GetPerson($id: ID!) {\n    person(id: $id) {\n        name\n        age\n        address\n    }\n}\n","operationName":"GetPerson","variables":{"id":7}}
 ```
-It is quite similar to usual HTTP request with a JSON body.
-It seems, unlike the gRPC and the websockets, 
+It is quite similar to a usual HTTP request with a JSON body.
+It seems, unlike gRPC and the WebSockets, 
 it uses post request bodies as the communication medium instead of defining a new protocol.
-I want to shit talk on it, but I cannot even bother myself doing it as I don't really care.
+I want to s**t talk about it, but I cannot even bother myself doing it as I don't really care.
 See [spec.graphql.org/](https://spec.graphql.org/) for GraphQL specs.
 See _Jens Neuse_'s [reflections on GraphQL](https://wundergraph.com/blog/six-year-graphql-recap). 
 
@@ -261,16 +261,16 @@ This protocol, whose common name is intentionally not uttered,
 differs from previous ones by not depending on any specific application or transport layer.
 I prefer not to have it used on my computer, 
 so see the [wiki page](https://en.wikipedia.org/wiki/SOAP#Example_message_(encapsulated_in_HTTP)) 
-for example HTTP request o****ver TCP.
+for an example HTTP request over TCP.
 
 ## Before the End
-In HTTP examples I used `curl` to issue requests.
+In the HTTP examples I used `curl` to issue requests.
 `curl` has a [--verbose](https://curl.se/docs/manpage.html#-v) flag that logs a lot of things, 
 including the raw http requests. \
 Moreover, it also logs DNS resolutions, TLS handshakes etc. \
 So, I could've used it all this time instead of writing a Read Print Loop,
 but it wouldn't have been as much fun.
-Try `--verbose` flag yourself:
+Try the `--verbose` flag yourself:
 ```shell
 curl --verbose https://kucukaslan.com.tr
 ```
@@ -280,8 +280,8 @@ curl --verbose https://kucukaslan.com.tr
 As a side benefit of working on IoT protocol, 
 we had a chance to unbox some of the common communication protocols.
 We recognized the structure of HTTP requests,
-use of Upgrade header for WebSockets,
-HTTP/2 preface for gRPC etc.
+use of the Upgrade header for WebSockets,
+the HTTP/2 preface for gRPC etc.
 
-I intend to write a follow-up article focusing on HTTP Request Message format
+I intend to write a follow-up article focusing on the HTTP Request Message format
 alongside the corresponding RFC documents. But no promises.
