@@ -198,7 +198,7 @@ SETTINGS frame (<a href="https://datatracker.ietf.org/doc/html/rfc7540#section-6
 <p>See <a href="https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md">gRPC over HTTP2</a> for more details on gRPC protocol<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>.</p>
 <p>See <a href="https://datatracker.ietf.org/doc/html/rfc7540#section-6.5">RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)</a> for more details on HTTP/2.</p>
 <h3 id="graphql">GraphQL</h3>
-<p>This was similar to gRPC as it usually expects a scheme. I used <a href="https://www.geeksforgeeks.org/variables-in-graphql/">geeksforgeeks</a>
+<p>This was similar to gRPC as it usually expects a scheme. I used <a href="https://www.geeksforgeeks.org/variables-in-graphql/">geeksforgeeks</a>&rsquo;
 example query and received the following output:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> / <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
 </span></span><span style="display:flex;"><span>accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">*/*</span>
@@ -212,9 +212,9 @@ example query and received the following output:</p>
 </span></span></code></pre></div><p>It is quite similar to a usual HTTP request with a JSON body.
 It seems, unlike gRPC and the WebSockets,
 it uses post request bodies as the communication medium instead of defining a new protocol.
-I want to s**t talk about it, but I cannot even bother myself doing it as I don&rsquo;t really care.
-See <a href="https://spec.graphql.org/">spec.graphql.org/</a> for GraphQL specs.
-See <em>Jens Neuse</em>&rsquo;s <a href="https://wundergraph.com/blog/six-year-graphql-recap">reflections on GraphQL</a>.</p>
+I want to s**t talk about it, but I cannot even bother myself doing it as I don&rsquo;t really care.</p>
+<p>See <a href="https://spec.graphql.org/">spec.graphql.org/</a> for GraphQL specs.</p>
+<p>See <em>Jens Neuse</em>&rsquo;s <a href="https://wundergraph.com/blog/six-year-graphql-recap">reflections on GraphQL</a>.</p>
 <h3 id="simple-object-access-protocol">Simple Object Access Protocol</h3>
 <p>This protocol, whose common name is intentionally not uttered,
 differs from previous ones by not depending on any specific application or transport layer.
@@ -238,6 +238,29 @@ use of the Upgrade header for WebSockets,
 the HTTP/2 preface for gRPC etc.</p>
 <p>I intend to write a follow-up article focusing on the HTTP Request Message format
 alongside the corresponding RFC documents. But no promises.</p>
+<pre class="mermaid">
+  stateDiagram-v2
+    pman: person nest manifests
+    man: Enocta manifests
+    fenocta: franchise enocta
+    fsap: franchise sap/kafka
+    fdb: franchise SAP db updates 
+    person: person nest
+    fman: franchise manifests
+    [*] --&gt; man
+    man --&gt; Enocta
+    pman --&gt; person
+    [*] --&gt; pman
+    Enocta --&gt; person
+    Enocta --&gt;fenocta
+    [*] --&gt; fman
+    fman --&gt; fenocta
+    fman --&gt; fdb 
+    fdb --&gt; fsap
+%%    fsap--&gt;fenocta: Fix merge conflicts
+%%    fenocta--&gt;fsap: Fix merge conflicts
+</pre>
+
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -245,7 +268,7 @@ alongside the corresponding RFC documents. But no promises.</p>
 <p>ps. imports are added automatically by the IDEs even by the text editors like VSCode (via Plugins 🤞🏻).&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p>I pronounce that word as <a href="https://letmegooglethat.com/?q=%22%2F%CA%8Cn%CB%88f%C9%94%CB%90r.t%CA%83%C9%99n.%C9%99t.li%2F%22">/ʌnˈfɔːr.tʃən.ət.li/</a> to my manager&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>I pronounced that word as <a href="https://letmegooglethat.com/?q=%22%2F%CA%8Cn%CB%88f%C9%94%CB%90r.t%CA%83%C9%99n.%C9%99t.li%2F%22">/ʌnˈfɔːr.tʃən.ət.li/</a> to my manager&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
 <p>or maybe because I hate it 🤫&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
@@ -268,6 +291,7 @@ alongside the corresponding RFC documents. But no promises.</p>
 
 <div id="nextprev">
 <a href="/faq/"><div id="prevart">Previous:<br>Frequently Asked Questions</div></a>
+<a href="/piping_channels_in_parallel/"><div id="nextart">Next:<br>A story of race conditions when piping channels in parallel</div></a>
 </div>
 <div style="clear:both" class=taglist>Related<br><a id="tag_professional" href="https://kucukaslan.com.tr/tags/professional">Professional</a> &middot; <a id="tag_en" href="https://kucukaslan.com.tr/tags/en">En</a></div>
 </article>

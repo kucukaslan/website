@@ -4,3 +4,7 @@ title = 'Muhammed Can Küçükaslan'
 
 publishDir="docs"
 theme = 'lugo'
+
+
+[markup.goldmark.renderer]
+unsafe= true

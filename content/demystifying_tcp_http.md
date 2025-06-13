@@ -2,7 +2,7 @@
 title: "Demystifying Network Requests: TCP, HTTP and More"
 date: 2025-05-19T00:00:00+03:00
 tags: ['professional', 'en']
-draft: false
+draft: true
 ---
 
 > **Draft Notice:**  
@@ -43,7 +43,7 @@ But, in this project, we needed to serve some IoT devices using custom communica
 Luckily[^ehem] there were no _official_ drivers whatsoever for them.
 Only me and the reference manual 😋.
 
-[^ehem]: I pronounce that word as [/ʌnˈfɔːr.tʃən.ət.li/](https://letmegooglethat.com/?q=%22%2F%CA%8Cn%CB%88f%C9%94%CB%90r.t%CA%83%C9%99n.%C9%99t.li%2F%22) to my manager
+[^ehem]: I pronounced that word as [/ʌnˈfɔːr.tʃən.ət.li/](https://letmegooglethat.com/?q=%22%2F%CA%8Cn%CB%88f%C9%94%CB%90r.t%CA%83%C9%99n.%C9%99t.li%2F%22) to my manager
 
 Don't get too excited though, we did not fall below the safe hills of TCP, yet.
 The simplified architecture of the system is as follows:
@@ -239,7 +239,7 @@ See [gRPC over HTTP2](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP
 See [RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)](https://datatracker.ietf.org/doc/html/rfc7540#section-6.5) for more details on HTTP/2.
 
 ### GraphQL
-This was similar to gRPC as it usually expects a scheme. I used [geeksforgeeks](https://www.geeksforgeeks.org/variables-in-graphql/)
+This was similar to gRPC as it usually expects a scheme. I used [geeksforgeeks](https://www.geeksforgeeks.org/variables-in-graphql/)'
 example query and received the following output:
 ```http request
 POST / HTTP/1.1
@@ -256,7 +256,9 @@ It is quite similar to a usual HTTP request with a JSON body.
 It seems, unlike gRPC and the WebSockets, 
 it uses post request bodies as the communication medium instead of defining a new protocol.
 I want to s**t talk about it, but I cannot even bother myself doing it as I don't really care.
+
 See [spec.graphql.org/](https://spec.graphql.org/) for GraphQL specs.
+
 See _Jens Neuse_'s [reflections on GraphQL](https://wundergraph.com/blog/six-year-graphql-recap). 
 
 ### Simple Object Access Protocol
@@ -288,3 +290,27 @@ the HTTP/2 preface for gRPC etc.
 
 I intend to write a follow-up article focusing on the HTTP Request Message format
 alongside the corresponding RFC documents. But no promises.
+
+
+```mermaid
+stateDiagram-v2
+    pman: person nest manifests
+    man: Enocta manifests
+    fenocta: franchise enocta
+    fsap: franchise sap/kafka
+    fdb: franchise SAP db updates 
+    person: person nest
+    fman: franchise manifests
+    [*] --> man
+    man --> Enocta
+    pman --> person
+    [*] --> pman
+    Enocta --> person
+    Enocta -->fenocta
+    [*] --> fman
+    fman --> fenocta
+    fman --> fdb 
+    fdb --> fsap
+%%    fsap-->fenocta: Fix merge conflicts
+%%    fenocta-->fsap: Fix merge conflicts
+```

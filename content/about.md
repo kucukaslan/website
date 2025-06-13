@@ -1,6 +1,6 @@
 ---
 title: "About"
-date: 2022-07-30T00:35:22+03:00
+date: 2019-08-24T00:00:00+00:00
 draft: false
 tags: ['personal']
 ---
@@ -18,3 +18,8 @@ that are aligned with this goal such as Parallel Computing, Distributed Systems.
 
 See my cv at [kucukaslan.com.tr/cv.pdf](/cv.pdf).
 
+## Contact
+If you want to contact me or have a chit-chat:
+<!-- Google Calendar Appointment Scheduling begin -->
+<iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ0bSKc4KScDDrZyBloHn27m4PGN6cR0kxbAcRIMTz_oOJT3pl_YHPq2HVgbt_j1e_MSQt5VKJmn?gv=true" style="border: 0" width="100%" height="600" frameborder="0"></iframe>
+<!-- end Google Calendar Appointment Scheduling -->
