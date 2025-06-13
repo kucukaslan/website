@@ -66,9 +66,15 @@ Gelek neşîd û stranên min jê hez dikir hebûn; hin ji wan winda bûn, hin y
       &gt;&lt;/iframe&gt;
     &lt;/div&gt;
 
-&lt;!-- raw HTML omitted --&gt;
-&lt;!-- raw HTML omitted --&gt;
-</description>
+&lt;!--
+Johnny Paycheck
+Someone to give my love to
+I&#39;ll be hating you
+
+Alpay
+Fabrika kızı
+Yanımda Kal
+ --&gt;</description>
 	</item>
 	
 	<item>
@@ -354,7 +360,7 @@ Kirin gewher e&lt;/p&gt;
 &lt;/div&gt;
 
 
-&lt;!-- raw HTML omitted --&gt;
+&lt;!-- ### Dadê landik#e 7JpTApuD2WI --&gt;
 &lt;h3 id=&#34;deşt-û-çiya&#34;&gt;Deşt û Çiya&lt;/h3&gt;
 &lt;div class=&#34;youtube-container&#34;&gt;
   &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;-ySCC066dgo&#34;&gt;
@@ -444,7 +450,13 @@ Madem te li min nagerînin &lt;br&gt;
 
 &lt;h2 id=&#34;mehmûd-ezîz-şakir&#34;&gt;Mehmûd Ezîz Şakir&lt;/h2&gt;
 &lt;h3 id=&#34;ber-dilê-min-pir-şêrîn-e&#34;&gt;Ber Dilê Min Pir Şêrîn e&lt;/h3&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;!-- &lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;ET_Qz4j-mu4&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/ET_Qz4j-mu4/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-ET_Qz4j-mu4&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+ --&gt;
 &lt;div class=&#34;youtube-container&#34;&gt;
   &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;stOPyzVvlFI&#34;&gt;
     &lt;img src=&#34;https://i.ytimg.com/vi/stOPyzVvlFI/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-stOPyzVvlFI&#34;&gt;
@@ -698,8 +710,50 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 
 &lt;/p&gt;
 &lt;h1 id=&#34;çavkanî&#34;&gt;Çavkanî&lt;/h1&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;!-- raw HTML omitted --&gt;
+&lt;script&gt;
+    document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
+  const lazyVideos = document.querySelectorAll(&#39;.youtube-lazy&#39;);
+  
+  function createYouTubeEmbed(container) {
+    const videoId = container.getAttribute(&#39;data-id&#39;);
+    const iframe = document.createElement(&#39;iframe&#39;);
+    
+    iframe.setAttribute(&#39;src&#39;, &#39;https://www.youtube.com/embed/&#39; + videoId + &#39;?autoplay=1&#39;);
+    iframe.setAttribute(&#39;frameborder&#39;, &#39;0&#39;);
+    iframe.setAttribute(&#39;allowfullscreen&#39;, &#39;1&#39;);
+    iframe.setAttribute(&#39;allow&#39;, &#39;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&#39;);
+    
+    container.innerHTML = &#39;&#39;;
+    container.appendChild(iframe);
+    container.classList.add(&#39;active&#39;);
+  }
+  
+  // Add click event to the container
+  lazyVideos.forEach(function(video) {
+    video.addEventListener(&#39;click&#39;, function(e) {
+      e.preventDefault();
+      createYouTubeEmbed(this);
+    });
+  });
+  
+  // Add click events to thumbnails and play buttons specifically
+  document.querySelectorAll(&#39;.youtube-lazy .thumbnail, .youtube-lazy .play-button&#39;).forEach(function(element) {
+    element.addEventListener(&#39;click&#39;, function(e) {
+      e.stopPropagation(); // Prevent double triggering
+      createYouTubeEmbed(this.closest(&#39;.youtube-lazy&#39;));
+    });
+  });
+  
+  // Check if thumbnails failed to load and replace with a placeholder
+  document.querySelectorAll(&#39;.youtube-lazy .thumbnail&#39;).forEach(function(img) {
+    img.addEventListener(&#39;error&#39;, function() {
+      this.src = &#39;data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22450%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20450%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1887ea5a3a7%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1887ea5a3a7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22450%22%20fill%3D%22%23373940%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22289.71875%22%20y%3D%22243.9%22%3EYouTube%20Video%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E&#39;;
+      this.style.objectFit = &#39;contain&#39;;
+    });
+  });
+});
+
+&lt;/script&gt;
 &lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;
@@ -731,7 +785,7 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	<item>
 		<title>About</title>
 		<link>https://kucukaslan.com.tr/about/</link>
-		<pubDate>Sat, 30 Jul 2022 00:35:22 +0300</pubDate>
+		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
 		<guid>https://kucukaslan.com.tr/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
@@ -743,6 +797,11 @@ uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
 &lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
+&lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
+&lt;!-- Google Calendar Appointment Scheduling begin --&gt;
+&lt;iframe src=&#34;https://calendar.google.com/calendar/appointments/schedules/AcZssZ0bSKc4KScDDrZyBloHn27m4PGN6cR0kxbAcRIMTz_oOJT3pl_YHPq2HVgbt_j1e_MSQt5VKJmn?gv=true&#34; style=&#34;border: 0&#34; width=&#34;100%&#34; height=&#34;600&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+&lt;!-- end Google Calendar Appointment Scheduling --&gt;
 </description>
 	</item>
 	
