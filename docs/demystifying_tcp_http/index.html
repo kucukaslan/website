@@ -58,7 +58,7 @@ The simplified architecture of the system is as follows:</p>
     participant Server
     IoT-&gt;&gt;Server: Sends connection request over TCP
     Server-&gt;&gt;IoT: Accepts/Rejects connection over same TCP socket
-    loop 
+    loop
         IoT-&gt;&gt;Server: Sends data in the custom format
         Server-&gt;&gt;Server: Processes data
         Server-&gt;&gt;IoT: Acknowledges data
@@ -238,28 +238,6 @@ use of the Upgrade header for WebSockets,
 the HTTP/2 preface for gRPC etc.</p>
 <p>I intend to write a follow-up article focusing on the HTTP Request Message format
 alongside the corresponding RFC documents. But no promises.</p>
-<pre class="mermaid">
-  stateDiagram-v2
-    pman: person nest manifests
-    man: Enocta manifests
-    fenocta: franchise enocta
-    fsap: franchise sap/kafka
-    fdb: franchise SAP db updates 
-    person: person nest
-    fman: franchise manifests
-    [*] --&gt; man
-    man --&gt; Enocta
-    pman --&gt; person
-    [*] --&gt; pman
-    Enocta --&gt; person
-    Enocta --&gt;fenocta
-    [*] --&gt; fman
-    fman --&gt; fenocta
-    fman --&gt; fdb 
-    fdb --&gt; fsap
-%%    fsap--&gt;fenocta: Fix merge conflicts
-%%    fenocta--&gt;fsap: Fix merge conflicts
-</pre>
 
 <div class="footnotes" role="doc-endnotes">
 <hr>
