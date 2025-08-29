@@ -1,6 +1,6 @@
 ---
 title: "Demystifying Network Requests: TCP, HTTP and More"
-date: 2025-05-19T00:00:00+03:00
+date: 2025-06-13T00:00:00+03:00
 tags: ['professional', 'en']
 draft: true
 ---
@@ -282,7 +282,7 @@ curl --verbose https://kucukaslan.com.tr
 
 
 ## Last words
-As a side benefit of working on IoT protocol, 
+As a side benefit of working on an IoT protocol, 
 we had a chance to unbox some of the common communication protocols.
 We recognized the structure of HTTP requests,
 use of the Upgrade header for WebSockets,
@@ -290,27 +290,3 @@ the HTTP/2 preface for gRPC etc.
 
 I intend to write a follow-up article focusing on the HTTP Request Message format
 alongside the corresponding RFC documents. But no promises.
-
-
-```mermaid
-stateDiagram-v2
-    pman: person nest manifests
-    man: Enocta manifests
-    fenocta: franchise enocta
-    fsap: franchise sap/kafka
-    fdb: franchise SAP db updates 
-    person: person nest
-    fman: franchise manifests
-    [*] --> man
-    man --> Enocta
-    pman --> person
-    [*] --> pman
-    Enocta --> person
-    Enocta -->fenocta
-    [*] --> fman
-    fman --> fenocta
-    fman --> fdb 
-    fdb --> fsap
-%%    fsap-->fenocta: Fix merge conflicts
-%%    fenocta-->fsap: Fix merge conflicts
-```

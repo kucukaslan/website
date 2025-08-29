@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>A Story of Race Conditions When Piping Channels in Parallel | Muhammed Can Küçükaslan</title>
+	<link rel="canonical" href="https://kucukaslan.com.tr/">
+	<link rel='alternate' type='application/rss+xml' title="Muhammed Can Küçükaslan RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="I had to write a batch processing job that downloads multiple files, processes them separately using external services, and produces separate outputs for each file.
+Ah the classical SIMD problem, I thought. We1 are gonna have fun with all that channels, syncs, once.Dos and goroutines; I thought. But man2, was I wrong.
+flowchart TD A[Start] --&gt; B{Is the channel open?} B -- Yes --&gt; C[Read from channel] C --&gt; D{Is the data valid?">
+	<meta name="keywords" content="professional, en">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+</head>
+<body>
+<main>
+<header><h1 id="tag_A story of race conditions when piping channels in parallel">A story of race conditions when piping channels in parallel</h1></header>
+<article>
+
+<p>I had to write a batch processing job that downloads multiple files,
+processes them separately using external services,
+and produces separate outputs for each file.</p>
+<p>Ah the classical SIMD problem, I thought. <br>
+We<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> are gonna have fun with all that <em>channel</em>s, <em>sync</em>s, <em>once.Do</em>s and <em>goroutine</em>s; I thought. <br>
+But man<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>, was I wrong.</p>
+<pre class="mermaid">
+  flowchart TD
+    A[Start] --&gt; B{Is the channel open?}
+    B -- Yes --&gt; C[Read from channel]
+    C --&gt; D{Is the data valid?}
+    D -- Yes --&gt; E[Process data]
+    E --&gt; F[Write to output]
+    F --&gt; G[Close channel]
+    G --&gt; H[End]
+    B -- No --&gt; I[Wait for channel to open]
+    I --&gt; B
+</pre>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>pluralis majestatis&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>as in the <a href="https://en.wikipedia.org/wiki/Man_(word)">God gesceop ða æt fruman twegen <em><strong>men</strong></em>, wer and wif</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+
+<div id="nextprev">
+<a href="/demystifying_tcp_http/"><div id="prevart">Previous:<br>Demystifying Network Requests: TCP, HTTP and More</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_professional" href="https://kucukaslan.com.tr/tags/professional">Professional</a> &middot; <a id="tag_en" href="https://kucukaslan.com.tr/tags/en">En</a></div>
+</article>
+</main>
+
+<footer>
+	<a href="https://kucukaslan.com.tr/">https://kucukaslan.com.tr/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+</footer>
+
+
+
+
+<script type="module">
+	import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+	mermaid.initialize({ startOnLoad: true });
+</script>
+
+</body>
+</html>

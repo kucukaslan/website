@@ -1,60 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>https://kucukaslan.com.tr/tags/professional/</link>
+	<link>http://localhost:1313/tags/professional/</link>
 	<description>Recent content in Professional on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
-	<lastBuildDate>Wed, 28 May 2025 23:22:02 +0300</lastBuildDate>
+	<lastBuildDate>Fri, 13 Jun 2025 00:00:00 +0300</lastBuildDate>
     
-        <atom:link href="https://kucukaslan.com.tr/tags/professional/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="http://localhost:1313/tags/professional/index.xml" rel="self" type="application/rss+xml" />
 	
-	
-	<item>
-		<title>A story of race conditions when piping channels in parallel</title>
-		<link>https://kucukaslan.com.tr/piping_channels_in_parallel/</link>
-		<pubDate>Wed, 28 May 2025 23:22:02 +0300</pubDate>
-		
-		<guid>https://kucukaslan.com.tr/piping_channels_in_parallel/</guid>
-		<description>&lt;p&gt;I had to write a batch processing job that downloads multiple files,
-processes them separately using external services,
-and produces separate outputs for each file.&lt;/p&gt;
-&lt;p&gt;Ah the classical SIMD problem, I thought. &lt;br&gt;
-We&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; are gonna have fun with all that &lt;em&gt;channel&lt;/em&gt;s, &lt;em&gt;sync&lt;/em&gt;s, &lt;em&gt;once.Do&lt;/em&gt;s and &lt;em&gt;goroutine&lt;/em&gt;s; I thought. &lt;br&gt;
-But man&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;, was I wrong.&lt;/p&gt;
-&lt;pre class=&#34;mermaid&#34;&gt;
-  flowchart TD
-    A[Start] --&amp;gt; B{Is the channel open?}
-    B -- Yes --&amp;gt; C[Read from channel]
-    C --&amp;gt; D{Is the data valid?}
-    D -- Yes --&amp;gt; E[Process data]
-    E --&amp;gt; F[Write to output]
-    F --&amp;gt; G[Close channel]
-    G --&amp;gt; H[End]
-    B -- No --&amp;gt; I[Wait for channel to open]
-    I --&amp;gt; B
-&lt;/pre&gt;
-
-&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li id=&#34;fn:1&#34;&gt;
-&lt;p&gt;pluralis majestatis&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id=&#34;fn:2&#34;&gt;
-&lt;p&gt;as in the &lt;a href=&#34;https://en.wikipedia.org/wiki/Man_(word)&#34;&gt;God gesceop ða æt fruman twegen &lt;em&gt;&lt;strong&gt;men&lt;/strong&gt;&lt;/em&gt;, wer and wif&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-</description>
-	</item>
 	
 	<item>
 		<title>Demystifying Network Requests: TCP, HTTP and More</title>
-		<link>https://kucukaslan.com.tr/demystifying_tcp_http/</link>
-		<pubDate>Mon, 19 May 2025 00:00:00 +0300</pubDate>
+		<link>http://localhost:1313/tcp/demystifying_tcp_http/</link>
+		<pubDate>Fri, 13 Jun 2025 00:00:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/demystifying_tcp_http/</guid>
+		<guid>http://localhost:1313/tcp/demystifying_tcp_http/</guid>
 		<description>&lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Draft Notice:&lt;/strong&gt;&lt;br&gt;
 This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. &lt;br&gt;
@@ -267,36 +228,13 @@ but it wouldn&amp;rsquo;t have been as much fun.
 Try the &lt;code&gt;--verbose&lt;/code&gt; flag yourself:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl --verbose https://kucukaslan.com.tr
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;last-words&#34;&gt;Last words&lt;/h2&gt;
-&lt;p&gt;As a side benefit of working on IoT protocol,
+&lt;p&gt;As a side benefit of working on an IoT protocol,
 we had a chance to unbox some of the common communication protocols.
 We recognized the structure of HTTP requests,
 use of the Upgrade header for WebSockets,
 the HTTP/2 preface for gRPC etc.&lt;/p&gt;
 &lt;p&gt;I intend to write a follow-up article focusing on the HTTP Request Message format
 alongside the corresponding RFC documents. But no promises.&lt;/p&gt;
-&lt;pre class=&#34;mermaid&#34;&gt;
-  stateDiagram-v2
-    pman: person nest manifests
-    man: Enocta manifests
-    fenocta: franchise enocta
-    fsap: franchise sap/kafka
-    fdb: franchise SAP db updates 
-    person: person nest
-    fman: franchise manifests
-    [*] --&amp;gt; man
-    man --&amp;gt; Enocta
-    pman --&amp;gt; person
-    [*] --&amp;gt; pman
-    Enocta --&amp;gt; person
-    Enocta --&amp;gt;fenocta
-    [*] --&amp;gt; fman
-    fman --&amp;gt; fenocta
-    fman --&amp;gt; fdb 
-    fdb --&amp;gt; fsap
-%%    fsap--&amp;gt;fenocta: Fix merge conflicts
-%%    fenocta--&amp;gt;fsap: Fix merge conflicts
-&lt;/pre&gt;
-
 &lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;
@@ -327,11 +265,405 @@ alongside the corresponding RFC documents. But no promises.&lt;/p&gt;
 	</item>
 	
 	<item>
+		<title>Parsing HTTP Request Message</title>
+		<link>http://localhost:1313/tcp/http_request/</link>
+		<pubDate>Fri, 13 Jun 2025 00:00:00 +0300</pubDate>
+		
+		<guid>http://localhost:1313/tcp/http_request/</guid>
+		<description>&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Draft Notice:&lt;/strong&gt;&lt;br&gt;
+This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. &lt;br&gt;
+Please let me know what you think via &lt;a href=&#34;mailto:muhammed@kucukaslan.com.tr&#34;&gt;muhammed@kucukaslan.com.tr&lt;/a&gt;! &lt;br&gt;
+Beware that I can deal with harsh comments,
+but I expect you to tolerate if I reject some of your suggestions.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In the previous article, we informally examined the structure of various communication
+protocols over TCP such as HTTP, gRPC, and WebSocket.&lt;/p&gt;
+&lt;p&gt;In the end of the article, I promised to examine the HTTP
+request message specification more formally.
+As I examined the specs I could not resist the urge to prototype a (partial) parser for it.&lt;/p&gt;
+  &lt;style&gt;
+      rect, line, path { stroke-width: 1.5px; stroke: black; fill: transparent; }
+      rect, line, path { stroke-linecap: square; stroke-linejoin: rounded; }
+      path { fill: transparent; }
+      text.literal { font-family: monospace; }
+      a { fill: blue; }
+      a:hover rect { fill: aliceblue; }
+      h2 { font-size: inherit; font-weight: inherit; }
+      line.ellipsis { stroke-dasharray: 1 3.5; }
+      tspan.hex { font-family: monospace; font-size: 90%; }
+      path.arrow { fill: black; }
+      svg { margin-left: 30px; }
+  &lt;/style&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;HTTP-message&#39;&gt;HTTP-message:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;85&#39; width=&#39;600&#39;&gt;
+    &lt;path d=&#39;M5.5 34 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M590.5 34 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#start-line&#39;&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;90&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;75&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;start-line&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;a href=&#39;#CRLF&#39;&gt;
+    &lt;rect x=&#39;190&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;215&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;CRLF&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;rect x=&#39;170&#39; y=&#39;60&#39; height=&#39;20&#39; width=&#39;90&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;215&#39; y=&#39;75&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;field-line&lt;/text&gt;
+    &lt;a href=&#39;#CRLF&#39;&gt;
+    &lt;rect x=&#39;310&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;335&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;CRLF&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;path d=&#39;M477 10 l-4 3 v-6 z&#39; class=&#39;arrow&#39;/&gt;
+    &lt;rect x=&#39;410&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;130&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;475&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;message-body&lt;/text&gt;
+    &lt;path d=&#39;M390 20 v10&#39;/&gt;
+    &lt;path d=&#39;M560 30 q0 10 10 10&#39;/&gt;
+    &lt;path d=&#39;M540 40 h50&#39;/&gt;
+    &lt;path d=&#39;M380 40 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M390 20 q0 -10 10 -10 h150 q10 0 10 10 v10&#39;/&gt;
+    &lt;path d=&#39;M360 40 h50&#39;/&gt;
+    &lt;path d=&#39;M150 50 v10 q0 10 10 10 h10&#39;/&gt;
+    &lt;path d=&#39;M260 70 h10 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M270 40 q10 0 10 10 v10&#39;/&gt;
+    &lt;path d=&#39;M240 40 h70&#39;/&gt;
+    &lt;path d=&#39;M150 50 q0 -10 10 -10&#39;/&gt;
+    &lt;path d=&#39;M120 40 h70&#39;/&gt;
+    &lt;path d=&#39;M10 40 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;start-line&#39;&gt;start-line:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;65&#39; width=&#39;230&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M220.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#request-line&#39;&gt;
+    &lt;rect x=&#39;60&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;115&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;request-line&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;a href=&#39;#status-line&#39;&gt;
+    &lt;rect x=&#39;70&#39; y=&#39;40&#39; height=&#39;20&#39; width=&#39;90&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;115&#39; y=&#39;55&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;status-line&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;path d=&#39;M190 30 v10&#39;/&gt;
+    &lt;path d=&#39;M160 50 h20 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 40 q0 10 10 10 h20&#39;/&gt;
+    &lt;path d=&#39;M190 30 q0 -10 10 -10&#39;/&gt;
+    &lt;path d=&#39;M170 20 h50&#39;/&gt;
+    &lt;path d=&#39;M30 20 q10 0 10 10 v10&#39;/&gt;
+    &lt;path d=&#39;M10 20 h50&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;request-line&#39;&gt;request-line:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;550&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M540.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#method&#39;&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;70&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;65&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;method&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;rect x=&#39;120&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;145&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;SP&lt;/text&gt;
+    &lt;a href=&#39;#request-target&#39;&gt;
+    &lt;rect x=&#39;190&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;130&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;255&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;request-target&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;rect x=&#39;340&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;365&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;SP&lt;/text&gt;
+    &lt;a href=&#39;#HTTP-version&#39;&gt;
+    &lt;rect x=&#39;410&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;465&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;HTTP-version&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;path d=&#39;M390 20 h20&#39;/&gt;
+    &lt;path d=&#39;M320 20 h20&#39;/&gt;
+    &lt;path d=&#39;M170 20 h20&#39;/&gt;
+    &lt;path d=&#39;M100 20 h20&#39;/&gt;
+    &lt;path d=&#39;M520 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;status-line&#39;&gt;status-line:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;55&#39; width=&#39;650&#39;&gt;
+    &lt;path d=&#39;M5.5 34 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M640.5 34 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#HTTP-version&#39;&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;85&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;HTTP-version&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;rect x=&#39;160&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;185&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;SP&lt;/text&gt;
+    &lt;rect x=&#39;230&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;285&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;status-code&lt;/text&gt;
+    &lt;rect x=&#39;360&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;385&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;SP&lt;/text&gt;
+    &lt;path d=&#39;M527 10 l-4 3 v-6 z&#39; class=&#39;arrow&#39;/&gt;
+    &lt;rect x=&#39;460&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;130&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;525&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;reason-phrase&lt;/text&gt;
+    &lt;path d=&#39;M440 20 v10&#39;/&gt;
+    &lt;path d=&#39;M610 30 q0 10 10 10&#39;/&gt;
+    &lt;path d=&#39;M590 40 h50&#39;/&gt;
+    &lt;path d=&#39;M430 40 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M440 20 q0 -10 10 -10 h150 q10 0 10 10 v10&#39;/&gt;
+    &lt;path d=&#39;M410 40 h50&#39;/&gt;
+    &lt;path d=&#39;M340 40 h20&#39;/&gt;
+    &lt;path d=&#39;M210 40 h20&#39;/&gt;
+    &lt;path d=&#39;M140 40 h20&#39;/&gt;
+    &lt;path d=&#39;M10 40 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;method&#39;&gt;method:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;110&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M100.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#token&#39;&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;55&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;token&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;path d=&#39;M80 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;tchar&#39;&gt;tchar:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;435&#39; width=&#39;190&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M180.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;!&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;40&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;55&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;#&lt;/text&gt;
+    &lt;line x1=&#39;95&#39; y1=&#39;65&#39; x2=&#39;95&#39; y2=&#39;75&#39; class=&#39;ellipsis&#39;/&gt;    &lt;rect x=&#39;85&#39; y=&#39;80&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;95&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;&#39;&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;110&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;125&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;*&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;140&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;155&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;+&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;170&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;185&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;-&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;200&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;215&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;.&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;230&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;245&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;^&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;260&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;275&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;_&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;290&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;305&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;`&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;320&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;335&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;|&lt;/text&gt;
+    &lt;rect x=&#39;85&#39; y=&#39;350&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;365&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;~&lt;/text&gt;
+    &lt;rect x=&#39;60&#39; y=&#39;380&#39; height=&#39;20&#39; width=&#39;70&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;395&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;DIGIT&lt;/text&gt;
+    &lt;rect x=&#39;60&#39; y=&#39;410&#39; height=&#39;20&#39; width=&#39;70&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;95&#39; y=&#39;425&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;ALPHA&lt;/text&gt;
+    &lt;path d=&#39;M150 30 v380&#39;/&gt;
+    &lt;path d=&#39;M130 420 h10 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 410 q0 10 10 10 h10&#39;/&gt;
+    &lt;path d=&#39;M130 390 h10 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 380 q0 10 10 10 h10&#39;/&gt;
+    &lt;path d=&#39;M105 360 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 350 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 330 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 320 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 300 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 290 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 270 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 260 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 240 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 230 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 210 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 200 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 180 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 170 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 150 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 140 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 120 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 110 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 90 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 80 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M105 50 h35 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 40 q0 10 10 10 h35&#39;/&gt;
+    &lt;path d=&#39;M150 30 q0 -10 10 -10&#39;/&gt;
+    &lt;path d=&#39;M105 20 h75&#39;/&gt;
+    &lt;path d=&#39;M30 20 q10 0 10 10 v380&#39;/&gt;
+    &lt;path d=&#39;M10 20 h75&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;token&#39;&gt;token:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;55&#39; width=&#39;170&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M160.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#tchar&#39;&gt;
+    &lt;rect x=&#39;60&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;85&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;tchar&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;path d=&#39;M83 40 l4 3 v-6 z&#39; class=&#39;arrow&#39;/&gt;
+    &lt;path d=&#39;M40 30 v0 q0 10 10 10 h70 q10 0 10 -10 v0&#39;/&gt;
+    &lt;path d=&#39;M120 20 q10 0 10 10&#39;/&gt;
+    &lt;path d=&#39;M110 20 h50&#39;/&gt;
+    &lt;path d=&#39;M40 30 q0 -10 10 -10&#39;/&gt;
+    &lt;path d=&#39;M10 20 h50&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;request-target&#39;&gt;request-target:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;125&#39; width=&#39;250&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M240.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#origin-form&#39;&gt;
+    &lt;rect x=&#39;70&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;125&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;origin-form&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;a href=&#39;#absolute-form&#39;&gt;
+    &lt;rect x=&#39;70&#39; y=&#39;40&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;125&#39; y=&#39;55&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;absolute-form&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;a href=&#39;#authority-form&#39;&gt;
+    &lt;rect x=&#39;60&#39; y=&#39;70&#39; height=&#39;20&#39; width=&#39;130&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;125&#39; y=&#39;85&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;authority-form&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;a href=&#39;#asterisk-form&#39;&gt;
+    &lt;rect x=&#39;70&#39; y=&#39;100&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;125&#39; y=&#39;115&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;asterisk-form&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;path d=&#39;M210 30 v70&#39;/&gt;
+    &lt;path d=&#39;M180 110 h20 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 100 q0 10 10 10 h20&#39;/&gt;
+    &lt;path d=&#39;M190 80 h10 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 70 q0 10 10 10 h10&#39;/&gt;
+    &lt;path d=&#39;M180 50 h20 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M40 40 q0 10 10 10 h20&#39;/&gt;
+    &lt;path d=&#39;M210 30 q0 -10 10 -10&#39;/&gt;
+    &lt;path d=&#39;M180 20 h60&#39;/&gt;
+    &lt;path d=&#39;M30 20 q10 0 10 10 v70&#39;/&gt;
+    &lt;path d=&#39;M10 20 h60&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;origin-form&#39;&gt;origin-form:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;55&#39; width=&#39;340&#39;&gt;
+    &lt;path d=&#39;M5.5 34 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M330.5 34 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;85&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;absolute-path&lt;/text&gt;
+    &lt;path d=&#39;M237 10 l-4 3 v-6 z&#39; class=&#39;arrow&#39;/&gt;
+    &lt;rect x=&#39;190&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;200&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;?&lt;/text&gt;
+    &lt;rect x=&#39;230&#39; y=&#39;30&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;255&#39; y=&#39;45&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;query&lt;/text&gt;
+    &lt;path d=&#39;M170 20 v10&#39;/&gt;
+    &lt;path d=&#39;M300 30 q0 10 10 10&#39;/&gt;
+    &lt;path d=&#39;M280 40 h50&#39;/&gt;
+    &lt;path d=&#39;M210 40 h20&#39;/&gt;
+    &lt;path d=&#39;M160 40 q10 0 10 -10&#39;/&gt;
+    &lt;path d=&#39;M170 20 q0 -10 10 -10 h110 q10 0 10 10 v10&#39;/&gt;
+    &lt;path d=&#39;M140 40 h50&#39;/&gt;
+    &lt;path d=&#39;M10 40 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;absolute-form&#39;&gt;absolute-form:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;170&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M160.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;110&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;85&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;absolute-URI&lt;/text&gt;
+    &lt;path d=&#39;M140 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;authority-form&#39;&gt;authority-form:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;240&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M230.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;70&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;65&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;uri-host&lt;/text&gt;
+    &lt;rect x=&#39;120&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;130&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;:&lt;/text&gt;
+    &lt;rect x=&#39;160&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;185&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;port&lt;/text&gt;
+    &lt;path d=&#39;M140 20 h20&#39;/&gt;
+    &lt;path d=&#39;M100 20 h20&#39;/&gt;
+    &lt;path d=&#39;M210 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;asterisk-form&#39;&gt;asterisk-form:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;80&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M70.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;40&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;*&lt;/text&gt;
+    &lt;path d=&#39;M50 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;HTTP-version&#39;&gt;HTTP-version:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;410&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M400.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;a href=&#39;#HTTP-name&#39;&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;90&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;75&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;HTTP-name&lt;/text&gt;
+    &lt;/a&gt;
+    &lt;rect x=&#39;140&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;150&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;/&lt;/text&gt;
+    &lt;rect x=&#39;180&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;70&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;215&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;DIGIT&lt;/text&gt;
+    &lt;rect x=&#39;270&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;20&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;280&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;.&lt;/text&gt;
+    &lt;rect x=&#39;310&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;70&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;345&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;DIGIT&lt;/text&gt;
+    &lt;path d=&#39;M290 20 h20&#39;/&gt;
+    &lt;path d=&#39;M250 20 h20&#39;/&gt;
+    &lt;path d=&#39;M160 20 h20&#39;/&gt;
+    &lt;path d=&#39;M120 20 h20&#39;/&gt;
+    &lt;path d=&#39;M380 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;HTTP-name&#39;&gt;HTTP-name:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;110&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M100.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;8&#39; ry=&#39;8&#39; class=&#39;literal&#39;/&gt;
+    &lt;text x=&#39;55&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;literal&#39;&gt;HTTP&lt;/text&gt;
+    &lt;path d=&#39;M80 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+ &lt;section&gt;
+  &lt;h2&gt;&lt;a name=&#39;CRLF&#39;&gt;CRLF:&lt;/a&gt;&lt;/h2&gt;
+  &lt;svg height=&#39;35&#39; width=&#39;160&#39;&gt;
+    &lt;path d=&#39;M5.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;path d=&#39;M150.5 14 v12 m 4 0 v-12&#39; class=&#39;station&#39;/&gt;
+    &lt;rect x=&#39;30&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;50&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;55&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;CR&lt;/text&gt;
+    &lt;rect x=&#39;100&#39; y=&#39;10&#39; height=&#39;20&#39; width=&#39;30&#39; rx=&#39;0&#39; ry=&#39;0&#39; class=&#39;rule&#39;/&gt;
+    &lt;text x=&#39;115&#39; y=&#39;25&#39; text-anchor=&#39;middle&#39; class=&#39;rule&#39;&gt;LF&lt;/text&gt;
+    &lt;path d=&#39;M80 20 h20&#39;/&gt;
+    &lt;path d=&#39;M130 20 h20&#39;/&gt;
+    &lt;path d=&#39;M10 20 h20&#39;/&gt;
+  &lt;/svg&gt;
+ &lt;/section&gt;
+&lt;h1 id=&#34;heading&#34;&gt;&lt;/h1&gt;
+</description>
+	</item>
+	
+	<item>
 		<title>Frequently Asked Questions</title>
-		<link>https://kucukaslan.com.tr/faq/</link>
+		<link>http://localhost:1313/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/faq/</guid>
+		<guid>http://localhost:1313/faq/</guid>
 		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
@@ -364,10 +696,10 @@ See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate
 	
 	<item>
 		<title>Guldesteyek Ji Stranên Biyanî</title>
-		<link>https://kucukaslan.com.tr/stranen_biyani/</link>
+		<link>http://localhost:1313/stranen_biyani/</link>
 		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stranen_biyani/</guid>
+		<guid>http://localhost:1313/stranen_biyani/</guid>
 		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
 Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
 &lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
@@ -396,10 +728,10 @@ Yanımda Kal
 	
 	<item>
 		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
-		<link>https://kucukaslan.com.tr/stran/</link>
+		<link>http://localhost:1313/stran/</link>
 		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stran/</guid>
+		<guid>http://localhost:1313/stran/</guid>
 		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
 înternetê parve bikim, yan li ser twitterê, yan li ser
 bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
@@ -1087,10 +1419,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>Neden Yazı Yazılır?</title>
-		<link>https://kucukaslan.com.tr/neden_yazariz/</link>
+		<link>http://localhost:1313/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/neden_yazariz/</guid>
+		<guid>http://localhost:1313/neden_yazariz/</guid>
 		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
 1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
 2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
@@ -1101,10 +1433,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>About</title>
-		<link>https://kucukaslan.com.tr/about/</link>
-		<pubDate>Sat, 30 Jul 2022 00:35:22 +0300</pubDate>
+		<link>http://localhost:1313/about/</link>
+		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/about/</guid>
+		<guid>http://localhost:1313/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
 at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
@@ -1113,9 +1445,9 @@ that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
-&lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
-&lt;p&gt;If you want to contact me or have a chit-chat me:&lt;/p&gt;
+&lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
 &lt;!-- Google Calendar Appointment Scheduling begin --&gt;
 &lt;iframe src=&#34;https://calendar.google.com/calendar/appointments/schedules/AcZssZ0bSKc4KScDDrZyBloHn27m4PGN6cR0kxbAcRIMTz_oOJT3pl_YHPq2HVgbt_j1e_MSQt5VKJmn?gv=true&#34; style=&#34;border: 0&#34; width=&#34;100%&#34; height=&#34;600&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
 &lt;!-- end Google Calendar Appointment Scheduling --&gt;

@@ -1,21 +1,275 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>https://kucukaslan.com.tr/</link>
-	<description>Recent content in Homepage on Muhammed Can Küçükaslan</description>
+	<link>http://localhost:1313/network/</link>
+	<description>Recent content in Networks on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
-	<lastBuildDate>Sat, 30 Jul 2022 00:49:51 +0300</lastBuildDate>
+	<lastBuildDate>Mon, 19 May 2025 00:00:00 +0300</lastBuildDate>
     
-        <atom:link href="https://kucukaslan.com.tr/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="http://localhost:1313/network/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
+		<title>Demystifying Network Requests: TCP, HTTP and More</title>
+		<link>http://localhost:1313/network/demystifying_tcp_http/</link>
+		<pubDate>Mon, 19 May 2025 00:00:00 +0300</pubDate>
+		
+		<guid>http://localhost:1313/network/demystifying_tcp_http/</guid>
+		<description>&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Draft Notice:&lt;/strong&gt;&lt;br&gt;
+This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. &lt;br&gt;
+Please let me know what you think via &lt;a href=&#34;mailto:muhammed@kucukaslan.com.tr&#34;&gt;muhammed@kucukaslan.com.tr&lt;/a&gt;! &lt;br&gt;
+Beware that I can deal with harsh comments,
+but I expect you to tolerate if I reject some of your suggestions.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In the recent weeks,
+I had the chance to work on a web server project
+that I need to go through a bit lower level than usual.
+Usually, our web servers serve &amp;ldquo;modern&amp;rdquo; RESTful APIs,
+and occasionally some other cool sounding protocols like GraphQL, gRPC or WebSockets.&lt;/p&gt;
+&lt;h2 id=&#34;what-do-we-usually-have&#34;&gt;What Do We Usually Have&lt;/h2&gt;
+&lt;p&gt;There are so many frameworks and built-in
+supports for them that handles more or less everything for you.&lt;/p&gt;
+&lt;p&gt;With Java Spring, it is, practically,
+as simple as writing a Class annotated with &lt;code&gt;@RestController&lt;/code&gt;
+and writing a method with &lt;code&gt;@GetMapping&lt;/code&gt; or &lt;code&gt;@PostMapping&lt;/code&gt; annotations
+to serve a RESTful API.&lt;/p&gt;
+&lt;p&gt;With Go, it is just writing &lt;a href=&#34;https://github.com/kucukaslan/go-network/blob/96c5a1369fcfe7ee6281d86f75815acede70deb4/bare/main.go#L10-L15&#34;&gt;this&lt;/a&gt;&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;http&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Handle&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/bare&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;http&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;HandlerFunc&lt;/span&gt;(&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;w&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;http&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ResponseWriter&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;r&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;http&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Request&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;		&lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Fprintf&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;w&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello, %q&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;html&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;EscapeString&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;r&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;URL&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Path&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	}))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;log&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Fatal&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;http&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ListenAndServe&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt;))
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;no libraries, no frameworks, no annotations, no nothing.&lt;/p&gt;
+&lt;h2 id=&#34;what-was-different-this-time&#34;&gt;What was Different This Time&lt;/h2&gt;
+&lt;p&gt;But, in this project, we needed to serve some IoT devices using custom communication protocols.
+Luckily&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; there were no &lt;em&gt;official&lt;/em&gt; drivers whatsoever for them.
+Only me and the reference manual 😋.&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t get too excited though, we did not fall below the safe hills of TCP, yet.
+The simplified architecture of the system is as follows:&lt;/p&gt;
+&lt;pre class=&#34;mermaid&#34;&gt;
+  sequenceDiagram
+    participant IoT as IoT Device
+    participant Server
+    IoT-&amp;gt;&amp;gt;Server: Sends connection request over TCP
+    Server-&amp;gt;&amp;gt;IoT: Accepts/Rejects connection over same TCP socket
+    loop 
+        IoT-&amp;gt;&amp;gt;Server: Sends data in the custom format
+        Server-&amp;gt;&amp;gt;Server: Processes data
+        Server-&amp;gt;&amp;gt;IoT: Acknowledges data
+    end
+    IoT-&amp;gt;&amp;gt;Server: Closes connection
+    Server-&amp;gt;&amp;gt;Server: Crashes (just kidding)
+&lt;/pre&gt;
+
+&lt;p&gt;In short, I couldn&amp;rsquo;t use any of the fancy libraries or frameworks
+as I needed to process the raw data coming from the IoT devices.&lt;/p&gt;
+&lt;p&gt;So I started listening to the TCP socket and reading the data.
+Roughly like this (omitted &lt;code&gt;if err != nil&lt;/code&gt; checks for brevity&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;listener&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Listen&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:8080&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;listener&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Accept&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;c&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Conn&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// read &amp;amp; process data and respond
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    }(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It might not be so surprising (or exciting?) for you,
+but as I was reading from the connection,
+I realized that I could just as easily be reading an ordinary HTTP request.&lt;/p&gt;
+&lt;h2 id=&#34;listening-to-http-requests&#34;&gt;Listening to HTTP Requests&lt;/h2&gt;
+&lt;p&gt;So, I decided to give it a try and see how a usual HTTP request looks like in the raw TCP socket.
+I prototyped a simple RPL (Read Print Loop) program
+that merely reads the data from the TCP socket and prints it to the console.
+See &lt;a href=&#34;https://github.com/kucukaslan/go-network/tree/main/rpl&#34;&gt;github.com/kucukaslan/go-network/tree/main/rpl&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I ran the program and started sending HTTP requests:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl http://localhost:8080/my/complex/path?with&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;query&amp;amp;params&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And the output was:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-http&#34; data-lang=&#34;http&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;GET&lt;/span&gt; /my/complex/path?with=query&amp;amp;params=1 &lt;span style=&#34;color:#66d9ef&#34;&gt;HTTP&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Host&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;localhost:8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;User-Agent&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;curl/8.7.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Accept&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;*/*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The first two lines contain the URL I used as well as the inferred request method: &lt;code&gt;GET&lt;/code&gt;.
+That is something.
+Following lines appears to be the headers.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s make it a bit more complex by using another method and adding some headers:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl -X POST &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;     -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Content-Type: application/json&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;     -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;My-Custom-Header: My-Custom-Value&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;     -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;key&amp;#34;:&amp;#34;value &amp;#34;}&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;     http://localhost:8080/my/complex/path?with&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;query&amp;amp;params&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;and the new output has &amp;lsquo;My-Custom-Header&amp;rsquo; header, different method and a body following the blank line:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-http&#34; data-lang=&#34;http&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;POST&lt;/span&gt; /my/complex/path?with=query&amp;amp;params=1 &lt;span style=&#34;color:#66d9ef&#34;&gt;HTTP&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Host&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;localhost:8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;User-Agent&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;curl/8.7.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Accept&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;*/*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Type&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;application/json&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;My-Custom-Header&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;My-Custom-Value&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Length&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;16&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;{&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;key&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;value&amp;#34;&lt;/span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Let&amp;rsquo;s try with a different type of body, using &lt;a href=&#34;https://www.postman.com/&#34;&gt;Postman&lt;/a&gt;
+I issued a &lt;code&gt;POST&lt;/code&gt; request with &lt;code&gt;form-data&lt;/code&gt; body. With two key-value pair:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-dotenv&#34; data-lang=&#34;dotenv&#34;&gt;name=Muhammed
+url=kucukaslan.com.tr
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;The server program printed:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-http&#34; data-lang=&#34;http&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;POST&lt;/span&gt; /lolmol &lt;span style=&#34;color:#66d9ef&#34;&gt;HTTP&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;User-Agent&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;PostmanRuntime/7.43.4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Accept&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;*/*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Cache-Control&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;no-cache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Postman-Token&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;30cb89d1-f2d8-41ae-9061-d4758c50d737&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Host&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;localhost:8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Accept-Encoding&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;gzip, deflate, br&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Connection&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;keep-alive&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Type&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;multipart/form-data; boundary=--------------------------127929364679488579321066&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Length&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;286&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;----------------------------127929364679488579321066
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Disposition: form-data; name=&amp;#34;name&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Muhammed
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;----------------------------127929364679488579321066
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Disposition: form-data; name=&amp;#34;url&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kucukaslan.com.tr
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;----------------------------127929364679488579321066--
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Apparantly, &lt;code&gt;Content-Type&lt;/code&gt; header defines some sort of separator, the &lt;code&gt;boundary&lt;/code&gt;.
+That boundary splits the body into multiple parts,
+each of which starts with the &lt;code&gt;Content-Disposition&lt;/code&gt; declaration
+defining the data type and the name of the field.
+The value of that field is the content between blank line and the next boundary.&lt;/p&gt;
+&lt;p&gt;These examples must have given some idea about how the HTTP requests look like.
+Obviously, there are more to it: compressions, encryptions, TLS etc.&lt;/p&gt;
+&lt;h2 id=&#34;listening-other-common-protocols&#34;&gt;Listening Other Common Protocols&lt;/h2&gt;
+&lt;p&gt;It is time to test non-HTTP&lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt; requests such as WebSockets, gRPC, GraphQL, and even&lt;sup id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;5&lt;/a&gt;&lt;/sup&gt; SOAP&lt;/p&gt;
+&lt;h3 id=&#34;websockets&#34;&gt;WebSockets&lt;/h3&gt;
+&lt;p&gt;When I attempt to initiate a WebSocket connection, the RPL program prints:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-http&#34; data-lang=&#34;http&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;GET&lt;/span&gt; / &lt;span style=&#34;color:#66d9ef&#34;&gt;HTTP&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Sec-WebSocket-Version&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;13&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Sec-WebSocket-Key&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;K601x1z6ko0266Ajx3QB5A==&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Connection&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;Upgrade&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Upgrade&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;websocket&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Sec-WebSocket-Extensions&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;permessage-deflate; client_max_window_bits&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Host&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;localhost:8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;this looks very similar to a usual HTTP request with some WebSocket specific headers.
+However, the most crucial headers are the &lt;code&gt;Connection: Upgrade&lt;/code&gt; and &lt;code&gt;Upgrade: websocket&lt;/code&gt; headers.
+These headers signal the server to switch the protocol from HTTP to WebSocket.
+If the server were to respond with &lt;code&gt;101 Switching Protocols&lt;/code&gt; status code,
+then the rest of the communication would be in the WebSocket protocol.&lt;/p&gt;
+&lt;pre class=&#34;mermaid&#34;&gt;
+  sequenceDiagram
+    participant Client
+    participant Server
+    Client-&amp;gt;&amp;gt;Server: Upgrade request in HTTP compatible format
+    Server-&amp;gt;&amp;gt;Client: 101 Switching Protocols
+    loop
+        Client&amp;lt;&amp;lt;-&amp;gt;&amp;gt;Server: Websocket Dataframes
+    end
+    Client&amp;lt;&amp;lt;-&amp;gt;&amp;gt;Server: Closing Frame
+&lt;/pre&gt;
+
+&lt;p&gt;See &lt;a href=&#34;https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Upgrade&#34;&gt;Upgrade - HTTP | MDN&lt;/a&gt;
+for some more details on Upgrade.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://www.rfc-editor.org/rfc/rfc2616#section-14.42&#34;&gt;RFC 2616 14.42 Upgrade&lt;/a&gt; for RFC documentation of Upgrade.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc6455&#34;&gt;RFC 6455 - The WebSocket Protocol&lt;/a&gt; for WebSocket protocol RFC,
+and in particular &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc6455#section-5.2&#34;&gt;Section 5.2 - Data Framing&lt;/a&gt; for the data frame format.&lt;/p&gt;
+&lt;h3 id=&#34;grpc&#34;&gt;gRPC&lt;/h3&gt;
+&lt;p&gt;Trying this is a bit tricky since we need a &lt;code&gt;.proto&lt;/code&gt; file to initiate the request.
+I found &lt;a href=&#34;https://gist.githubusercontent.com/agreatfool/5e3a41052c6dd2f6d04b30901fc0269b/raw/b4e0f82f73843a79ecdbde31c1294952df3855c6/book.proto&#34;&gt;this&lt;/a&gt;
+one on the wild and used it send the request.&lt;/p&gt;
+&lt;p&gt;After all the hard work (downloading random file from the internet and using it without checking),&lt;/p&gt;
+&lt;p&gt;This ugly thing was what I got:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;PRI &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; HTTP&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2.0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;SM
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;=&lt;/span&gt;LMed&lt;span style=&#34;color:#f92672&#34;&gt;@&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;te&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;�&lt;/span&gt;M&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;�&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;�&lt;/span&gt;z&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;���&lt;/span&gt;ȵG&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;��&lt;/span&gt;tC&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;\&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;!&lt;/span&gt;\Vt&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;�&lt;/span&gt;Ը&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You may have noticed that the first line still looks familiar except for the &lt;code&gt;PRI&lt;/code&gt; method.
+It turns out that HTTP/2 defines a new method called &lt;code&gt;PRI&lt;/code&gt; which is used to initiate the connection.
+Moreover, every HTTP/2 &amp;ldquo;connection preface starts with the string &amp;ldquo;&lt;code&gt;PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n&lt;/code&gt;&amp;rdquo;).  This sequence MUST be followed by a
+SETTINGS frame (&lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc7540#section-6.5&#34;&gt;Section 6.5&lt;/a&gt;)&amp;rdquo;&lt;sup id=&#34;fnref:6&#34;&gt;&lt;a href=&#34;#fn:6&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;6&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;So the gibberish-like line was the so-called SETTINGS frame.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md&#34;&gt;gRPC over HTTP2&lt;/a&gt; for more details on gRPC protocol&lt;sup id=&#34;fnref:7&#34;&gt;&lt;a href=&#34;#fn:7&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;7&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc7540#section-6.5&#34;&gt;RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)&lt;/a&gt; for more details on HTTP/2.&lt;/p&gt;
+&lt;h3 id=&#34;graphql&#34;&gt;GraphQL&lt;/h3&gt;
+&lt;p&gt;This was similar to gRPC as it usually expects a scheme. I used &lt;a href=&#34;https://www.geeksforgeeks.org/variables-in-graphql/&#34;&gt;geeksforgeeks&lt;/a&gt;&amp;rsquo;
+example query and received the following output:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-http&#34; data-lang=&#34;http&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;POST&lt;/span&gt; / &lt;span style=&#34;color:#66d9ef&#34;&gt;HTTP&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;accept&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;*/*&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;content-type&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;application/json&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;user-agent&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;PostmanClient/11.44.6 (AppId=10ae2050-5bdb-4706-97c5-394d76d2ae59)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Host&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;localhost:8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Content-Length&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;167&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Connection&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;keep-alive&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;{&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;query&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;query GetPerson($id: ID!) {\n    person(id: $id) {\n        name\n        age\n        address\n    }\n}\n&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;operationName&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;GetPerson&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;:{&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;:&lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;}}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It is quite similar to a usual HTTP request with a JSON body.
+It seems, unlike gRPC and the WebSockets,
+it uses post request bodies as the communication medium instead of defining a new protocol.
+I want to s**t talk about it, but I cannot even bother myself doing it as I don&amp;rsquo;t really care.&lt;/p&gt;
+&lt;p&gt;See &lt;a href=&#34;https://spec.graphql.org/&#34;&gt;spec.graphql.org/&lt;/a&gt; for GraphQL specs.&lt;/p&gt;
+&lt;p&gt;See &lt;em&gt;Jens Neuse&lt;/em&gt;&amp;rsquo;s &lt;a href=&#34;https://wundergraph.com/blog/six-year-graphql-recap&#34;&gt;reflections on GraphQL&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;simple-object-access-protocol&#34;&gt;Simple Object Access Protocol&lt;/h3&gt;
+&lt;p&gt;This protocol, whose common name is intentionally not uttered,
+differs from previous ones by not depending on any specific application or transport layer.
+I prefer not to have it used on my computer,
+so see the &lt;a href=&#34;https://en.wikipedia.org/wiki/SOAP#Example_message_(encapsulated_in_HTTP)&#34;&gt;wiki page&lt;/a&gt;
+for an example HTTP request over TCP.&lt;/p&gt;
+&lt;h2 id=&#34;before-the-end&#34;&gt;Before the End&lt;/h2&gt;
+&lt;p&gt;In the HTTP examples I used &lt;code&gt;curl&lt;/code&gt; to issue requests.
+&lt;code&gt;curl&lt;/code&gt; has a &lt;a href=&#34;https://curl.se/docs/manpage.html#-v&#34;&gt;&amp;ndash;verbose&lt;/a&gt; flag that logs a lot of things,
+including the raw http requests. &lt;br&gt;
+Moreover, it also logs DNS resolutions, TLS handshakes etc. &lt;br&gt;
+So, I could&amp;rsquo;ve used it all this time instead of writing a Read Print Loop,
+but it wouldn&amp;rsquo;t have been as much fun.
+Try the &lt;code&gt;--verbose&lt;/code&gt; flag yourself:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl --verbose https://kucukaslan.com.tr
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;last-words&#34;&gt;Last words&lt;/h2&gt;
+&lt;p&gt;As a side benefit of working on an IoT protocol,
+we had a chance to unbox some of the common communication protocols.
+We recognized the structure of HTTP requests,
+use of the Upgrade header for WebSockets,
+the HTTP/2 preface for gRPC etc.&lt;/p&gt;
+&lt;p&gt;I intend to write a follow-up article focusing on the HTTP Request Message format
+alongside the corresponding RFC documents. But no promises.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;ps. imports are added automatically by the IDEs even by the text editors like VSCode (via Plugins 🤞🏻).&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;I pronounced that word as &lt;a href=&#34;https://letmegooglethat.com/?q=%22%2F%CA%8Cn%CB%88f%C9%94%CB%90r.t%CA%83%C9%99n.%C9%99t.li%2F%22&#34;&gt;/ʌnˈfɔːr.tʃən.ət.li/&lt;/a&gt; to my manager&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;or maybe because I hate it 🤫&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34;&gt;
+&lt;p&gt;non-RESTful if you are as pedantic as &lt;a href=&#34;https://i.redd.it/1ef5ylxhmvx71.jpg&#34;&gt;the 20 year old proover&lt;/a&gt;.&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:5&#34;&gt;
+&lt;p&gt;may Allah forgive me for uttering this word&amp;#160;&lt;a href=&#34;#fnref:5&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:6&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc7540#section-3.5&#34;&gt;RFC 7540 - Hypertext Transfer Protocol Version 2 (HTTP/2)&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:6&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:7&#34;&gt;
+&lt;p&gt;trust me this was the least beginner-friendly document I could find sorry for any convenience invoked.&amp;#160;&lt;a href=&#34;#fnref:7&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+	</item>
+	
+	<item>
 		<title>Frequently Asked Questions</title>
-		<link>https://kucukaslan.com.tr/faq/</link>
+		<link>http://localhost:1313/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/faq/</guid>
+		<guid>http://localhost:1313/faq/</guid>
 		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
@@ -48,10 +302,10 @@ See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate
 	
 	<item>
 		<title>Guldesteyek Ji Stranên Biyanî</title>
-		<link>https://kucukaslan.com.tr/stranen_biyani/</link>
+		<link>http://localhost:1313/stranen_biyani/</link>
 		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stranen_biyani/</guid>
+		<guid>http://localhost:1313/stranen_biyani/</guid>
 		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
 Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
 &lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
@@ -59,8 +313,12 @@ Gelek neşîd û stranên min jê hez dikir hebûn; hin ji wan winda bûn, hin y
 &lt;p&gt;Bo niha (12ê tebaxê) ez bi tenê stranekî dest pê bikim&lt;/p&gt;
 &lt;h2 id=&#34;ahmet-kaya&#34;&gt;Ahmet Kaya&lt;/h2&gt;
 &lt;h3 id=&#34;yaşamadın-sen&#34;&gt;Yaşamadın Sen&lt;/h3&gt;
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-      &lt;iframe allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen&#34; loading=&#34;eager&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; src=&#34;https://www.youtube.com/embed/VrGxsbBCO-Q?autoplay=0&amp;amp;controls=1&amp;amp;end=0&amp;amp;loop=0&amp;amp;mute=0&amp;amp;start=0&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; title=&#34;YouTube video&#34;&gt;&lt;/iframe&gt;
+
+
+    
+    &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+      &lt;iframe allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&#34; allowfullscreen=&#34;allowfullscreen&#34; loading=&#34;eager&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; src=&#34;https://www.youtube.com/embed/VrGxsbBCO-Q?autoplay=0&amp;controls=1&amp;end=0&amp;loop=0&amp;mute=0&amp;start=0&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; title=&#34;YouTube video&#34;
+      &gt;&lt;/iframe&gt;
     &lt;/div&gt;
 
 &lt;!--
@@ -76,10 +334,10 @@ Yanımda Kal
 	
 	<item>
 		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
-		<link>https://kucukaslan.com.tr/stran/</link>
+		<link>http://localhost:1313/stran/</link>
 		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stran/</guid>
+		<guid>http://localhost:1313/stran/</guid>
 		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
 înternetê parve bikim, yan li ser twitterê, yan li ser
 bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
@@ -767,10 +1025,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>Neden Yazı Yazılır?</title>
-		<link>https://kucukaslan.com.tr/neden_yazariz/</link>
+		<link>http://localhost:1313/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/neden_yazariz/</guid>
+		<guid>http://localhost:1313/neden_yazariz/</guid>
 		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
 1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
 2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
@@ -781,10 +1039,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>About</title>
-		<link>https://kucukaslan.com.tr/about/</link>
+		<link>http://localhost:1313/about/</link>
 		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/about/</guid>
+		<guid>http://localhost:1313/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
 at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
@@ -793,7 +1051,7 @@ that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
-&lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
 &lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
 &lt;!-- Google Calendar Appointment Scheduling begin --&gt;
