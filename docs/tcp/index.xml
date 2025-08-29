@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>https://kucukaslan.com.tr/</link>
+	<link>http://localhost:1313/tcp/</link>
 	<description>Recent content in Homepage on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
 	<lastBuildDate>Sat, 30 Jul 2022 00:49:51 +0300</lastBuildDate>
     
-        <atom:link href="https://kucukaslan.com.tr/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="http://localhost:1313/tcp/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
 		<title>Frequently Asked Questions</title>
-		<link>https://kucukaslan.com.tr/faq/</link>
+		<link>http://localhost:1313/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/faq/</guid>
+		<guid>http://localhost:1313/faq/</guid>
 		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
@@ -48,10 +48,10 @@ See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate
 	
 	<item>
 		<title>Guldesteyek Ji Stranên Biyanî</title>
-		<link>https://kucukaslan.com.tr/stranen_biyani/</link>
+		<link>http://localhost:1313/stranen_biyani/</link>
 		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stranen_biyani/</guid>
+		<guid>http://localhost:1313/stranen_biyani/</guid>
 		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
 Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
 &lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
@@ -76,10 +76,10 @@ Yanımda Kal
 	
 	<item>
 		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
-		<link>https://kucukaslan.com.tr/stran/</link>
+		<link>http://localhost:1313/stran/</link>
 		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stran/</guid>
+		<guid>http://localhost:1313/stran/</guid>
 		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
 înternetê parve bikim, yan li ser twitterê, yan li ser
 bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
@@ -767,10 +767,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>Neden Yazı Yazılır?</title>
-		<link>https://kucukaslan.com.tr/neden_yazariz/</link>
+		<link>http://localhost:1313/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/neden_yazariz/</guid>
+		<guid>http://localhost:1313/neden_yazariz/</guid>
 		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
 1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
 2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
@@ -781,10 +781,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>About</title>
-		<link>https://kucukaslan.com.tr/about/</link>
+		<link>http://localhost:1313/about/</link>
 		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/about/</guid>
+		<guid>http://localhost:1313/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
 at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
@@ -793,7 +793,7 @@ that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
-&lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
 &lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
 &lt;!-- Google Calendar Appointment Scheduling begin --&gt;
