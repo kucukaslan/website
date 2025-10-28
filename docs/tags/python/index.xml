@@ -1,0 +1,854 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+	<title>Muhammed Can Küçükaslan</title>
+	<link>http://localhost:1313/tags/python/</link>
+	<description>Recent content in Python on Muhammed Can Küçükaslan</description>
+	<generator>Hugo -- gohugo.io</generator>
+	<language>tr-tr</language>
+	<lastBuildDate>Tue, 28 Oct 2025 00:00:00 +0300</lastBuildDate>
+    
+        <atom:link href="http://localhost:1313/tags/python/index.xml" rel="self" type="application/rss+xml" />
+	
+	
+	<item>
+		<title>Notes on Uvicorn on Production</title>
+		<link>http://localhost:1313/notes_on_uvicorn/</link>
+		<pubDate>Tue, 28 Oct 2025 00:00:00 +0300</pubDate>
+		
+		<guid>http://localhost:1313/notes_on_uvicorn/</guid>
+		<description>&lt;p&gt;The uvicorn + fastapi is a common default stack for Python web applications.
+However, it is easy to use it incorrectly on the production environment.
+A naive person could would install the fastapi and uvicorn using the &lt;code&gt;pip install fastapi uvicorn&lt;/code&gt; (or &lt;code&gt;uv add fastapi uvicorn&lt;/code&gt;) command.
+This is not incorrect and it will work, but it leaves low hanging fruits untouched.&lt;/p&gt;
+&lt;h2 id=&#34;uvloop-and-httptools&#34;&gt;uvloop and httptools&lt;/h2&gt;
+&lt;p&gt;However, when uvicorn is installed this way, it uses the &lt;code&gt;asyncio&lt;/code&gt;&amp;rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.&lt;/p&gt;
+&lt;p&gt;Remember the rule of thumb for Python is &lt;strong&gt;avoid pure python implementation of anything&lt;/strong&gt;,
+not even the freaking &lt;code&gt;for&lt;/code&gt; loops are exception (use numpy, pandas, etc. where possible).&lt;/p&gt;
+&lt;p&gt;So, we can&amp;rsquo;t, in our right mind, use the that pure python event loop.
+Luckily, there is a common suggested non-python event loop implementation: &lt;code&gt;uvloop&lt;/code&gt;.
+It is included in the uvicorn&amp;rsquo;s standard dependencies, so we can just install it using the &lt;code&gt;uv add &#39;uvloop[standard]&#39;&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;Similarly, by default uvicorn uses some pure python http parser. Again, there is a non-python http parser implementation: &lt;code&gt;httptools&lt;/code&gt; which is also included in the uvicorn[standard] dependencies.&lt;/p&gt;
+&lt;h2 id=&#34;dont-use-gunicorn-on-kubernetes-dont-multiple-workers&#34;&gt;Don&amp;rsquo;t Use Gunicorn on Kubernetes, Don&amp;rsquo;t Multiple Workers&lt;/h2&gt;
+&lt;p&gt;The natural next step following the protypeing the python server is to Dockerize it to be deployed in the production environment possibly on a Kubernetes cluster.&lt;/p&gt;
+&lt;p&gt;Now, that you&amp;rsquo;ve seen the naive mistake in installing uvicorn, you might want to be smart before you prepare production configuration and made some research.&lt;/p&gt;
+&lt;p&gt;You possibly asked some famous LLMs or even found &lt;a href=&#34;https://uvicorn.dev/deployment/&#34;&gt;uvicorn.dev/deployment&lt;/a&gt; and actually read the documentation by yourself like the old people.&lt;/p&gt;
+&lt;p&gt;Right there, in the official documentation, you see the following advice:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Run &lt;code&gt;gunicorn -k uvicorn.workers.UvicornWorker&lt;/code&gt; for production.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;or see&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;gunicorn -w 4 -k uvicorn.workers.UvicornWorker&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;below. Don&amp;rsquo;t do it.
+Not because it&amp;rsquo;s wrong.
+In fact this suggestion is great -but for the old-school reliable deployments to dedicated servers.&lt;/p&gt;
+&lt;p&gt;Gunicorn is yet another layer on top of the server.
+It&amp;rsquo;s used to manage multiple copies of the server in the same machine: distribute the load among them, restart them if they crash, etc.&lt;/p&gt;
+&lt;p&gt;When you deploy your application to a Kubernetes cluster, you already have a layer of load balancing and scaling. If you need multiple copies of the server, you should use multiple Kubernetes Pods. Kubernetes can manage it as well as Gunicorn can. Also, with kubernetes you get to deploy them on different nodes, and deploy other services on the same nodes.&lt;/p&gt;
+&lt;p&gt;If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You&amp;rsquo;d probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.&lt;/p&gt;
+&lt;h2 id=&#34;bonus-gzip-middleware&#34;&gt;Bonus: GZip Middleware&lt;/h2&gt;
+&lt;p&gt;It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the uvicorn.
+You need to add it manually to your application.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add_middleware(GZipMiddleware, minimum_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;, compresslevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It may reduce the response size significantly, obviously at the cost of some CPU time.
+I&amp;rsquo;ve seen it to reduce payload size from ~900 KB to ~175 KB. TBF, it was relatively structered payload. It&amp;rsquo;s on you to evaluate if it&amp;rsquo;s worth it for your application.&lt;/p&gt;
+&lt;p&gt;JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.&lt;/p&gt;
+&lt;h2 id=&#34;last-words&#34;&gt;Last words&lt;/h2&gt;
+&lt;p&gt;It&amp;rsquo;s obviously on you to think about the graceful shutdown, observability integrations etc.&lt;/p&gt;
+&lt;p&gt;I just wanted to comment on a few things that doesn&amp;rsquo;t match with the natural assumptions.&lt;/p&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Frequently Asked Questions</title>
+		<link>http://localhost:1313/faq/</link>
+		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
+		
+		<guid>http://localhost:1313/faq/</guid>
+		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
+&lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
+TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
+talent hunters/recruiters also it would amaze my colleagues.&lt;/p&gt;
+&lt;p&gt;Personally I like &lt;a href=&#34;https://mcagridurgut.com/&#34;&gt;M. Çağrı Durgut&lt;/a&gt;&amp;rsquo;s website. It is fancy, displays his wit, its blog even
+has dark mode. What more do people want?&lt;/p&gt;
+&lt;p&gt;Anyway.&lt;/p&gt;
+&lt;p&gt;Previously I used a Wordpress based website hosted on Digital Ocean or &lt;a href=&#34;https://webhosting.com.tr&#34;&gt;webhosting&lt;/a&gt; or
+somewhere. But as it is obvious I don&amp;rsquo;t actively maintain this website. So I don&amp;rsquo;t need the extra features provided by
+wordpress at the cost/burden of hosting a server.&lt;/p&gt;
+&lt;p&gt;I wanted to have my own domain, have a fancy &lt;a href=&#34;mailto:name@surname.com.tr&#34;&gt;name@surname.com.tr&lt;/a&gt; e-mail, to
+turn &lt;a href=&#34;https://landchad.net/#:~:text=into%20Internet%20Landlords&#34;&gt;into Internet Landlord&lt;/a&gt; instead of being internet
+peasant.&lt;/p&gt;
+&lt;p&gt;Moreover, I wanted to do this at minimal cost, at minimal effort.
+This simple website is just a bunch of markdown files that are transformed to html files with Hugo. I host the content
+on a GitHub Repository, updates to website are just &lt;code&gt;git push&lt;/code&gt;es (or PRs) to master. A GitHub Action is triggered and
+the update is deployed. Who is hosting it? Not me, thanks to &lt;a href=&#34;https://pages.github.com/&#34;&gt;GitHub Pages&lt;/a&gt;. Not so
+surprisingly, I have zero concern for uptime, zero concern for DDoS attacks, zero concern for vertical or horizontal or
+diagonal scaling, zero concern for billing.&lt;/p&gt;
+&lt;p&gt;Similarly, I added SSL to my domain with &lt;a href=&#34;https://cloudflare.com&#34;&gt;Cloudflare&lt;/a&gt; for free. I don&amp;rsquo;t have to worry about
+renewing the certificate etc.&lt;/p&gt;
+&lt;p&gt;See also another similar website: &lt;a href=&#34;https://motherfuckingwebsite.com/&#34;&gt;click here on you own risk&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;why-dont-you-have-ssl-https-on-your-website&#34;&gt;Why don&amp;rsquo;t you have SSL (https) on your website?&lt;/h3&gt;
+&lt;p&gt;I do have SSL if you type &lt;code&gt;https://&lt;/code&gt; before &lt;a href=&#34;https://kucukaslan.com.tr&#34;&gt;kucukaslan.com.tr&lt;/a&gt;. However, it is true that I
+do not force redirects to &lt;code&gt;https&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I will appeal to authority &amp;ldquo;Paul Graham&amp;rdquo; didn&amp;rsquo;t either (at least for a long time).
+See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate&lt;/a&gt; article.&lt;/p&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Guldesteyek Ji Stranên Biyanî</title>
+		<link>http://localhost:1313/stranen_biyani/</link>
+		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
+		
+		<guid>http://localhost:1313/stranen_biyani/</guid>
+		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
+Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
+&lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
+Gelek neşîd û stranên min jê hez dikir hebûn; hin ji wan winda bûn, hin yesax kirin, hin jî ez nevêrim parve bikim.&lt;/p&gt;
+&lt;p&gt;Bo niha (12ê tebaxê) ez bi tenê stranekî dest pê bikim&lt;/p&gt;
+&lt;h2 id=&#34;ahmet-kaya&#34;&gt;Ahmet Kaya&lt;/h2&gt;
+&lt;h3 id=&#34;yaşamadın-sen&#34;&gt;Yaşamadın Sen&lt;/h3&gt;
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+      &lt;iframe allow=&#34;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen&#34; loading=&#34;eager&#34; referrerpolicy=&#34;strict-origin-when-cross-origin&#34; src=&#34;https://www.youtube.com/embed/VrGxsbBCO-Q?autoplay=0&amp;amp;controls=1&amp;amp;end=0&amp;amp;loop=0&amp;amp;mute=0&amp;amp;start=0&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; title=&#34;YouTube video&#34;&gt;&lt;/iframe&gt;
+    &lt;/div&gt;
+
+&lt;!--
+Johnny Paycheck
+Someone to give my love to
+I&#39;ll be hating you
+
+Alpay
+Fabrika kızı
+Yanımda Kal
+ --&gt;</description>
+	</item>
+	
+	<item>
+		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
+		<link>http://localhost:1313/stran/</link>
+		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
+		
+		<guid>http://localhost:1313/stran/</guid>
+		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
+înternetê parve bikim, yan li ser twitterê, yan li ser
+bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
+&lt;h2 id=&#34;mihemed-şêxo&#34;&gt;Mihemed Şêxo&lt;/h2&gt;
+&lt;p&gt;Serekayê lîsta min e. Bal min pir bi qedr û qîmet e.
+Him stranên li ser evînê (ew tişta ku me bextreşan tehm nekiriye)
+him li ser welatparezî û hemiyyetperwerî.
+Ewilî min plan dikir ku ez stranek ji her stranbêjêkî
+ve hilbijêrim lê hê di dêstpêkê de xuya ye ez nikarim.&lt;/p&gt;
+&lt;h3 id=&#34;ez-bûm-ferar&#34;&gt;Ez Bûm Ferar&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;4jiwePbQW_w&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/4jiwePbQW_w/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-4jiwePbQW_w&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;şêrmin-e-dil&#34;&gt;Şêrmin e Dil&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;r7dROzWSSM4&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/r7dROzWSSM4/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-r7dROzWSSM4&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;dil-kuştiye-awirên-çawên-te&#34;&gt;Dil Kuştiye Awirên Çawên Te&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;m2sszIprUaA&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/m2sszIprUaA/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-m2sszIprUaA&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;xwedê-çawa-gul-wer-çêkir&#34;&gt;Xwedê Çawa Gul Wer Çêkir&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;v9x0kJy_5qs&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/v9x0kJy_5qs/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-v9x0kJy_5qs&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;xewa-min-nahêt-şeva-giran-e&#34;&gt;Xewa Min Nahêt Şeva Giran e&lt;/h3&gt;
+&lt;p&gt;Ezmanê lal bit &lt;br&gt;
+Bila her nebit &lt;br&gt;
+Jîn bê serbestî &lt;br&gt;
+Bila wêran bit&lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;HP0tmuCAx8k&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/HP0tmuCAx8k/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-HP0tmuCAx8k&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;p&gt;Allah wekîl dilê&amp;rsquo;m dixwaze çendin stranên din jî binivîsim
+lê gerek ez xwe bigrim û bisekinim.&lt;/p&gt;
+&lt;h2 id=&#34;erdewan-zaxolî-zaxoyî&#34;&gt;Erdewan Zaxolî (Zaxoyî)&lt;/h2&gt;
+&lt;h3 id=&#34;mêr-û-jin&#34;&gt;Mêr û Jin&lt;/h3&gt;
+&lt;p&gt;Barê me ye &lt;br&gt;
+Karê me ye &lt;br&gt;
+Bi destê me &lt;br&gt;
+Tê bextê me &lt;br&gt;
+Hiş serwer e &lt;br&gt;
+Kirin gewher e&lt;/p&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;aFPSk7OqITc&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/aFPSk7OqITc/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-aFPSk7OqITc&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;dindik-hinar&#34;&gt;Dindik Hinar&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;etEK9WTtToU&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/etEK9WTtToU/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-etEK9WTtToU&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;erê-dayikê-ji-xeribîyê-dikim-girî&#34;&gt;Erê Dayikê Ji Xeribîyê Dikim Girî&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;esSFFVqk9yo&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/esSFFVqk9yo/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-esSFFVqk9yo&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;xwedêyo&#34;&gt;Xwedêyo&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;hyvD0LBBXbs&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/hyvD0LBBXbs/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-hyvD0LBBXbs&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;kûtirê-were-û-nefire&#34;&gt;Kûtirê Were û Nefire&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;wfj80SMInDk&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/wfj80SMInDk/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-wfj80SMInDk&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;mihemed-teyib-tehir&#34;&gt;Mihemed Teyib Tehir&lt;/h2&gt;
+&lt;h3 id=&#34;bukê-delalê&#34;&gt;Bukê delalê&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;MiPciuOcYyg&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/MiPciuOcYyg/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-MiPciuOcYyg&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;sebra-dila-ez-dwîr-ketim-te-nabînim&#34;&gt;Sebra Dila (Ez Dwîr Ketim Te Nabînim)&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;2HtiY8nhwYk&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/2HtiY8nhwYk/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-2HtiY8nhwYk&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;semîra&#34;&gt;Semîra&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;oveqUqQNzZU&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/oveqUqQNzZU/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-oveqUqQNzZU&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;bêsozê&#34;&gt;Bêsozê&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;ByzfnB4eWTE&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/ByzfnB4eWTE/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-ByzfnB4eWTE&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;ivan-libnan&#34;&gt;Ivan Libnan&lt;/h2&gt;
+&lt;h3 id=&#34;min-viya&#34;&gt;Min Viya&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;BtGgbqJpoyU&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/BtGgbqJpoyU/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-BtGgbqJpoyU&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;dûktor&#34;&gt;Dûktor&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;QfSjGJnFWqs&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/QfSjGJnFWqs/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-QfSjGJnFWqs&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;behçet-yahya&#34;&gt;Behçet Yahya&lt;/h2&gt;
+&lt;h3 id=&#34;wezû-wezû&#34;&gt;Wezû Wezû&lt;/h3&gt;
+&lt;p&gt;غەریبەکـم هامتـە دەڤ تـە &lt;br&gt;
+نێـم کـەس نینـە ژ بلـی تـە &lt;br&gt;
+هێڤیدکــەم ڤــی دلــی نەشــکینە جانــێ &lt;br&gt;
+ئەڤــی ژینــێ تــو بخەملینــە جانــێ &lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;6RUGlgvxd24&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/6RUGlgvxd24/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-6RUGlgvxd24&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h3 id=&#34;eger-bimrim-dibin-gorî-te-gulnazê&#34;&gt;Eger Bimrim (Dibin gorî te gulnazê)&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;XBKuhP8XZKY&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/XBKuhP8XZKY/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-XBKuhP8XZKY&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;gulê-canê-keçê-gulê-ka-mizgînî&#34;&gt;Gulê Canê (Keçê Gulê Ka Mizgînî)&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;IseWkShY2TU&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/IseWkShY2TU/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-IseWkShY2TU&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;abdullah-zêrin&#34;&gt;Abdullah Zêrin&lt;/h2&gt;
+&lt;h3 id=&#34;hêstirên-çavan&#34;&gt;Hêstirên Çavan&lt;/h3&gt;
+&lt;p&gt;رۆندك ژ چاڤا هاتنە خارێ من نەزانى ئەگەر چيە&lt;br&gt;
+پشتى هزرو تەخمينێت من ديار بوو ئەگەر غەريبيە&lt;br&gt;
+غەريبى دەردەك گرانە مرنەكا نە ڤەشارتيە و رۆندك ژ چاڤا هاتنە خارێ.&lt;br&gt;
+دبێژن دەرڤەى وەلاتى پر شادى و خۆشيە&lt;br&gt;
+دەنگێ دەهۆلێ ژ دير خۆشە و كەس نزانى چ شاهيە&lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;eEvWOAudBIs&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/eEvWOAudBIs/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-eEvWOAudBIs&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h3 id=&#34;bo-çi-her-dem-tu-dil-bi-kul-î&#34;&gt;Bo çi Her Dem Tu Dil bi Kul î&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;klnj182_kkA&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/klnj182_kkA/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-klnj182_kkA&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;bo-çi-her-dem-dinalî-pisyar-li-min-kir-û-got&#34;&gt;Bo çi Her Dem Dinalî (Pisyar li min kir û got)&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;kYIc_ZQohJ0&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/kYIc_ZQohJ0/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-kYIc_ZQohJ0&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;ma-ne-bes-e&#34;&gt;Ma Ne Bes e&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;s2Ano56vmuc&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/s2Ano56vmuc/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-s2Ano56vmuc&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;seîd-yûsif&#34;&gt;Seîd Yûsif&lt;/h2&gt;
+&lt;h3 id=&#34;çava-kilke&#34;&gt;Çava Kilke&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;2rj0Q6_hlCw&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/2rj0Q6_hlCw/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-2rj0Q6_hlCw&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;canda&#34;&gt;Canda&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;9Bpx4myN0wk&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/9Bpx4myN0wk/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-9Bpx4myN0wk&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;hêstirê-min-dibarin&#34;&gt;Hêstirê Min Dibarin&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;dMJjQdDIdNE&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/dMJjQdDIdNE/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-dMJjQdDIdNE&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;eyaz-yusif-zaxoyî&#34;&gt;Eyaz Yusif (Zaxoyî)&lt;/h2&gt;
+&lt;h3 id=&#34;xelkêt-bajêrê-canê&#34;&gt;Xelkêt Bajêrê Canê&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;2ARUwXhS1vY&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/2ARUwXhS1vY/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-2ARUwXhS1vY&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;keziya-vehîne&#34;&gt;Keziya Vehîne&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;Mw-mjdJgfhQ&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/Mw-mjdJgfhQ/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-Mw-mjdJgfhQ&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;ev-ro-dilê-min-bi-kul-e&#34;&gt;Ev ro Dilê Min Bi Kul e&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;XeLehL6P1yc&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/XeLehL6P1yc/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-XeLehL6P1yc&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;eger-dinya-hemi-gul-bit&#34;&gt;Eger Dinya Hemi Gul Bit&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;UaKZjoz7S24&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/UaKZjoz7S24/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-UaKZjoz7S24&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;!-- ### Dadê landik#e 7JpTApuD2WI --&gt;
+&lt;h3 id=&#34;deşt-û-çiya&#34;&gt;Deşt û Çiya&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;-ySCC066dgo&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/-ySCC066dgo/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube--ySCC066dgo&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;seîd-gabarî&#34;&gt;Seîd Gabarî&lt;/h2&gt;
+&lt;h3 id=&#34;lê-ciwanê-feryad-û-sed-ax-û-eman&#34;&gt;Lê Ciwanê (Feryad û Sed Ax û Eman)&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;uUD21kjMcrY&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/uUD21kjMcrY/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-uUD21kjMcrY&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;bilbilê-dilşadî&#34;&gt;Bilbilê Dilşadî&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;1vj7aftCilc&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/1vj7aftCilc/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-1vj7aftCilc&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;min-heram-eşq-û-êvîn&#34;&gt;Min Heram &amp;lsquo;Eşq û Êvîn&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;dr-d-eNyezI&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/dr-d-eNyezI/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-dr-d-eNyezI&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;bilind-ibrahim&#34;&gt;Bilind Ibrahim&lt;/h2&gt;
+&lt;h3 id=&#34;dêm-û-bêjn-û-bala-te&#34;&gt;Dêm û Bêjn û Bala Te&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;iIZ29eIPX2E&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/iIZ29eIPX2E/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-iIZ29eIPX2E&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;bes-e-ey-dil&#34;&gt;Bes e Ey Dil&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;JMzMxnc5Lao&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/JMzMxnc5Lao/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-JMzMxnc5Lao&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;bila-çav-kore-bibin&#34;&gt;Bila Çav Kore Bibin&lt;/h3&gt;
+&lt;p&gt;Bila çav kore bibin &lt;br&gt;
+Madem êdî te nebînin &lt;br&gt;
+Ma rondikên min bo çi ne &lt;br&gt;
+Madem te li min nagerînin &lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;-qOuz5yq10o&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/-qOuz5yq10o/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube--qOuz5yq10o&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h2 id=&#34;tehsîn-taha&#34;&gt;Tehsîn Taha&lt;/h2&gt;
+&lt;h3 id=&#34;aşkere-nakem&#34;&gt;Aşkere Nakem&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;sE_P4AsF6zk&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/sE_P4AsF6zk/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-sE_P4AsF6zk&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;aso&#34;&gt;Aso&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;E88XuBCjs8I&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/E88XuBCjs8I/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-E88XuBCjs8I&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;lê-venabim&#34;&gt;Lê venabim&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;Dmtnbz5U2k0&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/Dmtnbz5U2k0/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-Dmtnbz5U2k0&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;mehmûd-ezîz-şakir&#34;&gt;Mehmûd Ezîz Şakir&lt;/h2&gt;
+&lt;h3 id=&#34;ber-dilê-min-pir-şêrîn-e&#34;&gt;Ber Dilê Min Pir Şêrîn e&lt;/h3&gt;
+&lt;!-- &lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;ET_Qz4j-mu4&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/ET_Qz4j-mu4/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-ET_Qz4j-mu4&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+ --&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;stOPyzVvlFI&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/stOPyzVvlFI/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-stOPyzVvlFI&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;hebs-û-zindan&#34;&gt;Hebs û Zindan&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;u_oy7EWoVaI&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/u_oy7EWoVaI/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-u_oy7EWoVaI&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h2 id=&#34;çend-stranbêjên-din-yê-ez-carna-guhdarî-dikim&#34;&gt;Çend stranbêjên din yê ez carna guhdarî dikim&lt;/h2&gt;
+&lt;h3 id=&#34;bişar-zaxoyî&#34;&gt;Bişar Zaxoyî&lt;/h3&gt;
+&lt;h4 id=&#34;min-nezani&#34;&gt;Min Nezani&lt;/h4&gt;
+&lt;p&gt;Min nezanî rêka min ho ye bi zehmet e &lt;br&gt;
+Min nezanî min ne çeng e ne teqet e &lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;I-Rm_5R5Dz4&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/I-Rm_5R5Dz4/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-I-Rm_5R5Dz4&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h3 id=&#34;mihemed-taha-akreyî&#34;&gt;Mihemed Taha Akreyî&lt;/h3&gt;
+&lt;h4 id=&#34;çi-hişyar-çi-xew-de&#34;&gt;Çi Hişyar Çi Xew De&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;EP7iSRLvc-U&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/EP7iSRLvc-U/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-EP7iSRLvc-U&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;alend-hazim&#34;&gt;Alend Hazim&lt;/h3&gt;
+&lt;h4 id=&#34;şerê-hesen-qela&#34;&gt;Şerê Hesen Qela&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;VMOr85SwWcM&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/VMOr85SwWcM/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-VMOr85SwWcM&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;nasir-rezazi&#34;&gt;Nasir Rezazi&lt;/h3&gt;
+&lt;h4 id=&#34;paytext&#34;&gt;Paytext&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;zJL6Nj2DvAw&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/zJL6Nj2DvAw/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-zJL6Nj2DvAw&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h4 id=&#34;çareyî-xemî-min-mey-nîye&#34;&gt;Çareyî Xemî Min Mey Nîye&lt;/h4&gt;
+&lt;p&gt;پێم وا نییە لەم غەدرەوە فریام بکەوێ کەس &lt;br&gt;
+ئەو دۆست بوو وەفای بۆم نەبوو بێگانە بڵێ چی&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;sbHgCqD41pI&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/sbHgCqD41pI/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-sbHgCqD41pI&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h3 id=&#34;homer-dizeyi&#34;&gt;Homer Dizeyi&lt;/h3&gt;
+&lt;h4 id=&#34;çendî-geram-le-şaran&#34;&gt;Çendî Geram Le Şaran&lt;/h4&gt;
+&lt;p&gt;چەندی گەڕام لە شاران &lt;br&gt;
+نەمدی کەس وەك تۆ جوان بێت &lt;br&gt;
+کیژۆڵە نەشمیلانەکەی جاران &lt;br&gt;
+چۆن دەبێت نێوانمان وابێت گیانە &lt;br&gt;
+بە یادی سەیرانەکەی ناو داران &lt;br&gt;
+بریندارم …….بریندارم &lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;vDCXIsJJQqM&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/vDCXIsJJQqM/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-vDCXIsJJQqM&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h3 id=&#34;abdulwahid-zaxoyi&#34;&gt;Abdulwahid zaxoyi&lt;/h3&gt;
+&lt;h4 id=&#34;mixabin&#34;&gt;Mixabin&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;1VTI1Q8BqRg&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/1VTI1Q8BqRg/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-1VTI1Q8BqRg&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;sefqan-orkeş&#34;&gt;Sefqan Orkeş&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;uhsTNwQiYJw&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/uhsTNwQiYJw/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-uhsTNwQiYJw&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;şivan-perwer&#34;&gt;Şivan Perwer&lt;/h3&gt;
+&lt;h4 id=&#34;kî-ne-em&#34;&gt;Kî Ne Em&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;qAZ_nW5psa8&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/qAZ_nW5psa8/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-qAZ_nW5psa8&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;nishtiman&#34;&gt;Nishtiman&lt;/h3&gt;
+&lt;h4 id=&#34;ûrmiye&#34;&gt;Ûrmiye&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;8uh-onqHOjk&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/8uh-onqHOjk/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-8uh-onqHOjk&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;yunus-dişkaya&#34;&gt;Yunus Dişkaya&lt;/h3&gt;
+&lt;h4 id=&#34;elegez&#34;&gt;Elegez&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;cxUcOYwMrgw&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/cxUcOYwMrgw/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-cxUcOYwMrgw&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;ez-tune-me&#34;&gt;Ez Tune Me&lt;/h3&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;l3R7FXn9hh8&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/l3R7FXn9hh8/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-l3R7FXn9hh8&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;nizamettin-arîç&#34;&gt;Nizamettin Arîç&lt;/h3&gt;
+&lt;h4 id=&#34;ez-şah-im-delala-min&#34;&gt;Ez Şah im Delala Min&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;0_vt90PFjHQ&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/0_vt90PFjHQ/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-0_vt90PFjHQ&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;baran-kendeş&#34;&gt;Baran Kendeş&lt;/h3&gt;
+&lt;h4 id=&#34;jiyan&#34;&gt;Jiyan&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;-crbl8ClZjY&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/-crbl8ClZjY/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube--crbl8ClZjY&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;temo&#34;&gt;Temo&lt;/h3&gt;
+&lt;h4 id=&#34;aferîn-qazî-mihemed&#34;&gt;Aferîn Qazî Mihemed&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;9PDqWpPRmeA&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/9PDqWpPRmeA/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-9PDqWpPRmeA&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;aram-dîkran&#34;&gt;Aram Dîkran&lt;/h3&gt;
+&lt;h4 id=&#34;gelo-ew-kî-bu&#34;&gt;Gelo Ew Kî Bu?&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;L8N5DgmMZng&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/L8N5DgmMZng/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-L8N5DgmMZng&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;zendin&#34;&gt;Zendin&lt;/h3&gt;
+&lt;h4 id=&#34;ya-reb-te-bo-kê-hêlaye&#34;&gt;Ya Reb Te Bo Kê Hêlaye?&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;mTrNJVBipRs&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/mTrNJVBipRs/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-mTrNJVBipRs&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;diyar&#34;&gt;Diyar&lt;/h3&gt;
+&lt;h4 id=&#34;dinyayê&#34;&gt;Dinyayê&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;51JWVLcjjw8&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/51JWVLcjjw8/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-51JWVLcjjw8&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;mehmet-atlı&#34;&gt;Mehmet Atlı&lt;/h3&gt;
+&lt;h4 id=&#34;pêşiya-malê&#34;&gt;Pêşiya Malê&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;HAhueW3XhNE&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/HAhueW3XhNE/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-HAhueW3XhNE&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;nojdar-mtahir&#34;&gt;Nojdar M.Tahir&lt;/h3&gt;
+&lt;h4 id=&#34;kes-bi-derdê-min-nizanit&#34;&gt;Kes Bi Derdê Min Nizanit&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;MS56apsuQdg&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/MS56apsuQdg/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-MS56apsuQdg&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;osman-faris&#34;&gt;Osman Faris&lt;/h3&gt;
+&lt;h4 id=&#34;textor--haya-min-ji-te-nebû&#34;&gt;Textor &amp;amp; Haya Min ji Te Nebû&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;Of1bwJuIHWo&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/Of1bwJuIHWo/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-Of1bwJuIHWo&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;karapetê-xaço&#34;&gt;Karapetê Xaço&lt;/h3&gt;
+&lt;h4 id=&#34;dêresorê&#34;&gt;Dêresorê&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;hENUrGVaR4Y&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/hENUrGVaR4Y/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-hENUrGVaR4Y&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;araz-berwarî&#34;&gt;Araz Berwarî&lt;/h3&gt;
+&lt;h4 id=&#34;gerdenzer&#34;&gt;Gerdenzer&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;-xaZ66tFY6c&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/-xaZ66tFY6c/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube--xaZ66tFY6c&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;karwan-kamil&#34;&gt;Karwan Kamil&lt;/h3&gt;
+&lt;h4 id=&#34;bê-sozê&#34;&gt;Bê Sozê&lt;/h4&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;vlgsD5WApi0&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/vlgsD5WApi0/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-vlgsD5WApi0&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;fuad-ehmed&#34;&gt;Fuad Ehmed&lt;/h3&gt;
+&lt;h4 id=&#34;peyman-biro-biro&#34;&gt;Peyman (Biro Biro)&lt;/h4&gt;
+&lt;p&gt;پەیمان ئەدەی لە بیر ئەکەی&lt;br&gt;
+دڵی شادم زویر ئەکەی&lt;br&gt;
+ئێستەش چۆن بڕوات پێ بکەم&lt;br&gt;
+بڕۆ بڕۆ درۆ ئەکەی&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;br&gt;
+&lt;div class=&#34;youtube-container&#34;&gt;
+  &lt;div class=&#34;youtube-lazy&#34; data-id=&#34;E5kUx6YoOL8&#34;&gt;
+    &lt;img src=&#34;https://i.ytimg.com/vi/E5kUx6YoOL8/hqdefault.jpg&#34; alt=&#34;YouTube video thumbnail&#34; id=&#34;youtube-E5kUx6YoOL8&#34;&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/p&gt;
+&lt;h1 id=&#34;çavkanî&#34;&gt;Çavkanî&lt;/h1&gt;
+&lt;script&gt;
+    document.addEventListener(&#39;DOMContentLoaded&#39;, function() {
+  const lazyVideos = document.querySelectorAll(&#39;.youtube-lazy&#39;);
+  
+  function createYouTubeEmbed(container) {
+    const videoId = container.getAttribute(&#39;data-id&#39;);
+    const iframe = document.createElement(&#39;iframe&#39;);
+    
+    iframe.setAttribute(&#39;src&#39;, &#39;https://www.youtube.com/embed/&#39; + videoId + &#39;?autoplay=1&#39;);
+    iframe.setAttribute(&#39;frameborder&#39;, &#39;0&#39;);
+    iframe.setAttribute(&#39;allowfullscreen&#39;, &#39;1&#39;);
+    iframe.setAttribute(&#39;allow&#39;, &#39;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&#39;);
+    
+    container.innerHTML = &#39;&#39;;
+    container.appendChild(iframe);
+    container.classList.add(&#39;active&#39;);
+  }
+  
+  // Add click event to the container
+  lazyVideos.forEach(function(video) {
+    video.addEventListener(&#39;click&#39;, function(e) {
+      e.preventDefault();
+      createYouTubeEmbed(this);
+    });
+  });
+  
+  // Add click events to thumbnails and play buttons specifically
+  document.querySelectorAll(&#39;.youtube-lazy .thumbnail, .youtube-lazy .play-button&#39;).forEach(function(element) {
+    element.addEventListener(&#39;click&#39;, function(e) {
+      e.stopPropagation(); // Prevent double triggering
+      createYouTubeEmbed(this.closest(&#39;.youtube-lazy&#39;));
+    });
+  });
+  
+  // Check if thumbnails failed to load and replace with a placeholder
+  document.querySelectorAll(&#39;.youtube-lazy .thumbnail&#39;).forEach(function(img) {
+    img.addEventListener(&#39;error&#39;, function() {
+      this.src = &#39;data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22450%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20450%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_1887ea5a3a7%20text%20%7B%20fill%3A%23999%3Bfont-weight%3Anormal%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1887ea5a3a7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22450%22%20fill%3D%22%23373940%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22289.71875%22%20y%3D%22243.9%22%3EYouTube%20Video%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E&#39;;
+      this.style.objectFit = &#39;contain&#39;;
+    });
+  });
+});
+
+&lt;/script&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.goranikurdi.com/ck/track/2156&#34;&gt;https://www.goranikurdi.com/ck/track/2156&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.goranikurdi.com/ck/track/5052&#34;&gt;https://www.goranikurdi.com/ck/track/5052&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Neden Yazı Yazılır?</title>
+		<link>http://localhost:1313/neden_yazariz/</link>
+		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
+		
+		<guid>http://localhost:1313/neden_yazariz/</guid>
+		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
+1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
+2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
+&lt;p&gt;Sanıyorum ki ilkine cevap olarak Schopenhauer’in dediğine benzer şekilde şöyle yanıt verebiliriz: Bir fikrin bana ait olması, o fikri dillendir(ebil)memden ibaret değildir. O fikrin ‑ekstra bir çaba sarf etmeme gerek kalmaksızın- düşünüşümü, davranışımı yönlendirmesini de kapsar. Basit bir örnek olarak, nedense herkesin hemfikir olduğu, “yalan söylemek kötüdür” savını ele alalım. Hepimiz yalan söylemenin kötü olduğuna inanırız fakat yine de yalan söyleriz? Belki de yalan söylemenin kötü olduğuna inanmıyoruzdur, yoksa yalan söylemenin kötü olduğuna inandığımızın farkında mı değiliz? Bkz. [buraya başka bir yazının linki gelecek].&lt;/p&gt;
+&lt;p&gt;Peki ya ikincisi? Soruyu daha açıkça soralım “ben kim köpeğim de nice saygın insanın zaten anlattığı şeyleri farklı bir şekilde anlatmaya cüret ediyorum”? Bilmiyorum. Bir şeyler anlatmaya çalıştığımdan da emin sayılmam. Düşüncelerimi yazmam vardığım mutlak doğruyu henüz aydınlanamamış insanlara lütfetmek gibi değil, ya da bu fikirleri duyurup insanları ikna etmek bir nevi propaganda yapmak da değil. Fark etmişsinizdir, cümlelerimdeki tereddüdü. Emin değilim ne düşündüğümden, neye inandığımdan, neyi savunduğumdan, neyi inkâr ettiğimden. Yazmak düşüncelerimi bir şekil almaya zorlamamı, yani ne düşündüğümü öğrenmemi sağlıyor bir nebze. Bu zorlama iyi bir şey mi ondan da emin değilim, nitekim Sokrates de düşünceleri yazıya dökmeyi onlara sınır çizmek gördüğünden düşüncelerini yazmazmış. Öte yandan zihnimde dağınık hâlde bulunan bu nedenle ne olduklarını bilmediğim düşüncelere sahip olduğumu nasıl iddia edebilirim ki? Bir yazardan okumuştum şu soruyu: “Düşüncelerimizi ifade edip, başkaları tarafından değerlendirilip eleştirilmesine izin vermezsek düşüncelerimizin doğruluğundan nasıl emin olabiliriz” (o yazar Ataç da olabilir, Schopenhauer de, net hatırlamıyorum). Ben biraz daha ileri gidip düşüncelerimizin ne olduğundan da emin olamayacağımızı iddia ediyorum. Bu yüzden de bizden daha akıllı, daha tecrübeli insanların bizden daha iyi ifade ettiği şeyleri kendimizce söylemeye çalışırız ki gerçekten ne düşündüğümüzü anlayabilelim. Kendimizden başka kime ne zararı olabilir ki? (Bunları yazdığım bilgisayara elektrik sağlayacak &lt;em&gt;temiz enerji kaynağı&lt;/em&gt; hidroelektrik santralini dikmek için mahveden doğadan habersizmişçesine…)&lt;/p&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>About</title>
+		<link>http://localhost:1313/about/</link>
+		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
+		
+		<guid>http://localhost:1313/about/</guid>
+		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
+at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
+&lt;p&gt;My interests (tendency) of study is &lt;em&gt;engineering&lt;/em&gt;
+that is to say building reliable (software/hardware) systems that
+uses resources as efficient as possible.&lt;/p&gt;
+&lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
+that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
+&lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
+&lt;!-- Google Calendar Appointment Scheduling begin --&gt;
+&lt;iframe src=&#34;https://calendar.google.com/calendar/appointments/schedules/AcZssZ0bSKc4KScDDrZyBloHn27m4PGN6cR0kxbAcRIMTz_oOJT3pl_YHPq2HVgbt_j1e_MSQt5VKJmn?gv=true&#34; style=&#34;border: 0&#34; width=&#34;100%&#34; height=&#34;600&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;
+&lt;!-- end Google Calendar Appointment Scheduling --&gt;
+</description>
+	</item>
+	
+	</channel>
+</rss>
