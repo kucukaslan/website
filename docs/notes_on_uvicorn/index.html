@@ -22,10 +22,10 @@ However, when uvicorn is installed this way, it uses the asyncio&rsquo;s default
 <header><h1 id="tag_Notes on Uvicorn on Production">Notes on Uvicorn on Production</h1></header>
 <article>
 
-<p>The uvicorn + fastapi is a common default stack for Python web applications.
-However, it is just too easy to use it with a wrong configuration on the production environment.
-A naive person could would install the fastapi and uvicorn using the <code>pip install fastapi uvicorn</code> (or <code>uv add fastapi uvicorn</code>) command.
-This is not incorrect, it will work, but it leaves low hanging fruits untouched.</p>
+<p>The uvicorn + fastapi is a common default stack for Python web applications.</p>
+<p>However, it is just too easy to use it with a wrong configuration on the production environment.</p>
+<p>A naive person could would install the fastapi and uvicorn using the <code>pip install fastapi uvicorn</code> (or <code>uv add fastapi uvicorn</code>) command.</p>
+<p>This is not incorrect, it will work, but it leaves low hanging fruits untouched.</p>
 <h2 id="uvloop-and-httptools">uvloop and httptools</h2>
 <p>However, when uvicorn is installed this way, it uses the <code>asyncio</code>&rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.</p>
 <p>Remember the rule of thumb for Python is <strong>avoid pure python implementation of anything</strong>,
@@ -53,7 +53,7 @@ It&rsquo;s used to manage multiple copies of the server in the same machine: dis
 <p>If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You&rsquo;d probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.</p>
 <h2 id="bonus-gzip-middleware-for-fastapi">Bonus: GZip Middleware for FastAPI</h2>
 <p>It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
-You need to add it manually to your application.</p>
+You need to explicitly add it to your application.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>app <span style="color:#f92672">=</span> FastAPI(lifespan<span style="color:#f92672">=</span>lifespan)
 </span></span><span style="display:flex;"><span>app<span style="color:#f92672">.</span>add_middleware(GZipMiddleware, minimum_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, compresslevel<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
 </span></span></code></pre></div><p>(<a href="https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45">Source</a>)</p>

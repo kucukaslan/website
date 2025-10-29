@@ -1,13 +1,16 @@
 ---
 title: "Notes on Uvicorn on Production"
-date: 2025-10-29T20:01:02+03:00
+date: 2025-10-29T20:25:10+03:00
 tags: ['english', 'python', 'uvicorn', 'fastapi', 'production']
 draft: false
 ---
 
 The uvicorn + fastapi is a common default stack for Python web applications.
+
 However, it is just too easy to use it with a wrong configuration on the production environment.
+
 A naive person could would install the fastapi and uvicorn using the `pip install fastapi uvicorn` (or `uv add fastapi uvicorn`) command.
+
 This is not incorrect, it will work, but it leaves low hanging fruits untouched.
 
 ## uvloop and httptools
@@ -49,7 +52,7 @@ If Gunicorn is used with kubernetes, then it hides some degree of flexibility an
 
 ## Bonus: GZip Middleware for FastAPI
 It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
-You need to add it manually to your application.
+You need to explicitly add it to your application.
 
 ```python
 app = FastAPI(lifespan=lifespan)

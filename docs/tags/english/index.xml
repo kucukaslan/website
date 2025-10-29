@@ -5,7 +5,7 @@
 	<description>Recent content in English on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
-	<lastBuildDate>Wed, 29 Oct 2025 20:01:02 +0300</lastBuildDate>
+	<lastBuildDate>Wed, 29 Oct 2025 20:25:10 +0300</lastBuildDate>
     
         <atom:link href="https://kucukaslan.com.tr/tags/english/index.xml" rel="self" type="application/rss+xml" />
 	
@@ -13,13 +13,13 @@
 	<item>
 		<title>Notes on Uvicorn on Production</title>
 		<link>https://kucukaslan.com.tr/notes_on_uvicorn/</link>
-		<pubDate>Wed, 29 Oct 2025 20:01:02 +0300</pubDate>
+		<pubDate>Wed, 29 Oct 2025 20:25:10 +0300</pubDate>
 		
 		<guid>https://kucukaslan.com.tr/notes_on_uvicorn/</guid>
-		<description>&lt;p&gt;The uvicorn + fastapi is a common default stack for Python web applications.
-However, it is just too easy to use it with a wrong configuration on the production environment.
-A naive person could would install the fastapi and uvicorn using the &lt;code&gt;pip install fastapi uvicorn&lt;/code&gt; (or &lt;code&gt;uv add fastapi uvicorn&lt;/code&gt;) command.
-This is not incorrect, it will work, but it leaves low hanging fruits untouched.&lt;/p&gt;
+		<description>&lt;p&gt;The uvicorn + fastapi is a common default stack for Python web applications.&lt;/p&gt;
+&lt;p&gt;However, it is just too easy to use it with a wrong configuration on the production environment.&lt;/p&gt;
+&lt;p&gt;A naive person could would install the fastapi and uvicorn using the &lt;code&gt;pip install fastapi uvicorn&lt;/code&gt; (or &lt;code&gt;uv add fastapi uvicorn&lt;/code&gt;) command.&lt;/p&gt;
+&lt;p&gt;This is not incorrect, it will work, but it leaves low hanging fruits untouched.&lt;/p&gt;
 &lt;h2 id=&#34;uvloop-and-httptools&#34;&gt;uvloop and httptools&lt;/h2&gt;
 &lt;p&gt;However, when uvicorn is installed this way, it uses the &lt;code&gt;asyncio&lt;/code&gt;&amp;rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.&lt;/p&gt;
 &lt;p&gt;Remember the rule of thumb for Python is &lt;strong&gt;avoid pure python implementation of anything&lt;/strong&gt;,
@@ -47,7 +47,7 @@ It&amp;rsquo;s used to manage multiple copies of the server in the same machine:
 &lt;p&gt;If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You&amp;rsquo;d probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.&lt;/p&gt;
 &lt;h2 id=&#34;bonus-gzip-middleware-for-fastapi&#34;&gt;Bonus: GZip Middleware for FastAPI&lt;/h2&gt;
 &lt;p&gt;It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
-You need to add it manually to your application.&lt;/p&gt;
+You need to explicitly add it to your application.&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; FastAPI(lifespan&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;lifespan)
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add_middleware(GZipMiddleware, minimum_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;, compresslevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(&lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45&#34;&gt;Source&lt;/a&gt;)&lt;/p&gt;
