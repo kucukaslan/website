@@ -1,7 +1,7 @@
 ---
 title: "Notebooks for Scripting"
 date: 2024-12-30T00:00:00+03:00
-tags: ['personal', 'en', 'shell', 'python']
+tags: ['personal', 'english', 'shell', 'python']
 draft: true
 ---
 

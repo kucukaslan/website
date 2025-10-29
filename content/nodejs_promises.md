@@ -1,7 +1,7 @@
 ---
 title: "4 Javascript Functions with Highest ROI: or a Commentary of the Promise Concurrency"
 date: 2024-08-15T00:00:00+03:00
-tags: ['basic','nodejs', 'async', 'en', "promise"]
+tags: ['basic','nodejs', 'async', 'english', "promise"]
 draft: true
 ---
 

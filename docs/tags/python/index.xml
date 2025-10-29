@@ -1,25 +1,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>http://localhost:1313/tags/python/</link>
+	<link>https://kucukaslan.com.tr/tags/python/</link>
 	<description>Recent content in Python on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
-	<lastBuildDate>Tue, 28 Oct 2025 00:00:00 +0300</lastBuildDate>
+	<lastBuildDate>Wed, 29 Oct 2025 20:01:02 +0300</lastBuildDate>
     
-        <atom:link href="http://localhost:1313/tags/python/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://kucukaslan.com.tr/tags/python/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
 		<title>Notes on Uvicorn on Production</title>
-		<link>http://localhost:1313/notes_on_uvicorn/</link>
-		<pubDate>Tue, 28 Oct 2025 00:00:00 +0300</pubDate>
+		<link>https://kucukaslan.com.tr/notes_on_uvicorn/</link>
+		<pubDate>Wed, 29 Oct 2025 20:01:02 +0300</pubDate>
 		
-		<guid>http://localhost:1313/notes_on_uvicorn/</guid>
+		<guid>https://kucukaslan.com.tr/notes_on_uvicorn/</guid>
 		<description>&lt;p&gt;The uvicorn + fastapi is a common default stack for Python web applications.
-However, it is easy to use it incorrectly on the production environment.
+However, it is just too easy to use it with a wrong configuration on the production environment.
 A naive person could would install the fastapi and uvicorn using the &lt;code&gt;pip install fastapi uvicorn&lt;/code&gt; (or &lt;code&gt;uv add fastapi uvicorn&lt;/code&gt;) command.
-This is not incorrect and it will work, but it leaves low hanging fruits untouched.&lt;/p&gt;
+This is not incorrect, it will work, but it leaves low hanging fruits untouched.&lt;/p&gt;
 &lt;h2 id=&#34;uvloop-and-httptools&#34;&gt;uvloop and httptools&lt;/h2&gt;
 &lt;p&gt;However, when uvicorn is installed this way, it uses the &lt;code&gt;asyncio&lt;/code&gt;&amp;rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.&lt;/p&gt;
 &lt;p&gt;Remember the rule of thumb for Python is &lt;strong&gt;avoid pure python implementation of anything&lt;/strong&gt;,
@@ -45,25 +45,40 @@ In fact this suggestion is great -but for the old-school reliable deployments to
 It&amp;rsquo;s used to manage multiple copies of the server in the same machine: distribute the load among them, restart them if they crash, etc.&lt;/p&gt;
 &lt;p&gt;When you deploy your application to a Kubernetes cluster, you already have a layer of load balancing and scaling. If you need multiple copies of the server, you should use multiple Kubernetes Pods. Kubernetes can manage it as well as Gunicorn can. Also, with kubernetes you get to deploy them on different nodes, and deploy other services on the same nodes.&lt;/p&gt;
 &lt;p&gt;If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You&amp;rsquo;d probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.&lt;/p&gt;
-&lt;h2 id=&#34;bonus-gzip-middleware&#34;&gt;Bonus: GZip Middleware&lt;/h2&gt;
-&lt;p&gt;It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the uvicorn.
+&lt;h2 id=&#34;bonus-gzip-middleware-for-fastapi&#34;&gt;Bonus: GZip Middleware for FastAPI&lt;/h2&gt;
+&lt;p&gt;It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
 You need to add it manually to your application.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add_middleware(GZipMiddleware, minimum_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;, compresslevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;It may reduce the response size significantly, obviously at the cost of some CPU time.
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; FastAPI(lifespan&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;lifespan)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add_middleware(GZipMiddleware, minimum_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;, compresslevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(&lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45&#34;&gt;Source&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;It may reduce the response size significantly, obviously at the cost of some CPU time.
 I&amp;rsquo;ve seen it to reduce payload size from ~900 KB to ~175 KB. TBF, it was relatively structered payload. It&amp;rsquo;s on you to evaluate if it&amp;rsquo;s worth it for your application.&lt;/p&gt;
 &lt;p&gt;JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.&lt;/p&gt;
+&lt;h2 id=&#34;demo-project&#34;&gt;Demo Project&lt;/h2&gt;
+&lt;p&gt;A complete working example implementing all the concepts discussed in this article is available in the &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo&#34;&gt;uvicorn-demo&lt;/a&gt; repository. The project includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Proper dependency configuration with &lt;code&gt;uvicorn[standard]&lt;/code&gt; in &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/pyproject.toml&#34;&gt;&lt;code&gt;pyproject.toml&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Event loop verification in the &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L18-L43&#34;&gt;&lt;code&gt;lifespan&lt;/code&gt; function&lt;/a&gt; to confirm uvloop and httptools usage&lt;/li&gt;
+&lt;li&gt;Kubernetes-friendly &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/Dockerfile&#34;&gt;&lt;code&gt;Dockerfile&lt;/code&gt;&lt;/a&gt; with single-worker uvicorn setup&lt;/li&gt;
+&lt;li&gt;GZip middleware configuration as shown above&lt;/li&gt;
+&lt;li&gt;A &lt;code&gt;/large-response&lt;/code&gt; endpoint for testing compression effectiveness with various payload sizes&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id=&#34;last-words&#34;&gt;Last words&lt;/h2&gt;
 &lt;p&gt;It&amp;rsquo;s obviously on you to think about the graceful shutdown, observability integrations etc.&lt;/p&gt;
 &lt;p&gt;I just wanted to comment on a few things that doesn&amp;rsquo;t match with the natural assumptions.&lt;/p&gt;
+&lt;p&gt;Heads up: I also had some issues with using slim docker images as they may not contain the necessary dependencies.
+The demo project&amp;rsquo;s Dockerfile installs the build-essential etc. but, I couldn&amp;rsquo;t reproduce the issue ( not downloading did not break).&lt;/p&gt;
+&lt;p&gt;I am not a Python developer so I might be missing something, moreover in my experience Python is a magical language.
+So there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration.&lt;/p&gt;
 </description>
 	</item>
 	
 	<item>
 		<title>Frequently Asked Questions</title>
-		<link>http://localhost:1313/faq/</link>
+		<link>https://kucukaslan.com.tr/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/faq/</guid>
+		<guid>https://kucukaslan.com.tr/faq/</guid>
 		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
@@ -96,10 +111,10 @@ See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate
 	
 	<item>
 		<title>Guldesteyek Ji Stranên Biyanî</title>
-		<link>http://localhost:1313/stranen_biyani/</link>
+		<link>https://kucukaslan.com.tr/stranen_biyani/</link>
 		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/stranen_biyani/</guid>
+		<guid>https://kucukaslan.com.tr/stranen_biyani/</guid>
 		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
 Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
 &lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
@@ -124,10 +139,10 @@ Yanımda Kal
 	
 	<item>
 		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
-		<link>http://localhost:1313/stran/</link>
+		<link>https://kucukaslan.com.tr/stran/</link>
 		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/stran/</guid>
+		<guid>https://kucukaslan.com.tr/stran/</guid>
 		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
 înternetê parve bikim, yan li ser twitterê, yan li ser
 bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
@@ -815,10 +830,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>Neden Yazı Yazılır?</title>
-		<link>http://localhost:1313/neden_yazariz/</link>
+		<link>https://kucukaslan.com.tr/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>http://localhost:1313/neden_yazariz/</guid>
+		<guid>https://kucukaslan.com.tr/neden_yazariz/</guid>
 		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
 1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
 2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
@@ -829,10 +844,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>About</title>
-		<link>http://localhost:1313/about/</link>
+		<link>https://kucukaslan.com.tr/about/</link>
 		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
-		<guid>http://localhost:1313/about/</guid>
+		<guid>https://kucukaslan.com.tr/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
 at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
@@ -841,7 +856,7 @@ that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
-&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
 &lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
 &lt;!-- Google Calendar Appointment Scheduling begin --&gt;

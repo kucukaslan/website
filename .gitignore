@@ -8,3 +8,4 @@ docs/code
 .idea/
 *.DS_Store
 cluster-dump.mongodump
+*workspace.code-workspace

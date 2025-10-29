@@ -1,14 +1,14 @@
 ---
 title: "Notes on Uvicorn on Production"
-date: 2025-10-29T00:00:00+03:00
-tags: ['en', 'python', 'uvicorn', 'fastapi', 'production']
+date: 2025-10-29T20:01:02+03:00
+tags: ['english', 'python', 'uvicorn', 'fastapi', 'production']
 draft: false
 ---
 
 The uvicorn + fastapi is a common default stack for Python web applications.
-However, it is easy to use it incorrectly on the production environment.
+However, it is just too easy to use it with a wrong configuration on the production environment.
 A naive person could would install the fastapi and uvicorn using the `pip install fastapi uvicorn` (or `uv add fastapi uvicorn`) command.
-This is not incorrect and it will work, but it leaves low hanging fruits untouched.
+This is not incorrect, it will work, but it leaves low hanging fruits untouched.
 
 ## uvloop and httptools
 However, when uvicorn is installed this way, it uses the `asyncio`'s default event loop for corresponding platform, which is usually a pure python implementation.
@@ -47,19 +47,39 @@ When you deploy your application to a Kubernetes cluster, you already have a lay
 
 If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You'd probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.
 
-## Bonus: GZip Middleware
-It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the uvicorn.
+## Bonus: GZip Middleware for FastAPI
+It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
 You need to add it manually to your application.
+
 ```python
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(GZipMiddleware, minimum_size=1024, compresslevel=5)
 ```
+
+([Source](https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45))
 
 It may reduce the response size significantly, obviously at the cost of some CPU time.
 I've seen it to reduce payload size from ~900 KB to ~175 KB. TBF, it was relatively structered payload. It's on you to evaluate if it's worth it for your application.
 
 JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.
 
+## Demo Project
+
+A complete working example implementing all the concepts discussed in this article is available in the [uvicorn-demo](https://github.com/kucukaslan/uvicorn-demo) repository. The project includes:
+
+- Proper dependency configuration with `uvicorn[standard]` in [`pyproject.toml`](https://github.com/kucukaslan/uvicorn-demo/blob/main/pyproject.toml)
+- Event loop verification in the [`lifespan` function](https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L18-L43) to confirm uvloop and httptools usage
+- Kubernetes-friendly [`Dockerfile`](https://github.com/kucukaslan/uvicorn-demo/blob/main/Dockerfile) with single-worker uvicorn setup
+- GZip middleware configuration as shown above
+- A `/large-response` endpoint for testing compression effectiveness with various payload sizes
+
 ## Last words
 It's obviously on you to think about the graceful shutdown, observability integrations etc. 
 
 I just wanted to comment on a few things that doesn't match with the natural assumptions.
+
+Heads up: I also had some issues with using slim docker images as they may not contain the necessary dependencies.
+The demo project's Dockerfile installs the build-essential etc. but, I couldn't reproduce the issue ( not downloading did not break).
+
+I am not a Python developer so I might be missing something, moreover in my experience Python is a magical language. 
+So there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration. 

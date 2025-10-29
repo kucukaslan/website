@@ -1,7 +1,7 @@
 ---
 title: "MongoDB Migration"
 date: 2025-03-15T00:00:00+03:00
-tags: ['personal', 'en']
+tags: ['personal', 'english']
 draft: true
 ---
 Since the dawn of (hu)mankind, authors wasted countless hours on writing first a few words of the things they intended to share. Forgive me for avoiding the struggle.
