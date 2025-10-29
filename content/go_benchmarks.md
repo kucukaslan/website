@@ -1,7 +1,7 @@
 ---
 title: "A Commentary on Go Webserver Benchmarks"
 date: 2024-09-08T00:00:01+03:00
-tags: ['go', 'en', 'benchmarks', 'technical']
+tags: ['go', 'english', 'benchmarks', 'technical']
 draft: true
 ---
 

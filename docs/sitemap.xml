@@ -2,16 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://kucukaslan.com.tr/tags/en/</loc>
-    <lastmod>2024-08-15T00:00:00+03:00</lastmod>
+    <loc>https://kucukaslan.com.tr/tags/english/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/fastapi/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/notes_on_uvicorn/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/production/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/python/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/uvicorn/</loc>
+    <lastmod>2025-10-29T20:01:02+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/faq/</loc>
     <lastmod>2024-08-15T00:00:00+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/tags/personal/</loc>
-    <lastmod>2024-08-15T00:00:00+03:00</lastmod>
-  </url><url>
-    <loc>https://kucukaslan.com.tr/tags/</loc>
     <lastmod>2024-08-15T00:00:00+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/stranen_biyani/</loc>
@@ -35,7 +50,7 @@
     <loc>https://kucukaslan.com.tr/neden_yazariz/</loc>
     <lastmod>2022-07-30T00:41:29+03:00</lastmod>
   </url><url>
-    <loc>https://kucukaslan.com.tr/tags/tr/</loc>
+    <loc>https://kucukaslan.com.tr/tags/t%C3%BCrk%C3%A7e/</loc>
     <lastmod>2022-07-30T00:41:29+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/tags/yazmak/</loc>

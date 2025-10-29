@@ -1,7 +1,7 @@
 ---
 title: "Demystifying Network Requests: TCP, HTTP and More"
 date: 2025-06-13T00:00:00+03:00
-tags: ['professional', 'en']
+tags: ['professional', 'english']
 draft: true
 ---
 

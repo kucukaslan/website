@@ -1,7 +1,7 @@
 ---
 title: "A story of race conditions when piping channels in parallel"
 date: 2025-05-28T23:22:02+03:00
-tags: ['professional', 'en']
+tags: ['professional', 'english']
 draft: true
 ---
 

@@ -10,6 +10,69 @@
 	
 	
 	<item>
+		<title>Notes on Uvicorn on Production</title>
+		<link>https://kucukaslan.com.tr/notes_on_uvicorn/</link>
+		<pubDate>Wed, 29 Oct 2025 20:01:02 +0300</pubDate>
+		
+		<guid>https://kucukaslan.com.tr/notes_on_uvicorn/</guid>
+		<description>&lt;p&gt;The uvicorn + fastapi is a common default stack for Python web applications.
+However, it is just too easy to use it with a wrong configuration on the production environment.
+A naive person could would install the fastapi and uvicorn using the &lt;code&gt;pip install fastapi uvicorn&lt;/code&gt; (or &lt;code&gt;uv add fastapi uvicorn&lt;/code&gt;) command.
+This is not incorrect, it will work, but it leaves low hanging fruits untouched.&lt;/p&gt;
+&lt;h2 id=&#34;uvloop-and-httptools&#34;&gt;uvloop and httptools&lt;/h2&gt;
+&lt;p&gt;However, when uvicorn is installed this way, it uses the &lt;code&gt;asyncio&lt;/code&gt;&amp;rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.&lt;/p&gt;
+&lt;p&gt;Remember the rule of thumb for Python is &lt;strong&gt;avoid pure python implementation of anything&lt;/strong&gt;,
+not even the freaking &lt;code&gt;for&lt;/code&gt; loops are exception (use numpy, pandas, etc. where possible).&lt;/p&gt;
+&lt;p&gt;So, we can&amp;rsquo;t, in our right mind, use the that pure python event loop.
+Luckily, there is a common suggested non-python event loop implementation: &lt;code&gt;uvloop&lt;/code&gt;.
+It is included in the uvicorn&amp;rsquo;s standard dependencies, so we can just install it using the &lt;code&gt;uv add &#39;uvloop[standard]&#39;&lt;/code&gt; command.&lt;/p&gt;
+&lt;p&gt;Similarly, by default uvicorn uses some pure python http parser. Again, there is a non-python http parser implementation: &lt;code&gt;httptools&lt;/code&gt; which is also included in the uvicorn[standard] dependencies.&lt;/p&gt;
+&lt;h2 id=&#34;dont-use-gunicorn-on-kubernetes-dont-multiple-workers&#34;&gt;Don&amp;rsquo;t Use Gunicorn on Kubernetes, Don&amp;rsquo;t Multiple Workers&lt;/h2&gt;
+&lt;p&gt;The natural next step following the protypeing the python server is to Dockerize it to be deployed in the production environment possibly on a Kubernetes cluster.&lt;/p&gt;
+&lt;p&gt;Now, that you&amp;rsquo;ve seen the naive mistake in installing uvicorn, you might want to be smart before you prepare production configuration and made some research.&lt;/p&gt;
+&lt;p&gt;You possibly asked some famous LLMs or even found &lt;a href=&#34;https://uvicorn.dev/deployment/&#34;&gt;uvicorn.dev/deployment&lt;/a&gt; and actually read the documentation by yourself like the old people.&lt;/p&gt;
+&lt;p&gt;Right there, in the official documentation, you see the following advice:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Run &lt;code&gt;gunicorn -k uvicorn.workers.UvicornWorker&lt;/code&gt; for production.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;or see&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;gunicorn -w 4 -k uvicorn.workers.UvicornWorker&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;below. Don&amp;rsquo;t do it.
+Not because it&amp;rsquo;s wrong.
+In fact this suggestion is great -but for the old-school reliable deployments to dedicated servers.&lt;/p&gt;
+&lt;p&gt;Gunicorn is yet another layer on top of the server.
+It&amp;rsquo;s used to manage multiple copies of the server in the same machine: distribute the load among them, restart them if they crash, etc.&lt;/p&gt;
+&lt;p&gt;When you deploy your application to a Kubernetes cluster, you already have a layer of load balancing and scaling. If you need multiple copies of the server, you should use multiple Kubernetes Pods. Kubernetes can manage it as well as Gunicorn can. Also, with kubernetes you get to deploy them on different nodes, and deploy other services on the same nodes.&lt;/p&gt;
+&lt;p&gt;If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You&amp;rsquo;d probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.&lt;/p&gt;
+&lt;h2 id=&#34;bonus-gzip-middleware-for-fastapi&#34;&gt;Bonus: GZip Middleware for FastAPI&lt;/h2&gt;
+&lt;p&gt;It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
+You need to add it manually to your application.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; FastAPI(lifespan&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;lifespan)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add_middleware(GZipMiddleware, minimum_size&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt;, compresslevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(&lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45&#34;&gt;Source&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;It may reduce the response size significantly, obviously at the cost of some CPU time.
+I&amp;rsquo;ve seen it to reduce payload size from ~900 KB to ~175 KB. TBF, it was relatively structered payload. It&amp;rsquo;s on you to evaluate if it&amp;rsquo;s worth it for your application.&lt;/p&gt;
+&lt;p&gt;JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.&lt;/p&gt;
+&lt;h2 id=&#34;demo-project&#34;&gt;Demo Project&lt;/h2&gt;
+&lt;p&gt;A complete working example implementing all the concepts discussed in this article is available in the &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo&#34;&gt;uvicorn-demo&lt;/a&gt; repository. The project includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Proper dependency configuration with &lt;code&gt;uvicorn[standard]&lt;/code&gt; in &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/pyproject.toml&#34;&gt;&lt;code&gt;pyproject.toml&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Event loop verification in the &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L18-L43&#34;&gt;&lt;code&gt;lifespan&lt;/code&gt; function&lt;/a&gt; to confirm uvloop and httptools usage&lt;/li&gt;
+&lt;li&gt;Kubernetes-friendly &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo/blob/main/Dockerfile&#34;&gt;&lt;code&gt;Dockerfile&lt;/code&gt;&lt;/a&gt; with single-worker uvicorn setup&lt;/li&gt;
+&lt;li&gt;GZip middleware configuration as shown above&lt;/li&gt;
+&lt;li&gt;A &lt;code&gt;/large-response&lt;/code&gt; endpoint for testing compression effectiveness with various payload sizes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;last-words&#34;&gt;Last words&lt;/h2&gt;
+&lt;p&gt;It&amp;rsquo;s obviously on you to think about the graceful shutdown, observability integrations etc.&lt;/p&gt;
+&lt;p&gt;I just wanted to comment on a few things that doesn&amp;rsquo;t match with the natural assumptions.&lt;/p&gt;
+&lt;p&gt;Heads up: I also had some issues with using slim docker images as they may not contain the necessary dependencies.
+The demo project&amp;rsquo;s Dockerfile installs the build-essential etc. but, I couldn&amp;rsquo;t reproduce the issue ( not downloading did not break).&lt;/p&gt;
+&lt;p&gt;I am not a Python developer so I might be missing something, moreover in my experience Python is a magical language.
+So there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration.&lt;/p&gt;
+</description>
+	</item>
+	
+	<item>
 		<title>Frequently Asked Questions</title>
 		<link>https://kucukaslan.com.tr/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>

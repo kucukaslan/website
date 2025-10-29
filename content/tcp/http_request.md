@@ -1,7 +1,7 @@
 ---
 title: "Parsing HTTP Request Message"
 date: 2025-06-14T00:00:00+03:00
-tags: ['personal', 'en']
+tags: ['personal', 'english']
 draft: true
 ---
 > **Draft Notice:**  
