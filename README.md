@@ -135,6 +135,8 @@ Edit `config.toml` to change:
 The generated static files in the `docs/` directory can be deployed to any static hosting service:
 
 - **GitHub Pages:** Push `docs/` directory, configure Pages to serve from `/docs`
+- **Netlify:** Connect repository, build command: `hugo`, publish directory: `docs`
+- **Vercel:** Similar setup with `hugo` as build command
 - **Any web server:** Simply upload the contents of `docs/` to your web server
 
 ## Resources
