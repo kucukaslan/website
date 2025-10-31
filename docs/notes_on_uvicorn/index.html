@@ -8,12 +8,12 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/computer-modern@0.0.1/dist/cmu-serif.css">
 	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="icon" href="/favicon.ico">
-	<meta name="description" content="The uvicorn &#43; fastapi is a common default stack for Python web applications.
+	<meta name="description" content="The Uvicorn &#43; FastAPI is a common default stack for Python web applications.
 However, it is just too easy to use it with a wrong configuration on the production environment.
-A naive person could would install the fastapi and uvicorn using the pip install fastapi uvicorn (or uv add fastapi uvicorn) command.
-This is not incorrect, it will work, but it leaves low hanging fruits untouched.
+A naive person would install the FastAPI and uvicorn using the pip install FastAPI uvicorn (or uv add FastAPI uvicorn) command.
+This is not incorrect, it will work, but it leaves low-hanging fruits untouched.
 uvloop and httptools
-However, when uvicorn is installed this way, it uses the asyncio&rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.">
+However, when uvicorn is installed this way, it uses asyncio&rsquo;s default event loop for corresponding platform, which is usually a pure Python implementation.">
 	<meta name="keywords" content="english, python, uvicorn, fastapi, production">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="index, follow">
@@ -24,21 +24,21 @@ However, when uvicorn is installed this way, it uses the asyncio&rsquo;s default
 <header><h1 id="tag_Notes on Uvicorn on Production">Notes on Uvicorn on Production</h1></header>
 <article>
 
-<p>The uvicorn + fastapi is a common default stack for Python web applications.</p>
+<p>The Uvicorn + FastAPI is a common default stack for Python web applications.</p>
 <p>However, it is just too easy to use it with a wrong configuration on the production environment.</p>
-<p>A naive person could would install the fastapi and uvicorn using the <code>pip install fastapi uvicorn</code> (or <code>uv add fastapi uvicorn</code>) command.</p>
-<p>This is not incorrect, it will work, but it leaves low hanging fruits untouched.</p>
+<p>A naive person would install the FastAPI and uvicorn using the <code>pip install FastAPI uvicorn</code> (or <code>uv add FastAPI uvicorn</code>) command.</p>
+<p>This is not incorrect, it will work, but it leaves low-hanging fruits untouched.</p>
 <h2 id="uvloop-and-httptools">uvloop and httptools</h2>
-<p>However, when uvicorn is installed this way, it uses the <code>asyncio</code>&rsquo;s default event loop for corresponding platform, which is usually a pure python implementation.</p>
-<p>Remember the rule of thumb for Python is <strong>avoid pure python implementation of anything</strong>,
-not even the freaking <code>for</code> loops are exception (use numpy, pandas, etc. where possible).</p>
-<p>So, we can&rsquo;t, in our right mind, use the that pure python event loop.
-Luckily, there is a common suggested non-python event loop implementation: <code>uvloop</code>.
+<p>However, when uvicorn is installed this way, it uses <code>asyncio</code>&rsquo;s default event loop for corresponding platform, which is usually a pure Python implementation.</p>
+<p>Remember the rule of thumb for Python is <strong>avoid a pure Python implementation of anything</strong>,
+not even the freaking <code>for</code> loops are an exception (use numpy, pandas, etc. where possible).</p>
+<p>So, we can&rsquo;t, in our right mind, use that pure Python event loop.
+Luckily, there is a commonly suggested non-Python event loop implementation: <code>uvloop</code>.
 It is included in the uvicorn&rsquo;s standard dependencies, so we can just install it using the <code>uv add 'uvloop[standard]'</code> command.</p>
-<p>Similarly, by default uvicorn uses some pure python http parser. Again, there is a non-python http parser implementation: <code>httptools</code> which is also included in the uvicorn[standard] dependencies.</p>
-<h2 id="dont-use-gunicorn-on-kubernetes-dont-multiple-workers">Don&rsquo;t Use Gunicorn on Kubernetes, Don&rsquo;t Multiple Workers</h2>
-<p>The natural next step following the protypeing the python server is to Dockerize it to be deployed in the production environment possibly on a Kubernetes cluster.</p>
-<p>Now, that you&rsquo;ve seen the naive mistake in installing uvicorn, you might want to be smart before you prepare production configuration and made some research.</p>
+<p>Similarly, by default uvicorn uses a pure Python http parser. Again, there is a non-Python http parser implementation: <code>httptools</code> which is also included in the uvicorn[standard] dependencies.</p>
+<h2 id="dont-use-gunicorn-on-kubernetes-dont-use-multiple-workers">Don&rsquo;t Use Gunicorn on Kubernetes, Don&rsquo;t Use Multiple Workers</h2>
+<p>The natural next step following the prototyping the Python server is to Dockerize it to be deployed in the production environment possibly on a Kubernetes cluster.</p>
+<p>Now, that you&rsquo;ve seen the naive mistake in installing uvicorn, you might want to be smart before you prepare production configuration and done some research.</p>
 <p>You possibly asked some famous LLMs or even found <a href="https://uvicorn.dev/deployment/">uvicorn.dev/deployment</a> and actually read the documentation by yourself like the old people.</p>
 <p>Right there, in the official documentation, you see the following advice:</p>
 <blockquote>
@@ -50,17 +50,17 @@ It is included in the uvicorn&rsquo;s standard dependencies, so we can just inst
 Not because it&rsquo;s wrong.
 In fact this suggestion is great -but for the old-school reliable deployments to dedicated servers.</p>
 <p>Gunicorn is yet another layer on top of the server.
-It&rsquo;s used to manage multiple copies of the server in the same machine: distribute the load among them, restart them if they crash, etc.</p>
-<p>When you deploy your application to a Kubernetes cluster, you already have a layer of load balancing and scaling. If you need multiple copies of the server, you should use multiple Kubernetes Pods. Kubernetes can manage it as well as Gunicorn can. Also, with kubernetes you get to deploy them on different nodes, and deploy other services on the same nodes.</p>
-<p>If Gunicorn is used with kubernetes, then it hides some degree of flexibility and control from kubernetes. You&rsquo;d probably give higher resources to account for multiple workers. Then it may prevent kubernetes from assigning the pod to existing nodes and trigger the deployment of new nodes.</p>
+It&rsquo;s used to manage multiple copies of the server in the same machine: distributing the load among them, restart them if they crash, etc.</p>
+<p>When you deploy your application to a Kubernetes cluster, you already have a layer of load balancing and scaling. If you need multiple copies of the server, you should use multiple Kubernetes Pods. Kubernetes can manage it as well as Gunicorn can. Also, with Kubernetes you get to deploy them on different nodes, and deploy other services on the same nodes.</p>
+<p>If Gunicorn is used with Kubernetes, then it hides some degree of flexibility and control from Kubernetes. You&rsquo;d probably give higher resources to account for multiple workers. Then it may prevent Kubernetes from assigning the pod to existing nodes and may trigger the deployment of new nodes.</p>
 <h2 id="bonus-gzip-middleware-for-fastapi">Bonus: GZip Middleware for FastAPI</h2>
-<p>It seems that GZip middleware (that compressses request payload/body) is not enabled by default in the FastAPI.
+<p>It seems that GZip middleware (that compresses request payload/body) is not enabled by default in FastAPI.
 You need to explicitly add it to your application.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>app <span style="color:#f92672">=</span> FastAPI(lifespan<span style="color:#f92672">=</span>lifespan)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>app <span style="color:#f92672">=</span> FastAPI(lifespan<span style="color:#f92672">=</span>lifespan)
 </span></span><span style="display:flex;"><span>app<span style="color:#f92672">.</span>add_middleware(GZipMiddleware, minimum_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, compresslevel<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
 </span></span></code></pre></div><p>(<a href="https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45">Source</a>)</p>
 <p>It may reduce the response size significantly, obviously at the cost of some CPU time.
-I&rsquo;ve seen it to reduce payload size from ~900 KB to ~175 KB. TBF, it was relatively structered payload. It&rsquo;s on you to evaluate if it&rsquo;s worth it for your application.</p>
+I&rsquo;ve seen it reduce payload size from ~900 KB to ~175 KB. TBF, it was a relatively structured payload. It&rsquo;s on you to evaluate if it&rsquo;s worth it for your application.</p>
 <p>JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.</p>
 <h2 id="demo-project">Demo Project</h2>
 <p>A complete working example implementing all the concepts discussed in this article is available in the <a href="https://github.com/kucukaslan/uvicorn-demo">uvicorn-demo</a> repository. The project includes:</p>
@@ -73,11 +73,11 @@ I&rsquo;ve seen it to reduce payload size from ~900 KB to ~175 KB. TBF, it was r
 </ul>
 <h2 id="last-words">Last words</h2>
 <p>It&rsquo;s obviously on you to think about the graceful shutdown, observability integrations etc.</p>
-<p>I just wanted to comment on a few things that doesn&rsquo;t match with the natural assumptions.</p>
-<p>Heads up: I also had some issues with using slim docker images as they may not contain the necessary dependencies.
-The demo project&rsquo;s Dockerfile installs the build-essential etc. but, I couldn&rsquo;t reproduce the issue ( not downloading did not break).</p>
-<p>I am not a Python developer so I might be missing something, moreover in my experience Python is a magical language.
-So there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration.</p>
+<p>I just wanted to comment on a few things that don&rsquo;t match with the natural assumptions.</p>
+<p>Heads up: I also had some issues with using slim Docker images as they may not contain the necessary dependencies.
+The demo project&rsquo;s Dockerfile installs the <code>build-essential</code> etc., but I couldn&rsquo;t reproduce the issue ( not downloading did not break).</p>
+<p>I am not primarily a Python developer so I might be missing something. Moreover in my experience Python can be a magical language.
+So, there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration.</p>
 
 
 <div id="nextprev">
