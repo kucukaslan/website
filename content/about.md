@@ -3,6 +3,7 @@ title: "About"
 date: 2019-08-24T00:00:00+00:00
 draft: false
 tags: ['personal']
+notablog: true
 ---
 I'm Muhammed Can Küçükaslan. Yet another fellow _human_.
 
