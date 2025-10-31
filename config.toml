@@ -8,3 +8,13 @@ theme = 'lugo'
 
 [markup.goldmark.renderer]
 unsafe= true
+
+[[menu.main]]
+weight = 1
+name = "Home"
+url = "/"
+
+[[menu.main]]
+weight = 2
+name = "About"
+url = "/about/"
