@@ -26,7 +26,7 @@
 not even the freaking &lt;code&gt;for&lt;/code&gt; loops are an exception (use numpy, pandas, etc. where possible).&lt;/p&gt;
 &lt;p&gt;So, we can&amp;rsquo;t, in our right mind, use that pure Python event loop.
 Luckily, there is a commonly suggested non-Python event loop implementation: &lt;code&gt;uvloop&lt;/code&gt;.
-It is included in the uvicorn&amp;rsquo;s standard dependencies, so we can just install it using the &lt;code&gt;uv add &#39;uvloop[standard]&#39;&lt;/code&gt; command.&lt;/p&gt;
+It is included in the uvicorn&amp;rsquo;s standard dependencies, so we can just install it using the &lt;code&gt;uv add &#39;uvicorn[standard]&#39;&lt;/code&gt; command.&lt;/p&gt;
 &lt;p&gt;Similarly, by default uvicorn uses a pure Python http parser. Again, there is a non-Python http parser implementation: &lt;code&gt;httptools&lt;/code&gt; which is also included in the uvicorn[standard] dependencies.&lt;/p&gt;
 &lt;h2 id=&#34;dont-use-gunicorn-on-kubernetes-dont-use-multiple-workers&#34;&gt;Don&amp;rsquo;t Use Gunicorn on Kubernetes, Don&amp;rsquo;t Use Multiple Workers&lt;/h2&gt;
 &lt;p&gt;The natural next step following the prototyping the Python server is to Dockerize it to be deployed in the production environment possibly on a Kubernetes cluster.&lt;/p&gt;
@@ -56,6 +56,7 @@ You need to explicitly add it to your application.&lt;/p&gt;
 &lt;p&gt;It may reduce the response size significantly, obviously at the cost of some CPU time.
 I&amp;rsquo;ve seen it reduce payload size from ~900 KB to ~175 KB. TBF, it was a relatively structured payload. It&amp;rsquo;s on you to evaluate if it&amp;rsquo;s worth it for your application.&lt;/p&gt;
 &lt;p&gt;JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.&lt;/p&gt;
+&lt;h2 id=&#34;bonus-json-serializer&#34;&gt;Bonus: JSON Serializer&lt;/h2&gt;
 &lt;h2 id=&#34;demo-project&#34;&gt;Demo Project&lt;/h2&gt;
 &lt;p&gt;A complete working example implementing all the concepts discussed in this article is available in the &lt;a href=&#34;https://github.com/kucukaslan/uvicorn-demo&#34;&gt;uvicorn-demo&lt;/a&gt; repository. The project includes:&lt;/p&gt;
 &lt;ul&gt;

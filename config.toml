@@ -6,6 +6,10 @@ publishDir="docs"
 theme = 'lugo'
 
 
+[params]
+  author = "Muhammed Can Küçükaslan"
+  og_image = "/img/knuth_taocp.png"
+
 [markup.goldmark.renderer]
 unsafe= true
 

@@ -7,14 +7,21 @@
 {{ if $desc }}<meta property="og:description" content="{{ $desc | plainify | truncate 200 }}">{{ end }}
 
 {{ $img := "" }}
-{{ with .Params.images }}{{ $img = index . 0 }}{{ else }}{{ $img = .Params.feature_image | default .Params.cover }}{{ end }}
+{{ with .Params.images }}{{ $img = index . 0 }}{{ else }}{{ with .Params.feature_image }}{{ $img = . }}{{ else }}{{ with .Params.cover }}{{ $img = . }}{{ end }}{{ end }}{{ end }}
 {{ if not $img }}{{ $img = .Site.Params.og_image | default .Site.Params.logo }}{{ end }}
-{{ if $img }}
-  {{ $imgURL := $img }}
-  {{ if not (hasPrefix $img "http") }}{{ $imgURL = (absURL (strings.TrimPrefix "/" $img)) }}{{ end }}
+{{ with $img }}
+  {{ $imgURL := . }}
+  {{ if not (hasPrefix . "http") }}{{ $imgURL = (absURL (strings.TrimPrefix "/" .)) }}{{ end }}
 <meta property="og:image" content="{{ $imgURL }}">
 {{ end }}
 
 <meta property="og:url" content="{{ .Permalink }}">
 <meta property="og:type" content="{{ cond .IsHome "website" "article" }}">
 <meta property="og:site_name" content="{{ .Site.Title }}">
+
+{{ if not .IsHome }}
+{{ with .Params.author | default .Site.Params.author }}<meta property="article:author" content="{{ . }}">{{ end }}
+{{ with .Date }}<meta property="article:published_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+{{ with .Lastmod }}<meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+{{ with .Params.tags }}{{ range . }}<meta property="article:tag" content="{{ . }}">{{ end }}{{ end }}
+{{ end }}

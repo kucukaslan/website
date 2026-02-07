@@ -2,6 +2,7 @@
 title: "Notes on Uvicorn on Production"
 date: 2025-10-29T20:25:10+03:00
 tags: ['english', 'python', 'uvicorn', 'fastapi', 'production']
+images: ['/img/uv_add_unicorn_standard.png']
 draft: false
 ---
 
@@ -21,7 +22,7 @@ not even the freaking `for` loops are an exception (use numpy, pandas, etc. wher
 
 So, we can't, in our right mind, use that pure Python event loop.
 Luckily, there is a commonly suggested non-Python event loop implementation: `uvloop`.
-It is included in the uvicorn's standard dependencies, so we can just install it using the `uv add 'uvloop[standard]'` command.
+It is included in the uvicorn's standard dependencies, so we can just install it using the `uv add 'uvicorn[standard]'` command.
 
 Similarly, by default uvicorn uses a pure Python http parser. Again, there is a non-Python http parser implementation: `httptools` which is also included in the uvicorn[standard] dependencies.
 
