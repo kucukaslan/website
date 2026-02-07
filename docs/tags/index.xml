@@ -34,10 +34,12 @@ It is included in the uvicorn&amp;rsquo;s standard dependencies, so we can just 
 &lt;p&gt;You possibly asked some famous LLMs or even found &lt;a href=&#34;https://uvicorn.dev/deployment/&#34;&gt;uvicorn.dev/deployment&lt;/a&gt; and actually read the documentation by yourself like the old people.&lt;/p&gt;
 &lt;p&gt;Right there, in the official documentation, you see the following advice:&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Run &lt;code&gt;gunicorn -k uvicorn.workers.UvicornWorker&lt;/code&gt; for production.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Run &lt;code&gt;gunicorn -k uvicorn.workers.UvicornWorker&lt;/code&gt; for production.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;or see&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;gunicorn -w 4 -k uvicorn.workers.UvicornWorker&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;gunicorn -w 4 -k uvicorn.workers.UvicornWorker&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;below. Don&amp;rsquo;t do it.
 Not because it&amp;rsquo;s wrong.
 In fact this suggestion is great -but for the old-school reliable deployments to dedicated servers.&lt;/p&gt;

@@ -1,0 +1,20 @@
+{{ $title := .Site.Title }}
+{{ if and (not .IsHome) .Title }}{{ $title = printf "%s | %s" (.Title | title) .Site.Title }}{{ end }}
+<meta property="og:title" content="{{ $title }}">
+
+{{ $desc := .Site.Params.description }}
+{{ with .Params.description }}{{ $desc = . }}{{ else }}{{ with .Summary }}{{ $desc = . }}{{ end }}{{ end }}
+{{ if $desc }}<meta property="og:description" content="{{ $desc | plainify | truncate 200 }}">{{ end }}
+
+{{ $img := "" }}
+{{ with .Params.images }}{{ $img = index . 0 }}{{ else }}{{ $img = .Params.feature_image | default .Params.cover }}{{ end }}
+{{ if not $img }}{{ $img = .Site.Params.og_image | default .Site.Params.logo }}{{ end }}
+{{ if $img }}
+  {{ $imgURL := $img }}
+  {{ if not (hasPrefix $img "http") }}{{ $imgURL = (absURL (strings.TrimPrefix "/" $img)) }}{{ end }}
+<meta property="og:image" content="{{ $imgURL }}">
+{{ end }}
+
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:type" content="{{ cond .IsHome "website" "article" }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">

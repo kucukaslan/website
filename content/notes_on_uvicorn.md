@@ -66,6 +66,9 @@ I've seen it reduce payload size from ~900 KB to ~175 KB. TBF, it was a relative
 
 JFYI, minimum_size argument is used to disable compression for smaller responses, compresslevel is the level of compression. 9 is the highest level.
 
+## Bonus: JSON Serializer
+
+
 ## Demo Project
 
 A complete working example implementing all the concepts discussed in this article is available in the [uvicorn-demo](https://github.com/kucukaslan/uvicorn-demo) repository. The project includes:

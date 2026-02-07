@@ -119,7 +119,7 @@ The main stylesheet is located at `static/style.css`. This file is copied direct
 Custom layouts should be placed in the `layouts/` directory, mirroring the structure of the theme:
 - `layouts/_default/` - Default page templates
 - `layouts/page/` - Page-specific templates
-- `layouts/partials/` - Reusable partial templates
+- `layouts/partials/` - Reusable partial templates (e.g. `opengraph.html` for per-page Open Graph meta tags used when sharing links on social platforms)
 - `layouts/shortcodes/` - Custom shortcodes
 
 ### Configuration
@@ -144,5 +144,6 @@ The generated static files in the `docs/` directory can be deployed to any stati
 - [Hugo Documentation](https://gohugo.io/documentation/)
 - [Hugo Themes](https://themes.gohugo.io/)
 - [Markdown Guide](https://www.markdownguide.org/)
+
 
 
