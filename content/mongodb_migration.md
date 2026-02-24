@@ -58,12 +58,12 @@ mongodump --archive="cluster-dump.mongodump" --uri "mongodb+srv://USERNAME:<PASS
 ```
 
 ```sh 
-mongodump --uri "mongodb+srv://muhammedcankucukaslan:***REMOVED***@source-cluster.cbker.mongodb.net/" --out ./tmp/mongodump
+mongodump --uri "mongodb+srv://muhammedcankucukaslan:@source-cluster.cbker.mongodb.net/" --out ./tmp/mongodump
  
 ```
 
 ```sh
-mongosync --cluster0 "mongodb+srv://muhammedcankucukaslan:***REMOVED***@source-cluster.cbker.mongodb.net/" --cluster1 "mongodb://localhost:27017"
+mongosync --cluster0 "mongodb+srv://muhammedcankucukaslan:@source-cluster.cbker.mongodb.net/" --cluster1 "mongodb://localhost:27017"
 ```
 
 https://www.mydbops.com/blog/mongodb-7-0-cluster-to-cluster-sync-simplifying-data-synchronization
