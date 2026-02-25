@@ -1,21 +1,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>http://localhost:1313/tags/english/</link>
+	<link>https://kucukaslan.com.tr/tags/english/</link>
 	<description>Recent content in English on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
 	<lastBuildDate>Wed, 25 Feb 2026 12:00:00 +0300</lastBuildDate>
     
-        <atom:link href="http://localhost:1313/tags/english/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://kucukaslan.com.tr/tags/english/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
 		<title>Fixing a 9-Year-Old OSS Bug with Cursor</title>
-		<link>http://localhost:1313/debugging_with_cursor/</link>
+		<link>https://kucukaslan.com.tr/debugging_with_cursor/</link>
 		<pubDate>Wed, 25 Feb 2026 12:00:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/debugging_with_cursor/</guid>
+		<guid>https://kucukaslan.com.tr/debugging_with_cursor/</guid>
 		<description>&lt;blockquote&gt;
 &lt;p&gt;Last things first: this is the revisionist history of a &lt;a href=&#34;https://github.com/osmcode/osmium-tool/pull/305&#34;&gt;PR fixing a multi-year-old bug in osmium-tool&lt;/a&gt;, an open-source tool for working with OpenStreetMap (OSM) data.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -23,19 +23,65 @@
 &lt;p&gt;First things second: &lt;a href=&#34;https://github.com/osmcode/osmium-tool&#34;&gt;osmium&lt;/a&gt; is one of my favourite tools when I work with OSM data, along with the &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;. I use osmium-tool for manipulating data and JOSM editor for visualizing and examining the data, ironically, never for editing.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;background-and-purpose&#34;&gt;Background and Purpose&lt;/h2&gt;
+&lt;svg viewBox=&#34;0 0 500 280&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; style=&#34;max-width: 100%; height: auto; background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px;&#34;&gt;
+  &lt;polygon points=&#34;100,40 400,70 350,240 80,210&#34; fill=&#34;#fde8e8&#34; stroke=&#34;#f87171&#34; stroke-width=&#34;2&#34; stroke-dasharray=&#34;5,5&#34;/&gt;
+  &lt;text x=&#34;110&#34; y=&#34;65&#34; font-family=&#34;monospace&#34; font-size=&#34;14&#34; fill=&#34;#ef4444&#34; font-weight=&#34;bold&#34;&gt;Extraction Region&lt;/text&gt;
+  &lt;line x1=&#34;40&#34; y1=&#34;140&#34; x2=&#34;160&#34; y2=&#34;110&#34; stroke=&#34;#9ca3af&#34; stroke-width=&#34;4&#34; /&gt;
+  &lt;line x1=&#34;160&#34; y1=&#34;110&#34; x2=&#34;290&#34; y2=&#34;170&#34; stroke=&#34;#22c55e&#34; stroke-width=&#34;6&#34; /&gt;
+  &lt;line x1=&#34;290&#34; y1=&#34;170&#34; x2=&#34;460&#34; y2=&#34;130&#34; stroke=&#34;#9ca3af&#34; stroke-width=&#34;4&#34; /&gt;
+  &lt;circle cx=&#34;40&#34; cy=&#34;140&#34; r=&#34;6&#34; fill=&#34;#4b5563&#34; /&gt;
+  &lt;text x=&#34;25&#34; y=&#34;165&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#4b5563&#34;&gt;Node A&lt;/text&gt;
+  &lt;text x=&#34;20&#34; y=&#34;180&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;(Outside)&lt;/text&gt;
+  &lt;circle cx=&#34;160&#34; cy=&#34;110&#34; r=&#34;6&#34; fill=&#34;#16a34a&#34; /&gt;
+  &lt;text x=&#34;145&#34; y=&#34;95&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#16a34a&#34;&gt;Node B&lt;/text&gt;
+  &lt;text x=&#34;140&#34; y=&#34;80&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#16a34a&#34;&gt;(Inside)&lt;/text&gt;
+  &lt;circle cx=&#34;290&#34; cy=&#34;170&#34; r=&#34;6&#34; fill=&#34;#16a34a&#34; /&gt;
+  &lt;text x=&#34;275&#34; y=&#34;195&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#16a34a&#34;&gt;Node C&lt;/text&gt;
+  &lt;text x=&#34;270&#34; y=&#34;210&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#16a34a&#34;&gt;(Inside)&lt;/text&gt;
+  &lt;circle cx=&#34;460&#34; cy=&#34;130&#34; r=&#34;6&#34; fill=&#34;#4b5563&#34; /&gt;
+  &lt;text x=&#34;445&#34; y=&#34;115&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#4b5563&#34;&gt;Node D&lt;/text&gt;
+  &lt;text x=&#34;435&#34; y=&#34;100&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;(Outside)&lt;/text&gt;
+  &lt;text x=&#34;180&#34; y=&#34;135&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#15803d&#34; font-weight=&#34;bold&#34;&gt;Target Segment&lt;/text&gt;
+  &lt;text x=&#34;50&#34; y=&#34;115&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;Crosses&lt;/text&gt;
+  &lt;text x=&#34;330&#34; y=&#34;140&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;Crosses&lt;/text&gt;
+&lt;/svg&gt;
 &lt;p&gt;We wanted to limit the use of ways that are strictly inside a given region.
 A region is defined by one or more &lt;a href=&#34;https://en.wikipedia.org/wiki/Simple_polygon&#34;&gt;simple polygons&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Ways, on the other hand, have an obvious common-sense definition&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-&lt;p&gt;It is a continuous curve where things can move along.
-But its formal definition in the OSM data neither includes all ways nor excludes all non-ways in the real-world (common sense) conceptualization.&lt;/p&gt;
-&lt;p&gt;In OSM, we first need to define &lt;code&gt;node&lt;/code&gt;s as points (coordinates) in space with some additional data (i.e. tags).
-Then, a &lt;code&gt;way&lt;/code&gt; in OSM is defined as a (finite) sequence of nodes with some additional data (e.g., speed limits, access restrictions).
-We can informally refer to a portion of the way that connects two consecutive nodes as a way segment.&lt;/p&gt;
-&lt;p&gt;Since a physical way may have different lanes, speed limits, etc., OSM splits a single physical way into multiple pieces.&lt;/p&gt;
-&lt;p&gt;As if this discrepancy wasn&amp;rsquo;t enough, we needed to handle arbitrary regions.
-Thus, a region may include only a portion of the ways. Even OSM&amp;rsquo;s ways weren&amp;rsquo;t precise enough for our needs.
-We could merely tolerate exclusions at way segment precision.&lt;/p&gt;
-&lt;p&gt;In short, we needed to find all way segments inside a given polygon.&lt;/p&gt;
+&lt;p&gt;A way is a continuous curve along which things can move. But its formal definition in the OSM data structure doesn&amp;rsquo;t perfectly align with our real-world, common-sense conceptualization of a road.&lt;/p&gt;
+&lt;p&gt;In OSM, the fundamental building blocks are &lt;strong&gt;&lt;code&gt;node&lt;/code&gt;s&lt;/strong&gt;: points (coordinates) in space with some additional data (e.g., tags).
+A &lt;strong&gt;&lt;code&gt;way&lt;/code&gt;&lt;/strong&gt; is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions).
+For our purposes, we can informally refer to the direct line connecting two consecutive nodes as a &lt;strong&gt;way segment&lt;/strong&gt;.&lt;/p&gt;
+&lt;pre class=&#34;mermaid&#34;&gt;
+  graph TD
+    %% Define styles
+    classDef nodeStyle fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef wayStyle fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,stroke-dasharray: 5 5;
+
+    %% Nodes
+    N1((&amp;#34;Node 1&amp;lt;br/&amp;gt;(Lat, Lon)&amp;#34;)):::nodeStyle
+    N2((&amp;#34;Node 2&amp;lt;br/&amp;gt;(Lat, Lon)&amp;#34;)):::nodeStyle
+    N3((&amp;#34;Node 3&amp;lt;br/&amp;gt;(Lat, Lon)&amp;#34;)):::nodeStyle
+    N4((&amp;#34;Node 4&amp;lt;br/&amp;gt;(Lat, Lon)&amp;#34;)):::nodeStyle
+
+    %% Relationships (Segments)
+    N1 ===|Way Segment 1| N2
+    N2 ===|Way Segment 2| N3
+    N3 ===|Way Segment 3| N4
+
+    %% Grouping into a Way
+    subgraph &amp;#34;OSM Way&amp;#34;
+        N1
+        N2
+        N3
+        N4
+    end
+&lt;/pre&gt;
+
+&lt;p&gt;Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate &lt;code&gt;way&lt;/code&gt; entities.&lt;/p&gt;
+&lt;p&gt;As if this structural discrepancy wasn&amp;rsquo;t enough, we needed to handle arbitrary geographic regions. A polygon boundary might cut right through the middle of an OSM way.&lt;/p&gt;
+&lt;p&gt;Because OSM&amp;rsquo;s standard &lt;code&gt;way&lt;/code&gt; definitions weren&amp;rsquo;t granular enough for our geometric needs, we couldn&amp;rsquo;t just include or exclude entire ways.&lt;/p&gt;
+&lt;p&gt;We could merely tolerate exclusions at the precision of a &lt;em&gt;way segment&lt;/em&gt;. In short, we needed to isolate and extract all individual way segments that fall completely inside a given polygon.&lt;/p&gt;
 &lt;h2 id=&#34;enter-osmium-tool&#34;&gt;Enter &lt;a href=&#34;https://github.com/osmcode/osmium-tool&#34;&gt;osmium-tool&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;osmium-tool has a feature to &lt;em&gt;&lt;a href=&#34;https://osmcode.org/osmium-tool/manual.html#creating-geographic-extracts&#34;&gt;create a geographical extract&lt;/a&gt; of OSM data that only contains the data for a specific region&lt;/em&gt;.
 That&amp;rsquo;s exactly what we wanted, right?&lt;br&gt;
@@ -45,17 +91,17 @@ osmium-tool provides 3 extraction strategies:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;When using the simple strategy, all nodes inside the specified region are included and all nodes that are outside the region are not included. All ways that have at least one node inside the region are included, but they might be missing some nodes, they are not reference-complete.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;img src=&#34;http://localhost:1313/img/extract-strategy-simple.svg&#34; alt=&#34;Demonstration of simple extraction strategy&#34; /&gt;
+&lt;img src=&#34;https://kucukaslan.com.tr/img/extract-strategy-simple.svg&#34; alt=&#34;Demonstration of simple extraction strategy&#34; /&gt;
 &lt;details&gt;
 &lt;summary&gt; Expand for complete_ways and smart strategies&lt;/summary&gt;
 &lt;h3 id=&#34;complete_ways&#34;&gt;complete_ways&lt;/h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;When using the complete_ways strategy, all nodes inside the specified region as well as all nodes used by ways that are partially inside the specified region will be in the output.
-&lt;img src=&#34;http://localhost:1313/img/extract-strategy-complete-ways.svg&#34; alt=&#34;Demonstration of complete_ways extraction strategy&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;https://kucukaslan.com.tr/img/extract-strategy-complete-ways.svg&#34; alt=&#34;Demonstration of complete_ways extraction strategy&#34; /&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h3 id=&#34;smart&#34;&gt;smart&lt;/h3&gt;
 &lt;p&gt;When using the smart strategy, everything is done as in the complete_ways strategy, but multipolygon relations that have at least one node in the region will also be completely included.
-&lt;img src=&#34;http://localhost:1313/img/extract-strategy-smart.svg&#34; alt=&#34;Demonstration of smart extraction strategy&#34; /&gt;&lt;/p&gt;
+&lt;img src=&#34;https://kucukaslan.com.tr/img/extract-strategy-smart.svg&#34; alt=&#34;Demonstration of smart extraction strategy&#34; /&gt;&lt;/p&gt;
 &lt;/details&gt;
 &lt;p&gt;The simple strategy sounds great for our needs.
 Beware that it extracts nodes and ways, but we need to find way segments (consecutive node pairs that are part of those ways) inside the region.
@@ -66,7 +112,7 @@ Then we started testing it on multiple regions in random places.
 Areas highlighted in red on the left side are the regions we want to examine/extract.
 The points are the nodes and the lines are the way segments.
 Brown segments are all the segments we found in the regions (other segments are colored in orange, cyan, green, etc.):
-&lt;img src=&#34;http://localhost:1313/img/osmium-polygon-overlay.png&#34; alt=&#34;osmium-polygon-overlay&#34;&gt;&lt;/p&gt;
+&lt;img src=&#34;https://kucukaslan.com.tr/img/osmium-polygon-overlay.png&#34; alt=&#34;osmium-polygon-overlay&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Disappointingly, there were non-brown segments inside the region (even if both their nodes were inside the region).
 First, I went over my implementation and found nothing suspicious. It was straightforward code, anyway.
 Then I started examining the wrong segments to see if they had anything in common: same road type, same tags, etc. with the &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;.
@@ -77,11 +123,11 @@ In fact, for a specific way whose multiple segments were inside the region, only
 &lt;p&gt;I decided that it was time I plead to the AI overlords!&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Last things first (one more time):
-you can find an export of the Cursor session that I used for debugging and fixing the issue &lt;a href=&#34;http://localhost:1313/cursor_map_segment_speed_changes_within&#34;&gt;here&lt;/a&gt;.
+you can find an export of the Cursor session that I used for debugging and fixing the issue &lt;a href=&#34;https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within&#34;&gt;here&lt;/a&gt;.
 I will go over the steps below, but you can examine the export for the raw interaction.&lt;br&gt;
 Also, beware that the export does not include the images, files, and code references that I added to context. Similarly, the interaction with the terminal and other tools are not included either.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;I initiated the chat by sharing the &lt;a href=&#34;http://localhost:1313/img/osmium-polygon-overlay.png&#34;&gt;previous image that shows the error&lt;/a&gt;. &lt;br&gt;
+&lt;p&gt;I initiated the chat by sharing the &lt;a href=&#34;https://kucukaslan.com.tr/img/osmium-polygon-overlay.png&#34;&gt;previous image that shows the error&lt;/a&gt;. &lt;br&gt;
 Instead of explicitly stating the issue, I explained what the colors, lines, etc. mean, what my intent was, and asked it to evaluate the result. &lt;br&gt;
 By doing so, &lt;em&gt;I hoped to verify both that it understood my intention and that it really examined the image, not just slopping plausibly sounding success/mistakes with a gazillion buzzwords.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;To my mild surprise, it did a really good job.
@@ -252,7 +298,7 @@ In that case, the problem would be solved as far as I was concerned, but I would
 Cursor helped come up with a hypothesis on what went wrong, quickly test the hypothesis, and iterate until we found the problem in a reasonable amount of time with a reasonable cost. In other words, Cursor made it feasible to debug the issue until we found the root cause and fixed it.&lt;br&gt;
 In addition to debugging, it makes many more things feasible.
 I have prepared many dashboards that gave us precious insights into the quality of our data analysis results, which helped us identify a major bug, and easily visualize how our customizations affect our route planning.&lt;br&gt;
-I have used it to create custom tools that saved me a lot of time: creating test data, and &lt;a href=&#34;http://localhost:1313/html/teltonika_codec_8_8ext.html&#34;&gt;a visualizer to decode/encode Teltonika&amp;rsquo;s Communication Protocol binary data&lt;/a&gt;.&lt;br&gt;
+I have used it to create custom tools that saved me a lot of time: creating test data, and &lt;a href=&#34;https://kucukaslan.com.tr/html/teltonika_codec_8_8ext.html&#34;&gt;a visualizer to decode/encode Teltonika&amp;rsquo;s Communication Protocol binary data&lt;/a&gt;.&lt;br&gt;
 These tools give an immeasurable quality of life boost during development and debugging.&lt;br&gt;
 The effort required to create them was not usually justified unless they were to be used for a really long time by a lot of people.
 But, since we can have LLMs prepare them in a few prompts with a little bit of guidance,
@@ -274,10 +320,10 @@ I really appreciate how these simple things make my life easier and my code bett
 	
 	<item>
 		<title>Notes on Uvicorn on Production</title>
-		<link>http://localhost:1313/notes_on_uvicorn/</link>
+		<link>https://kucukaslan.com.tr/notes_on_uvicorn/</link>
 		<pubDate>Wed, 29 Oct 2025 20:25:10 +0300</pubDate>
 		
-		<guid>http://localhost:1313/notes_on_uvicorn/</guid>
+		<guid>https://kucukaslan.com.tr/notes_on_uvicorn/</guid>
 		<description>&lt;p&gt;The Uvicorn + FastAPI is a common default stack for Python web applications.&lt;/p&gt;
 &lt;p&gt;However, it is just too easy to use it with a wrong configuration on the production environment.&lt;/p&gt;
 &lt;p&gt;A naive person would install the FastAPI and uvicorn using the &lt;code&gt;pip install FastAPI uvicorn&lt;/code&gt; (or &lt;code&gt;uv add FastAPI uvicorn&lt;/code&gt;) command.&lt;/p&gt;
@@ -340,10 +386,10 @@ So, there might be some magic under the hood that ensures the code/configuration
 	
 	<item>
 		<title>Frequently Asked Questions</title>
-		<link>http://localhost:1313/faq/</link>
+		<link>https://kucukaslan.com.tr/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/faq/</guid>
+		<guid>https://kucukaslan.com.tr/faq/</guid>
 		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
@@ -376,10 +422,10 @@ See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate
 	
 	<item>
 		<title>Guldesteyek Ji Stranên Biyanî</title>
-		<link>http://localhost:1313/stranen_biyani/</link>
+		<link>https://kucukaslan.com.tr/stranen_biyani/</link>
 		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/stranen_biyani/</guid>
+		<guid>https://kucukaslan.com.tr/stranen_biyani/</guid>
 		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
 Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
 &lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
@@ -404,10 +450,10 @@ Yanımda Kal
 	
 	<item>
 		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
-		<link>http://localhost:1313/stran/</link>
+		<link>https://kucukaslan.com.tr/stran/</link>
 		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
 		
-		<guid>http://localhost:1313/stran/</guid>
+		<guid>https://kucukaslan.com.tr/stran/</guid>
 		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
 înternetê parve bikim, yan li ser twitterê, yan li ser
 bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
@@ -1095,10 +1141,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>Neden Yazı Yazılır?</title>
-		<link>http://localhost:1313/neden_yazariz/</link>
+		<link>https://kucukaslan.com.tr/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>http://localhost:1313/neden_yazariz/</guid>
+		<guid>https://kucukaslan.com.tr/neden_yazariz/</guid>
 		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
 1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
 2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
@@ -1109,10 +1155,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>About</title>
-		<link>http://localhost:1313/about/</link>
+		<link>https://kucukaslan.com.tr/about/</link>
 		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
-		<guid>http://localhost:1313/about/</guid>
+		<guid>https://kucukaslan.com.tr/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
 at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
@@ -1121,7 +1167,7 @@ that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
-&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
 &lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
 &lt;!-- Google Calendar Appointment Scheduling begin --&gt;
@@ -1132,10 +1178,10 @@ that are aligned with this goal such as Parallel Computing, Distributed Systems&
 	
 	<item>
 		<title>Cursor Export: Map segment speed changes within polygons</title>
-		<link>http://localhost:1313/cursor_map_segment_speed_changes_within/</link>
+		<link>https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within/</link>
 		<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
 		
-		<guid>http://localhost:1313/cursor_map_segment_speed_changes_within/</guid>
+		<guid>https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within/</guid>
 		<description>&lt;h1 id=&#34;map-segment-speed-changes-within-polygons&#34;&gt;Map segment speed changes within polygons&lt;/h1&gt;
 &lt;p&gt;&lt;em&gt;Exported on 12/17/2025 at 09:48:09 GMT+3 from Cursor (2.2.23)&lt;/em&gt;&lt;/p&gt;
 &lt;hr&gt;
