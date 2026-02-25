@@ -1,93 +1,90 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
 	<title>Muhammed Can Küçükaslan</title>
-	<link>https://kucukaslan.com.tr/tags/cursor/</link>
+	<link>http://localhost:1313/tags/cursor/</link>
 	<description>Recent content in Cursor on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
 	<lastBuildDate>Wed, 25 Feb 2026 12:00:00 +0300</lastBuildDate>
     
-        <atom:link href="https://kucukaslan.com.tr/tags/cursor/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="http://localhost:1313/tags/cursor/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
-		<title>Fixing 9 Years Old OSS Bug with Cursor</title>
-		<link>https://kucukaslan.com.tr/debugging_with_cursor/</link>
+		<title>Fixing a 9-Year-Old OSS Bug with Cursor</title>
+		<link>http://localhost:1313/debugging_with_cursor/</link>
 		<pubDate>Wed, 25 Feb 2026 12:00:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/debugging_with_cursor/</guid>
+		<guid>http://localhost:1313/debugging_with_cursor/</guid>
 		<description>&lt;blockquote&gt;
-&lt;p&gt;Last things first: this is the revisionist history of a &lt;a href=&#34;https://github.com/osmcode/osmium-tool/pull/305&#34;&gt;PR fixing a few years old bug in osmium-tool&lt;/a&gt;, an opensource tool for working with OpenStreetMap (OSM) data.&lt;/p&gt;
+&lt;p&gt;Last things first: this is the revisionist history of a &lt;a href=&#34;https://github.com/osmcode/osmium-tool/pull/305&#34;&gt;PR fixing a multi-year-old bug in osmium-tool&lt;/a&gt;, an open-source tool for working with OpenStreetMap (OSM) data.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;blockquote&gt;
-&lt;p&gt;First things second: &lt;a href=&#34;https://github.com/osmcode/osmium-tool&#34;&gt;osmium&lt;/a&gt; is one of my favourite tools when I work with the OSM data, along with the &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;. I use osmium-tool for manipulating data, JOSM editor for visualizing and examining the data -ironically never for editing.&lt;/p&gt;
+&lt;p&gt;First things second: &lt;a href=&#34;https://github.com/osmcode/osmium-tool&#34;&gt;osmium&lt;/a&gt; is one of my favourite tools when I work with OSM data, along with the &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;. I use osmium-tool for manipulating data and JOSM editor for visualizing and examining the data, ironically, never for editing.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;background-and-purpose&#34;&gt;Background and Purpose&lt;/h2&gt;
-&lt;p&gt;We wanted to limit use of ways that are strictly inside in a given region.
-A region is defined by one or more &lt;a href=&#34;https://en.wikipedia.org/wiki/Simple_polygon&#34;&gt;simple polygon&lt;/a&gt;s.&lt;/p&gt;
-&lt;p&gt;Ways on the other hand have an obvious common sense definition&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-&lt;p&gt;It&amp;rsquo;s a continuous curve where things can move along.
-But it&amp;rsquo;s formal definition in the OSM data neither includes all ways nor exludes all non-ways in the the real-world (common sense) conceptualization.&lt;/p&gt;
-&lt;p&gt;In the OSM, we need to define &lt;code&gt;node&lt;/code&gt;s first as points (coordinates) in the space with some additional data (i.e. tags).
-Then a &lt;code&gt;way&lt;/code&gt; in OSM is defined as a (finite) sequence of nodes with some additional data (e.g. speed limits, access restrictions).
-We can informally call way segment to a portion of the way that connects two consecutive nodes in the wat.&lt;/p&gt;
-&lt;p&gt;Since a physical way may have different lanes, speed limits etc. OSM splits a single physical way into multiple pieces.&lt;/p&gt;
+&lt;p&gt;We wanted to limit the use of ways that are strictly inside a given region.
+A region is defined by one or more &lt;a href=&#34;https://en.wikipedia.org/wiki/Simple_polygon&#34;&gt;simple polygons&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Ways, on the other hand, have an obvious common-sense definition&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;It is a continuous curve where things can move along.
+But its formal definition in the OSM data neither includes all ways nor excludes all non-ways in the real-world (common sense) conceptualization.&lt;/p&gt;
+&lt;p&gt;In OSM, we first need to define &lt;code&gt;node&lt;/code&gt;s as points (coordinates) in space with some additional data (i.e. tags).
+Then, a &lt;code&gt;way&lt;/code&gt; in OSM is defined as a (finite) sequence of nodes with some additional data (e.g., speed limits, access restrictions).
+We can informally refer to a portion of the way that connects two consecutive nodes as a way segment.&lt;/p&gt;
+&lt;p&gt;Since a physical way may have different lanes, speed limits, etc., OSM splits a single physical way into multiple pieces.&lt;/p&gt;
 &lt;p&gt;As if this discrepancy wasn&amp;rsquo;t enough, we needed to handle arbitrary regions.
-Thus a region may include only a portion of the ways. Even OSM&amp;rsquo;s ways weren&amp;rsquo;t precise enough for our needs.
+Thus, a region may include only a portion of the ways. Even OSM&amp;rsquo;s ways weren&amp;rsquo;t precise enough for our needs.
 We could merely tolerate exclusions at way segment precision.&lt;/p&gt;
-&lt;p&gt;In short we needed to find all way segments inside a given polygon.&lt;/p&gt;
+&lt;p&gt;In short, we needed to find all way segments inside a given polygon.&lt;/p&gt;
 &lt;h2 id=&#34;enter-osmium-tool&#34;&gt;Enter &lt;a href=&#34;https://github.com/osmcode/osmium-tool&#34;&gt;osmium-tool&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;osmium-tool has a feature to &lt;em&gt;&lt;a href=&#34;https://osmcode.org/osmium-tool/manual.html#creating-geographic-extracts&#34;&gt;create a geographical extract&lt;/a&gt; of OSM data that only contains the data for a specific region&lt;/em&gt;.
 That&amp;rsquo;s exactly what we wanted, right?&lt;br&gt;
-Almost: inclusion of the roads that intersects the region boundary, the nodes on such nodes that are inside or outside the region depends on the use case.
+Almost: inclusion of the roads that intersect the region boundary, and whether the nodes on such ways inside or outside the region are included, depends on the use case.
 osmium-tool provides 3 extraction strategies:&lt;/p&gt;
 &lt;h3 id=&#34;simple&#34;&gt;simple&lt;/h3&gt;
 &lt;blockquote&gt;
 &lt;p&gt;When using the simple strategy, all nodes inside the specified region are included and all nodes that are outside the region are not included. All ways that have at least one node inside the region are included, but they might be missing some nodes, they are not reference-complete.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;!-- render the svg image /img/extract-strategy-simple.svg --&gt;
-&lt;img src=&#34;https://kucukaslan.com.tr/img/extract-strategy-simple.svg&#34; alt=&#34;Demonstration of simple extraction strategy&#34; /&gt;
+&lt;img src=&#34;http://localhost:1313/img/extract-strategy-simple.svg&#34; alt=&#34;Demonstration of simple extraction strategy&#34; /&gt;
 &lt;details&gt;
 &lt;summary&gt; Expand for complete_ways and smart strategies&lt;/summary&gt;
 &lt;h3 id=&#34;complete_ways&#34;&gt;complete_ways&lt;/h3&gt;
 &lt;blockquote&gt;
-&lt;p&gt;When using the complete_ways strategy, all nodes inside the specified region as well as all nodes used by ways that are partially inside the specified region will be in the output.&lt;/p&gt;
+&lt;p&gt;When using the complete_ways strategy, all nodes inside the specified region as well as all nodes used by ways that are partially inside the specified region will be in the output.
+&lt;img src=&#34;http://localhost:1313/img/extract-strategy-complete-ways.svg&#34; alt=&#34;Demonstration of complete_ways extraction strategy&#34; /&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;!-- render the svg image /img/extract-strategy-complete-ways.svg --&gt;
-&lt;img src=&#34;https://kucukaslan.com.tr/img/extract-strategy-complete-ways.svg&#34; alt=&#34;Demonstration of complete_ways extraction strategy&#34; /&gt;
 &lt;h3 id=&#34;smart&#34;&gt;smart&lt;/h3&gt;
-&lt;p&gt;When using the smart strategy, everything is done as in the complete_ways strategy, but multipolygon relations that have at least one node in the region will also be completely included.&lt;/p&gt;
-&lt;!-- render the svg image /img/extract-strategy-smart.svg --&gt;
-&lt;img src=&#34;https://kucukaslan.com.tr/img/extract-strategy-smart.svg&#34; alt=&#34;Demonstration of smart extraction strategy&#34; /&gt;
+&lt;p&gt;When using the smart strategy, everything is done as in the complete_ways strategy, but multipolygon relations that have at least one node in the region will also be completely included.
+&lt;img src=&#34;http://localhost:1313/img/extract-strategy-smart.svg&#34; alt=&#34;Demonstration of smart extraction strategy&#34; /&gt;&lt;/p&gt;
 &lt;/details&gt;
-&lt;p&gt;the simple strategy sounds great for our needs.
-Beware that it extracts nodes and ways. But we need to find way segments (consecutive node pairs that are part of those ways) inside the region.
-When we extract the region we are interested with simple strategy it will give ways that intersects the region boundary, so some segments of those ways rest outside the region. So we need to filter out those segments by checking if both of their nodes are inside the extraction as well.&lt;/p&gt;
+&lt;p&gt;The simple strategy sounds great for our needs.
+Beware that it extracts nodes and ways, but we need to find way segments (consecutive node pairs that are part of those ways) inside the region.
+When we extract the region we are interested in with the simple strategy, it will give ways that intersect the region boundary, so some segments of those ways rest outside the region. So, we need to filter out those segments by checking if both of their nodes are inside the extraction as well.&lt;/p&gt;
 &lt;h2 id=&#34;first-draft-and-noticing-the-problem&#34;&gt;First Draft and Noticing the Problem&lt;/h2&gt;
-&lt;p&gt;It&amp;rsquo;s implementation was pretty straightforward.
-Then we started testing it multiple regions on random places.
-Areas highlighted in red in the left side are the regions we want to examine/extract.
+&lt;p&gt;Its implementation was pretty straightforward.
+Then we started testing it on multiple regions in random places.
+Areas highlighted in red on the left side are the regions we want to examine/extract.
 The points are the nodes and the lines are the way segments.
-Brown segments are all the segments we founded in the regions (other segments are colored in orange, cyan, green etc.):
-&lt;img src=&#34;https://kucukaslan.com.tr/img/osmium-polygon-overlay.png&#34; alt=&#34;osmium-polygon-overlay&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Disappointingly, there were non-brown segments inside the region (even if their both nodes were inside the region).
-First, I went over my implementation nothing suspicious. It was a straightforward code anyway.
-Then I started examining the wrong segments if they have any common thing: same road type, same tags, etc. with &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;.
+Brown segments are all the segments we found in the regions (other segments are colored in orange, cyan, green, etc.):
+&lt;img src=&#34;http://localhost:1313/img/osmium-polygon-overlay.png&#34; alt=&#34;osmium-polygon-overlay&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Disappointingly, there were non-brown segments inside the region (even if both their nodes were inside the region).
+First, I went over my implementation and found nothing suspicious. It was straightforward code, anyway.
+Then I started examining the wrong segments to see if they had anything in common: same road type, same tags, etc. with the &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;.
 In fact, for a specific way whose multiple segments were inside the region, only a single segment was included.&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;p&gt;I was stuck: there was nothing common for the wrong segments, my code seems to correctly handle edge cases, my logic -obviously- was sound.&lt;/p&gt;
-&lt;p&gt;I need to check the state at every step to find where the code failed.&lt;/p&gt;
+&lt;p&gt;I was stuck: there was nothing in common for the wrong segments, my code seemed to correctly handle edge cases, and my logic, obviously, was sound.&lt;/p&gt;
+&lt;p&gt;I needed to check the state at every step to find where the code failed.&lt;/p&gt;
 &lt;h2 id=&#34;enter-cursor-and-claude-sonnet--opus&#34;&gt;Enter Cursor and Claude Sonnet | Opus&lt;/h2&gt;
-&lt;p&gt;I decided that it was the time I plea to AI overlords!&lt;/p&gt;
+&lt;p&gt;I decided that it was time I plead to the AI overlords!&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Last things first (one more time):
-you can find export of Cursor session that I used for debugging and fixing the issue &lt;a href=&#34;https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within&#34;&gt;here&lt;/a&gt;.
-I will go over the steps below, but you can examine the export for raw interaction.&lt;br&gt;
-Also beware that export does not include the images, file and code references that I added to context. Similarly the interaction with terminal and other tools are not included either.&lt;/p&gt;
+you can find an export of the Cursor session that I used for debugging and fixing the issue &lt;a href=&#34;http://localhost:1313/cursor_map_segment_speed_changes_within&#34;&gt;here&lt;/a&gt;.
+I will go over the steps below, but you can examine the export for the raw interaction.&lt;br&gt;
+Also, beware that the export does not include the images, files, and code references that I added to context. Similarly, the interaction with the terminal and other tools are not included either.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;I initated the chat by sharing the &lt;a href=&#34;https://kucukaslan.com.tr/img/osmium-polygon-overlay.png&#34;&gt;previous image that shows the error&lt;/a&gt;. &lt;br&gt;
-Instead of explicitly stating the issue I explained what the colors, lines etc. mean, what my intent was and asked it to evaluate the result. &lt;br&gt;
-By doing so, &lt;em&gt;I hoped to verify both that it understood my intention and it really examined the image, not just slopping plausibly sounding success/mistakes with a gazillion buzzwords.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;It, to my mild surprise it made really a good job.
+&lt;p&gt;I initiated the chat by sharing the &lt;a href=&#34;http://localhost:1313/img/osmium-polygon-overlay.png&#34;&gt;previous image that shows the error&lt;/a&gt;. &lt;br&gt;
+Instead of explicitly stating the issue, I explained what the colors, lines, etc. mean, what my intent was, and asked it to evaluate the result. &lt;br&gt;
+By doing so, &lt;em&gt;I hoped to verify both that it understood my intention and that it really examined the image, not just slopping plausibly sounding success/mistakes with a gazillion buzzwords.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;To my mild surprise, it did a really good job.
 It correctly explained my implementation and identified two issues:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;ol&gt;
@@ -95,7 +92,7 @@ It correctly explained my implementation and identified two issues:&lt;/p&gt;
 &lt;li&gt;&lt;strong&gt;Some dark-gray roads seem to extend beyond&lt;/strong&gt; the polygon boundaries on the left&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;well, the second one is incorrect, but I&amp;rsquo;ll look over that.
+&lt;p&gt;Well, the second one is incorrect, but I&amp;rsquo;ll look over that.
 It presented three reasonable root causes:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;ol&gt;
@@ -104,12 +101,12 @@ It presented three reasonable root causes:&lt;/p&gt;
 &lt;li&gt;&lt;strong&gt;Node position vs line geometry&lt;/strong&gt;: A road segment might visually appear inside the polygon, but if either of its endpoint nodes is outside, it won&amp;rsquo;t be affected&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;It followed with clarifacation questions on what should be done for the boundary segments and what specific issue I want it to fix. My reply was skip boundary segments and fix the unaffected way segment inside the polygons.&lt;/p&gt;
+&lt;p&gt;It followed up with clarification questions on what should be done for the boundary segments and what specific issue I wanted it to fix. My reply was to skip boundary segments and fix the unaffected way segments inside the polygons.&lt;/p&gt;
 &lt;p&gt;It made a plan for reproducing the issue and asked for IDs for the specific ways and nodes.&lt;/p&gt;
-&lt;p&gt;I prepared an OSM file for the region (so that it won&amp;rsquo;t waste time on processing the a full map), shared IDs of a way segment and corresponding nodes that was clearly inside the red polygons and the polygon coordinates.&lt;/p&gt;
-&lt;p&gt;It started with sanity checks that the nodes were inside of the polygon.&lt;/p&gt;
-&lt;p&gt;Then I shared list of way segments that our current implementation found.&lt;/p&gt;
-&lt;p&gt;It checked whether there was an issues with specific nodes and their neighbours:&lt;/p&gt;
+&lt;p&gt;I prepared an OSM file for the region (so that it wouldn&amp;rsquo;t waste time processing a full map), shared the IDs of a way segment and corresponding nodes that were clearly inside the red polygons, and the polygon coordinates.&lt;/p&gt;
+&lt;p&gt;It started with sanity checks to ensure that the nodes were inside the polygon.&lt;/p&gt;
+&lt;p&gt;Then I shared a list of way segments that our current implementation found.&lt;/p&gt;
+&lt;p&gt;It checked whether there was an issue with specific nodes and their neighbours:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Node 5992278830: lon=30.7155, lat=36.9051 ✓ captured &lt;br&gt;
 Node 36245618: lon=30.7161, lat=36.9051 ✗ NOT captured &lt;br&gt;
@@ -158,9 +155,9 @@ Node 36245618: lon=30.7161, lat=36.9051 ✗ NOT captured &lt;br&gt;
 &lt;/table&gt;
 &lt;p&gt;This is a critical finding! The issue is NOT with the polygon geometry or the containment logic. &lt;em&gt;Something is wrong with the osmium extraction or the PBF file being used&lt;/em&gt;.&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;I verified that PBF file was correct. But it suspected that our polygon coordinates were counter-clockwise against the &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6&#34;&gt;RFC 7946 Specs&lt;/a&gt; to no avail.&lt;/p&gt;
+&lt;p&gt;I verified that the PBF file was correct. It then suspected that our polygon coordinates were counter-clockwise against the &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6&#34;&gt;RFC 7946 Spec&lt;/a&gt;, to no avail.&lt;/p&gt;
 &lt;p&gt;It made a plan to use custom node and way extraction logic instead, but I stopped it and asked it to focus on reproducing the issue.&lt;/p&gt;
-&lt;p&gt;After implementing and running the reproduction code it found:&lt;/p&gt;
+&lt;p&gt;After implementing and running the reproduction code, it found:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Surprising result!&lt;/strong&gt; osmium correctly extracts ALL 4 nodes from &lt;code&gt;debug.osm.pbf&lt;/code&gt;! &lt;br&gt;
 This means the issue is NOT with osmium. Let me now trace the full segment generation to find where the segments are being lost: &lt;br&gt;
@@ -168,7 +165,7 @@ This means the issue is NOT with osmium. Let me now trace the full segment gener
 The nodes (36245618, 5992278830) ARE inside the polygon, but the WAY that contains them is missing&amp;hellip; so osmium&amp;rsquo;s &amp;ldquo;simple&amp;rdquo; strategy should include it, but &lt;strong&gt;it&amp;rsquo;s NOT in the filtered output!&lt;/strong&gt; &lt;br&gt;
 This is an osmium bug or edge case. Let me compare with ways that ARE included:&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;It continued thinking and running reproduction and finally come with a strong hypothesis:&lt;/p&gt;
+&lt;p&gt;It continued thinking and running the reproduction, and finally came up with a strong hypothesis:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Major discovery!&lt;/strong&gt; osmium is missing &lt;strong&gt;28 ways&lt;/strong&gt; that should be included!&lt;/p&gt;
 &lt;p&gt;Let me check if there&amp;rsquo;s a pattern - maybe osmium is only including ways that START inside the polygon:&lt;/p&gt;
@@ -201,10 +198,10 @@ This is an osmium bug or edge case. Let me compare with ways that ARE included:&
 &lt;/table&gt;
 &lt;p&gt;&lt;strong&gt;osmium&amp;rsquo;s &amp;ldquo;simple&amp;rdquo; strategy only includes ways where the FIRST node is inside the polygon!&lt;/strong&gt; Ways that start outside but enter the polygon are incorrectly skipped!&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;At this point it started coming with a workaround by using custom filters on top of other extraction methods. &lt;br&gt;
-However, its hypothesis excited me and I wanted to find the root cause. I had previously cloned the osmium-tool repository for potentially adding a new extraction method that fits our other uses cases but didn&amp;rsquo;t complete since I couldn&amp;rsquo;t how it should handle some cases that were irrelevant to our use case but could be relevant to other people using the osmium-tool. &lt;br&gt;
-Anyway, due to this previous exposure I knew where exactly to look for the issue: &lt;a href=&#34;https://github.com/osmcode/osmium-tool/blob/v1.18.0/src/extract/strategy_simple.cpp&#34;&gt;src/extract/strategy_simple.cpp&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;I hope, at this point you&amp;rsquo;re no longer naive enough to think that I, myself, read the code. I asked it to examine the code aaaand BINGO:&lt;/p&gt;
+&lt;p&gt;At this point, it started coming up with a workaround by using custom filters on top of other extraction methods. &lt;br&gt;
+However, its hypothesis excited me and I wanted to find the root cause. I had previously cloned the osmium-tool repository to potentially add a new extraction method that fit our other use cases. I didn&amp;rsquo;t complete it since I couldn&amp;rsquo;t figure out how it should handle some edge cases; these were irrelevant to our use case but could be relevant to other people using osmium-tool. &lt;br&gt;
+Anyway, due to this previous exposure, I knew exactly where to look for the issue: &lt;a href=&#34;https://github.com/osmcode/osmium-tool/blob/v1.18.0/src/extract/strategy_simple.cpp&#34;&gt;src/extract/strategy_simple.cpp&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I hope at this point you&amp;rsquo;re no longer naive enough to think that I, myself, read the code. I asked it to examine the code, aaaaand BINGO:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Looking at the osmium-tool source code, I found &lt;strong&gt;the bug&lt;/strong&gt;!&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-75:83:osmium-tool/src/extract/strategy_simple.cpp&#34; data-lang=&#34;75:83:osmium-tool/src/extract/strategy_simple.cpp&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;eway&lt;/span&gt;(extract_data&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; e, &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; osmium&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;Way&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt; way) {
@@ -234,33 +231,33 @@ Anyway, due to this previous exposure I knew where exactly to look for the issue
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
 &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/blockquote&gt;
-&lt;p&gt;I asked it to fix the code and prepare minimal reproducible test case.&lt;/p&gt;
-&lt;p&gt;It completed the implementation and prepared the test cases. Then went on setting up C++ environment and running the tests.&lt;/p&gt;
-&lt;p&gt;I examined the tests, verifyed the test would&amp;rsquo;ve failed without the fix and asked a few follow-up questions etc. It really did a great job.&lt;br&gt;
-Right away I commited the changes to my fork and opened a &lt;a href=&#34;https://github.com/osmcode/osmium-tool/pull/305&#34;&gt;PR&lt;/a&gt; to the upstream repository. &lt;br&gt;
+&lt;p&gt;I asked it to fix the code and prepare a minimal reproducible test case.&lt;/p&gt;
+&lt;p&gt;It completed the implementation and prepared the test cases. Then it went on to set up the C++ environment and run the tests.&lt;/p&gt;
+&lt;p&gt;I examined the tests, verified the test would&amp;rsquo;ve failed without the fix, and asked a few follow-up questions, etc. It really did a great job.&lt;br&gt;
+Right away, I committed the changes to my fork and opened a &lt;a href=&#34;https://github.com/osmcode/osmium-tool/pull/305&#34;&gt;PR&lt;/a&gt; to the upstream repository. &lt;br&gt;
 Two of the CI checks failed, but I verified that they were not related to the changes and informed the maintainers.
 A few days later the PR was merged, and the fix was included in the next &lt;a href=&#34;https://github.com/osmcode/osmium-tool/releases/tag/v1.19.0&#34;&gt;release&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;conclusion-and-reflections&#34;&gt;Conclusion and Reflections&lt;/h2&gt;
-&lt;p&gt;I guess we all have heard how Cursor/LLMs helps non-technical people to create apps, quickly spin up beautiful landing pages, writing compilers etc.&lt;br&gt;
-These are certainly impressive use cases of Cursor and I believe they received, arguably, deserved hype for it.&lt;br&gt;
-However, when I reflect on how Cursor helped solving this issue, I can&amp;rsquo;t help but noticing that, in this particular case, the Cursor did not bring any extra technical expertize. I already knew:&lt;/p&gt;
+&lt;p&gt;I guess we all have heard how Cursor/LLMs help non-technical people create apps, quickly spin up beautiful landing pages, write compilers, etc.&lt;br&gt;
+These are certainly impressive use cases for Cursor, and I believe they&amp;rsquo;ve received, arguably, deserved hype for it.&lt;br&gt;
+However, when I reflect on how Cursor helped solve this issue, I can&amp;rsquo;t help but notice that, in this particular case, Cursor did not bring any extra technical expertise. I already knew:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;how it should use the osmium-tool as my original code was accurate (assuming osmium-tool conforms the specs/documentation)&lt;/li&gt;
-&lt;li&gt;how can it reproduce the issue as I identified the issue, found problematic node and ways, prepared OSM file for the relevant region&lt;/li&gt;
-&lt;li&gt;where the actual implementation of the osmium&amp;rsquo;s extraction was as I found and gave the corresponding file to Cursor. \&lt;/li&gt;
+&lt;li&gt;how to use the osmium-tool, as my original code was accurate (assuming osmium-tool conformed to the specs/documentation).&lt;/li&gt;
+&lt;li&gt;how to reproduce the issue, as I identified the issue, found the problematic nodes and ways, and prepared an OSM file for the relevant region.&lt;/li&gt;
+&lt;li&gt;where the actual implementation of osmium&amp;rsquo;s extraction was, as I found and gave the corresponding file to Cursor. \&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;On one hand Cursor did not help me debug a problem that I couldn&amp;rsquo;t already debug.&lt;br&gt;
-On the other hand, without Cursor I would not have gone this much way for an issue that I could workaround by writing my own extraction logic and call it a day.&lt;br&gt;
-In this case the problem would be solved as far as I was concerned, but I would neither learn what the actual root cause was nor fix it for all the people using osmium-tool. A missed learning opportunity for me and wasted hours or buggy software for the users.
-Cursor helped to come up with hypothesis on what went wrong, quickly test the hypothesis and iterate until we found the problem in a reasonable with a reasonable cost, in other words Cursor made it feasible to debug the issue until we found the root cause and fix it.&lt;br&gt;
-In addition to debugging it makes many more things feasible.
-I have prepared many dashboards that gave us precious insights on the quality of our data analysis results which helped us identify a major bug, that helped us to easily visualize how our customizations affects our route planning.&lt;br&gt;
-I have used it to create custom tools that saved me a lot of time: creating test data, &lt;a href=&#34;https://kucukaslan.com.tr/html/teltonika_codec_8_8ext.html&#34;&gt;a visualizer to decode/encode Teltonika&amp;rsquo;s Communication Protocol binary data&lt;/a&gt;.&lt;br&gt;
-These tools gives immeasurable quality of life during development and debugging.&lt;br&gt;
-Efforts required to create them were not usually justified unless they were to be used for really long time by a lot of people.
-But, since we can have the LLMs prepare them in a few prompts with a little bit of guidance,
-I can write quick scripts, jupyter notebooks for my own specific needs.&lt;br&gt;
-I really appreciate how these simple things my life easier and my code better, this post was a means to show my appreciation.&lt;/p&gt;
+&lt;p&gt;On one hand, Cursor did not help me debug a problem that I couldn&amp;rsquo;t already debug myself.&lt;br&gt;
+On the other hand, without Cursor, I would not have gone this far for an issue that I could work around by writing my own extraction logic and calling it a day.&lt;br&gt;
+In that case, the problem would be solved as far as I was concerned, but I would neither have learned what the actual root cause was, nor fixed it for all the people using osmium-tool. It would have been a missed learning opportunity for me, and wasted hours or buggy software for the users.
+Cursor helped come up with a hypothesis on what went wrong, quickly test the hypothesis, and iterate until we found the problem in a reasonable amount of time with a reasonable cost. In other words, Cursor made it feasible to debug the issue until we found the root cause and fixed it.&lt;br&gt;
+In addition to debugging, it makes many more things feasible.
+I have prepared many dashboards that gave us precious insights into the quality of our data analysis results, which helped us identify a major bug, and easily visualize how our customizations affect our route planning.&lt;br&gt;
+I have used it to create custom tools that saved me a lot of time: creating test data, and &lt;a href=&#34;http://localhost:1313/html/teltonika_codec_8_8ext.html&#34;&gt;a visualizer to decode/encode Teltonika&amp;rsquo;s Communication Protocol binary data&lt;/a&gt;.&lt;br&gt;
+These tools give an immeasurable quality of life boost during development and debugging.&lt;br&gt;
+The effort required to create them was not usually justified unless they were to be used for a really long time by a lot of people.
+But, since we can have LLMs prepare them in a few prompts with a little bit of guidance,
+I can write quick scripts and Jupyter notebooks for my own specific needs.&lt;br&gt;
+I really appreciate how these simple things make my life easier and my code better; this post was a means to show my appreciation.&lt;/p&gt;
 &lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;
@@ -268,7 +265,7 @@ I really appreciate how these simple things my life easier and my code better, t
 &lt;p&gt;Nooo, it ain&amp;rsquo;t the asphalt!&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li id=&#34;fn:2&#34;&gt;
-&lt;p&gt;In retrospect we understood that this happened because we have two overlapping regions. The way was correctly included for one of them but it was incorrectly excluded for the other one.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;In retrospect we understood that this happened because we have two overlapping regions. The way was correctly included for one of them, but it was incorrectly excluded for the other one.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
@@ -277,10 +274,10 @@ I really appreciate how these simple things my life easier and my code better, t
 	
 	<item>
 		<title>Notes on Uvicorn on Production</title>
-		<link>https://kucukaslan.com.tr/notes_on_uvicorn/</link>
+		<link>http://localhost:1313/notes_on_uvicorn/</link>
 		<pubDate>Wed, 29 Oct 2025 20:25:10 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/notes_on_uvicorn/</guid>
+		<guid>http://localhost:1313/notes_on_uvicorn/</guid>
 		<description>&lt;p&gt;The Uvicorn + FastAPI is a common default stack for Python web applications.&lt;/p&gt;
 &lt;p&gt;However, it is just too easy to use it with a wrong configuration on the production environment.&lt;/p&gt;
 &lt;p&gt;A naive person would install the FastAPI and uvicorn using the &lt;code&gt;pip install FastAPI uvicorn&lt;/code&gt; (or &lt;code&gt;uv add FastAPI uvicorn&lt;/code&gt;) command.&lt;/p&gt;
@@ -343,10 +340,10 @@ So, there might be some magic under the hood that ensures the code/configuration
 	
 	<item>
 		<title>Frequently Asked Questions</title>
-		<link>https://kucukaslan.com.tr/faq/</link>
+		<link>http://localhost:1313/faq/</link>
 		<pubDate>Thu, 15 Aug 2024 00:00:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/faq/</guid>
+		<guid>http://localhost:1313/faq/</guid>
 		<description>&lt;h3 id=&#34;why-is-this-website-is-so-plain&#34;&gt;Why is this website is so &amp;ldquo;plain&amp;rdquo;?&lt;/h3&gt;
 &lt;p&gt;I don&amp;rsquo;t see any reason for it not to be.
 TBH, I do: a fancy website could&amp;rsquo;ve been more impressive for
@@ -379,10 +376,10 @@ See also &lt;a href=&#34;http://n-gate.com/software/2017/07/12/0/&#34;&gt;n-gate
 	
 	<item>
 		<title>Guldesteyek Ji Stranên Biyanî</title>
-		<link>https://kucukaslan.com.tr/stranen_biyani/</link>
+		<link>http://localhost:1313/stranen_biyani/</link>
 		<pubDate>Tue, 13 Aug 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stranen_biyani/</guid>
+		<guid>http://localhost:1313/stranen_biyani/</guid>
 		<description>&lt;p&gt;Pişti min guldesteyek ser stranên kurdewarî weşand, gelek kes (0) ji min pirsî &amp;ldquo;ma tu stranên biyani guhdar nakî?&amp;rdquo;.
 Xwedê efû bike, bersiva min &amp;ldquo;belê, guhdar dikim&amp;rdquo; bû.&lt;/p&gt;
 &lt;p&gt;Berî her tiştî gerek hûn zanibin ku ez nikarim hemû stranan li vir parve bikim.
@@ -407,10 +404,10 @@ Yanımda Kal
 	
 	<item>
 		<title>Guldesteyek Ji Stran û Stranbêjên Kurdewarî</title>
-		<link>https://kucukaslan.com.tr/stran/</link>
+		<link>http://localhost:1313/stran/</link>
 		<pubDate>Sun, 19 May 2024 02:56:00 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/stran/</guid>
+		<guid>http://localhost:1313/stran/</guid>
 		<description>&lt;p&gt;Zû de min dixwest ku ez lîsteyeke stranan çêkim û li ser
 înternetê parve bikim, yan li ser twitterê, yan li ser
 bloga xwe û nizanim çi. Bes e ev zexeltî.&lt;/p&gt;
@@ -1098,10 +1095,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>Neden Yazı Yazılır?</title>
-		<link>https://kucukaslan.com.tr/neden_yazariz/</link>
+		<link>http://localhost:1313/neden_yazariz/</link>
 		<pubDate>Sat, 30 Jul 2022 00:41:29 +0300</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/neden_yazariz/</guid>
+		<guid>http://localhost:1313/neden_yazariz/</guid>
 		<description>&lt;p&gt;Ne zaman aklıma “yeni” bir şey geldiyse her seferinde şunu görüyorum: benden belki yüzlerce belki yüzlerce belki binlerce yıl önce birileri özünde aynı anlamı benim yapabileceğimden çok daha iyi bir şekilde ifade etmiş. Hâl böyle iken:&lt;br&gt;
 1) Benim bu fikirleri yeniden keşfetmek için çaba harcamamın ne anlamı var;&lt;br&gt;
 2) Benim fikirlerimi başkaları benden daha iyi ifade edebiliyorsa benim onları haddim olmayarak ifade etmeye çabalamamın ne anlamı var?&lt;/p&gt;
@@ -1112,10 +1109,10 @@ Min nezanî min ne çeng e ne teqet e &lt;br&gt;
 	
 	<item>
 		<title>About</title>
-		<link>https://kucukaslan.com.tr/about/</link>
+		<link>http://localhost:1313/about/</link>
 		<pubDate>Sat, 24 Aug 2019 00:00:00 +0000</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/about/</guid>
+		<guid>http://localhost:1313/about/</guid>
 		<description>&lt;p&gt;I&amp;rsquo;m Muhammed Can Küçükaslan. Yet another fellow &lt;em&gt;human&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;I graduated from Department of Computer Engineering (and Math as second major)
 at Bilkent University (Ankara, Turkey) in January 2024 with high honours.&lt;/p&gt;
@@ -1124,7 +1121,7 @@ that is to say building reliable (software/hardware) systems that
 uses resources as efficient as possible.&lt;/p&gt;
 &lt;p&gt;Consequently I&amp;rsquo;m interested in the subfields of Computer Science
 that are aligned with this goal such as Parallel Computing, Distributed Systems&amp;hellip;&lt;/p&gt;
-&lt;p&gt;See my cv at &lt;a href=&#34;https://kucukaslan.com.tr/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;See my cv at &lt;a href=&#34;http://localhost:1313/cv.pdf&#34;&gt;kucukaslan.com.tr/cv.pdf&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;contact&#34;&gt;Contact&lt;/h2&gt;
 &lt;p&gt;If you want to contact me or have a chit-chat:&lt;/p&gt;
 &lt;!-- Google Calendar Appointment Scheduling begin --&gt;
@@ -1135,10 +1132,10 @@ that are aligned with this goal such as Parallel Computing, Distributed Systems&
 	
 	<item>
 		<title>Cursor Export: Map segment speed changes within polygons</title>
-		<link>https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within/</link>
+		<link>http://localhost:1313/cursor_map_segment_speed_changes_within/</link>
 		<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
 		
-		<guid>https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within/</guid>
+		<guid>http://localhost:1313/cursor_map_segment_speed_changes_within/</guid>
 		<description>&lt;h1 id=&#34;map-segment-speed-changes-within-polygons&#34;&gt;Map segment speed changes within polygons&lt;/h1&gt;
 &lt;p&gt;&lt;em&gt;Exported on 12/17/2025 at 09:48:09 GMT+3 from Cursor (2.2.23)&lt;/em&gt;&lt;/p&gt;
 &lt;hr&gt;
