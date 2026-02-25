@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
 	<title>Fixing a 9-Year-Old OSS Bug With Cursor | Muhammed Can Küçükaslan</title>
-	<link rel="canonical" href="http://localhost:1313/debugging_with_cursor/">
+	<link rel="canonical" href="https://kucukaslan.com.tr/debugging_with_cursor/">
 	<link rel='alternate' type='application/rss+xml' title="Muhammed Can Küçükaslan RSS" href='/index.xml'>
 	
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/computer-modern@0.0.1/dist/cmu-serif.css">
@@ -15,6 +15,28 @@ Last things first: this is the revisionist history of a PR fixing a multi-year-o
 First things second: osmium is one of my favourite tools when I work with OSM data, along with the JOSM editor. I use osmium-tool for manipulating data and JOSM editor for visualizing and examining the data, ironically, never for editing.
 
 Background and Purpose
+
+  
+  Extraction Region
+  
+  
+  
+  
+  Node A
+  (Outside)
+  
+  Node B
+  (Inside)
+  
+  Node C
+  (Inside)
+  
+  Node D
+  (Outside)
+  Target Segment
+  Crosses
+  Crosses
+
 We wanted to limit the use of ways that are strictly inside a given region.
 A region is defined by one or more simple polygons.">
 	<meta name="keywords" content="English, cursor, osmium">
@@ -36,10 +58,10 @@ First things second: osmium is …">
 
   
   
-<meta property="og:image" content="http://localhost:1313/img/knuth_taocp.png">
+<meta property="og:image" content="https://kucukaslan.com.tr/img/knuth_taocp.png">
 
 
-<meta property="og:url" content="http://localhost:1313/debugging_with_cursor/">
+<meta property="og:url" content="https://kucukaslan.com.tr/debugging_with_cursor/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Muhammed Can Küçükaslan">
 
@@ -70,19 +92,65 @@ First things second: osmium is …">
 <p>First things second: <a href="https://github.com/osmcode/osmium-tool">osmium</a> is one of my favourite tools when I work with OSM data, along with the <a href="https://josm.openstreetmap.de/">JOSM editor</a>. I use osmium-tool for manipulating data and JOSM editor for visualizing and examining the data, ironically, never for editing.</p>
 </blockquote>
 <h2 id="background-and-purpose">Background and Purpose</h2>
+<svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px;">
+  <polygon points="100,40 400,70 350,240 80,210" fill="#fde8e8" stroke="#f87171" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="110" y="65" font-family="monospace" font-size="14" fill="#ef4444" font-weight="bold">Extraction Region</text>
+  <line x1="40" y1="140" x2="160" y2="110" stroke="#9ca3af" stroke-width="4" />
+  <line x1="160" y1="110" x2="290" y2="170" stroke="#22c55e" stroke-width="6" />
+  <line x1="290" y1="170" x2="460" y2="130" stroke="#9ca3af" stroke-width="4" />
+  <circle cx="40" cy="140" r="6" fill="#4b5563" />
+  <text x="25" y="165" font-family="monospace" font-size="12" fill="#4b5563">Node A</text>
+  <text x="20" y="180" font-family="monospace" font-size="10" fill="#6b7280">(Outside)</text>
+  <circle cx="160" cy="110" r="6" fill="#16a34a" />
+  <text x="145" y="95" font-family="monospace" font-size="12" fill="#16a34a">Node B</text>
+  <text x="140" y="80" font-family="monospace" font-size="10" fill="#16a34a">(Inside)</text>
+  <circle cx="290" cy="170" r="6" fill="#16a34a" />
+  <text x="275" y="195" font-family="monospace" font-size="12" fill="#16a34a">Node C</text>
+  <text x="270" y="210" font-family="monospace" font-size="10" fill="#16a34a">(Inside)</text>
+  <circle cx="460" cy="130" r="6" fill="#4b5563" />
+  <text x="445" y="115" font-family="monospace" font-size="12" fill="#4b5563">Node D</text>
+  <text x="435" y="100" font-family="monospace" font-size="10" fill="#6b7280">(Outside)</text>
+  <text x="180" y="135" font-family="monospace" font-size="12" fill="#15803d" font-weight="bold">Target Segment</text>
+  <text x="50" y="115" font-family="monospace" font-size="10" fill="#6b7280">Crosses</text>
+  <text x="330" y="140" font-family="monospace" font-size="10" fill="#6b7280">Crosses</text>
+</svg>
 <p>We wanted to limit the use of ways that are strictly inside a given region.
 A region is defined by one or more <a href="https://en.wikipedia.org/wiki/Simple_polygon">simple polygons</a>.</p>
 <p>Ways, on the other hand, have an obvious common-sense definition<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
-<p>It is a continuous curve where things can move along.
-But its formal definition in the OSM data neither includes all ways nor excludes all non-ways in the real-world (common sense) conceptualization.</p>
-<p>In OSM, we first need to define <code>node</code>s as points (coordinates) in space with some additional data (i.e. tags).
-Then, a <code>way</code> in OSM is defined as a (finite) sequence of nodes with some additional data (e.g., speed limits, access restrictions).
-We can informally refer to a portion of the way that connects two consecutive nodes as a way segment.</p>
-<p>Since a physical way may have different lanes, speed limits, etc., OSM splits a single physical way into multiple pieces.</p>
-<p>As if this discrepancy wasn&rsquo;t enough, we needed to handle arbitrary regions.
-Thus, a region may include only a portion of the ways. Even OSM&rsquo;s ways weren&rsquo;t precise enough for our needs.
-We could merely tolerate exclusions at way segment precision.</p>
-<p>In short, we needed to find all way segments inside a given polygon.</p>
+<p>A way is a continuous curve along which things can move. But its formal definition in the OSM data structure doesn&rsquo;t perfectly align with our real-world, common-sense conceptualization of a road.</p>
+<p>In OSM, the fundamental building blocks are <strong><code>node</code>s</strong>: points (coordinates) in space with some additional data (e.g., tags).
+A <strong><code>way</code></strong> is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions).
+For our purposes, we can informally refer to the direct line connecting two consecutive nodes as a <strong>way segment</strong>.</p>
+<pre class="mermaid">
+  graph TD
+    %% Define styles
+    classDef nodeStyle fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef wayStyle fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,stroke-dasharray: 5 5;
+
+    %% Nodes
+    N1((&#34;Node 1&lt;br/&gt;(Lat, Lon)&#34;)):::nodeStyle
+    N2((&#34;Node 2&lt;br/&gt;(Lat, Lon)&#34;)):::nodeStyle
+    N3((&#34;Node 3&lt;br/&gt;(Lat, Lon)&#34;)):::nodeStyle
+    N4((&#34;Node 4&lt;br/&gt;(Lat, Lon)&#34;)):::nodeStyle
+
+    %% Relationships (Segments)
+    N1 ===|Way Segment 1| N2
+    N2 ===|Way Segment 2| N3
+    N3 ===|Way Segment 3| N4
+
+    %% Grouping into a Way
+    subgraph &#34;OSM Way&#34;
+        N1
+        N2
+        N3
+        N4
+    end
+</pre>
+
+<p>Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate <code>way</code> entities.</p>
+<p>As if this structural discrepancy wasn&rsquo;t enough, we needed to handle arbitrary geographic regions. A polygon boundary might cut right through the middle of an OSM way.</p>
+<p>Because OSM&rsquo;s standard <code>way</code> definitions weren&rsquo;t granular enough for our geometric needs, we couldn&rsquo;t just include or exclude entire ways.</p>
+<p>We could merely tolerate exclusions at the precision of a <em>way segment</em>. In short, we needed to isolate and extract all individual way segments that fall completely inside a given polygon.</p>
 <h2 id="enter-osmium-tool">Enter <a href="https://github.com/osmcode/osmium-tool">osmium-tool</a></h2>
 <p>osmium-tool has a feature to <em><a href="https://osmcode.org/osmium-tool/manual.html#creating-geographic-extracts">create a geographical extract</a> of OSM data that only contains the data for a specific region</em>.
 That&rsquo;s exactly what we wanted, right?<br>
@@ -321,16 +389,21 @@ I really appreciate how these simple things make my life easier and my code bett
 <div id="nextprev">
 <a href="/notes_on_uvicorn/"><div id="prevart">Previous:<br>Notes on Uvicorn on Production</div></a>
 </div>
-<div style="clear:both" class=taglist>Related<br><a id="tag_english" href="http://localhost:1313/tags/english">English</a> &middot; <a id="tag_cursor" href="http://localhost:1313/tags/cursor">Cursor</a> &middot; <a id="tag_osmium" href="http://localhost:1313/tags/osmium">Osmium</a></div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_english" href="https://kucukaslan.com.tr/tags/english">English</a> &middot; <a id="tag_cursor" href="https://kucukaslan.com.tr/tags/cursor">Cursor</a> &middot; <a id="tag_osmium" href="https://kucukaslan.com.tr/tags/osmium">Osmium</a></div>
 </article>
 </main>
 
 <footer>
-	<a href="http://localhost:1313/">http://localhost:1313/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+	<a href="https://kucukaslan.com.tr/">https://kucukaslan.com.tr/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
 </footer>
 
 
 
+
+<script type="module">
+	import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+	mermaid.initialize({ startOnLoad: true });
+</script>
 
 
 

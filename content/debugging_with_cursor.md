@@ -11,6 +11,28 @@ tags: ['English', 'cursor', 'osmium']
 
 
 ## Background and Purpose
+<svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px;">
+  <polygon points="100,40 400,70 350,240 80,210" fill="#fde8e8" stroke="#f87171" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="110" y="65" font-family="monospace" font-size="14" fill="#ef4444" font-weight="bold">Extraction Region</text>
+  <line x1="40" y1="140" x2="160" y2="110" stroke="#9ca3af" stroke-width="4" />
+  <line x1="160" y1="110" x2="290" y2="170" stroke="#22c55e" stroke-width="6" />
+  <line x1="290" y1="170" x2="460" y2="130" stroke="#9ca3af" stroke-width="4" />
+  <circle cx="40" cy="140" r="6" fill="#4b5563" />
+  <text x="25" y="165" font-family="monospace" font-size="12" fill="#4b5563">Node A</text>
+  <text x="20" y="180" font-family="monospace" font-size="10" fill="#6b7280">(Outside)</text>
+  <circle cx="160" cy="110" r="6" fill="#16a34a" />
+  <text x="145" y="95" font-family="monospace" font-size="12" fill="#16a34a">Node B</text>
+  <text x="140" y="80" font-family="monospace" font-size="10" fill="#16a34a">(Inside)</text>
+  <circle cx="290" cy="170" r="6" fill="#16a34a" />
+  <text x="275" y="195" font-family="monospace" font-size="12" fill="#16a34a">Node C</text>
+  <text x="270" y="210" font-family="monospace" font-size="10" fill="#16a34a">(Inside)</text>
+  <circle cx="460" cy="130" r="6" fill="#4b5563" />
+  <text x="445" y="115" font-family="monospace" font-size="12" fill="#4b5563">Node D</text>
+  <text x="435" y="100" font-family="monospace" font-size="10" fill="#6b7280">(Outside)</text>
+  <text x="180" y="135" font-family="monospace" font-size="12" fill="#15803d" font-weight="bold">Target Segment</text>
+  <text x="50" y="115" font-family="monospace" font-size="10" fill="#6b7280">Crosses</text>
+  <text x="330" y="140" font-family="monospace" font-size="10" fill="#6b7280">Crosses</text>
+</svg>
 
 We wanted to limit the use of ways that are strictly inside a given region.
 A region is defined by one or more [simple polygons](https://en.wikipedia.org/wiki/Simple_polygon). 
@@ -18,20 +40,45 @@ A region is defined by one or more [simple polygons](https://en.wikipedia.org/wi
 Ways, on the other hand, have an obvious common-sense definition[^asphalt].
 [^asphalt]: Nooo, it ain't the asphalt!
 
-It is a continuous curve where things can move along.
-But its formal definition in the OSM data neither includes all ways nor excludes all non-ways in the real-world (common sense) conceptualization.
+A way is a continuous curve along which things can move. But its formal definition in the OSM data structure doesn't perfectly align with our real-world, common-sense conceptualization of a road.
 
-In OSM, we first need to define `node`s as points (coordinates) in space with some additional data (i.e. tags).
-Then, a `way` in OSM is defined as a (finite) sequence of nodes with some additional data (e.g., speed limits, access restrictions).
-We can informally refer to a portion of the way that connects two consecutive nodes as a way segment.
+In OSM, the fundamental building blocks are **`node`s**: points (coordinates) in space with some additional data (e.g., tags).
+A **`way`** is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions). 
+For our purposes, we can informally refer to the direct line connecting two consecutive nodes as a **way segment**.
+```mermaid
+graph TD
+    %% Define styles
+    classDef nodeStyle fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    classDef wayStyle fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,stroke-dasharray: 5 5;
 
-Since a physical way may have different lanes, speed limits, etc., OSM splits a single physical way into multiple pieces.
+    %% Nodes
+    N1(("Node 1<br/>(Lat, Lon)")):::nodeStyle
+    N2(("Node 2<br/>(Lat, Lon)")):::nodeStyle
+    N3(("Node 3<br/>(Lat, Lon)")):::nodeStyle
+    N4(("Node 4<br/>(Lat, Lon)")):::nodeStyle
 
-As if this discrepancy wasn't enough, we needed to handle arbitrary regions.
-Thus, a region may include only a portion of the ways. Even OSM's ways weren't precise enough for our needs.
-We could merely tolerate exclusions at way segment precision.
+    %% Relationships (Segments)
+    N1 ===|Way Segment 1| N2
+    N2 ===|Way Segment 2| N3
+    N3 ===|Way Segment 3| N4
 
-In short, we needed to find all way segments inside a given polygon.
+    %% Grouping into a Way
+    subgraph "OSM Way"
+        N1
+        N2
+        N3
+        N4
+    end
+```
+
+Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate `way` entities.
+
+
+As if this structural discrepancy wasn't enough, we needed to handle arbitrary geographic regions. A polygon boundary might cut right through the middle of an OSM way. 
+
+Because OSM's standard `way` definitions weren't granular enough for our geometric needs, we couldn't just include or exclude entire ways. 
+
+We could merely tolerate exclusions at the precision of a *way segment*. In short, we needed to isolate and extract all individual way segments that fall completely inside a given polygon.
 
 ## Enter [osmium-tool](https://github.com/osmcode/osmium-tool)
 osmium-tool has a feature to _[create a geographical extract](https://osmcode.org/osmium-tool/manual.html#creating-geographic-extracts) of OSM data that only contains the data for a specific region_.
