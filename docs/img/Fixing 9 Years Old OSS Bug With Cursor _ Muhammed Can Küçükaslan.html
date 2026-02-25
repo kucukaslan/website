@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)http://localhost:1313/debugging_with_cursor/#fn:1 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/livereload.js" data-no-instant="" defer=""></script>
+	<title>Fixing 9 Years Old OSS Bug With Cursor | Muhammed Can Küçükaslan</title>
+	<link rel="canonical" href="http://localhost:1313/debugging_with_cursor/">
+	<link rel="alternate" type="application/rss+xml" title="Muhammed Can Küçükaslan RSS" href="http://localhost:1313/index.xml">
+	
+	<link rel="stylesheet" href="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/cmu-serif.css">
+	<link rel="stylesheet" type="text/css" href="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/style.css">
+	<link rel="icon" href="http://localhost:1313/favicon.ico">
+	<meta name="description" content="
+Last things first: this is the revisionist history of a PR fixing a few years old bug in osmium-tool, an opensource tool for working with OpenStreetMap (OSM) data.
+
+
+First things second: osmium is one of my favourite tools when I work with the OSM data, along with the JOSM editor. I use osmium-tool for manipulating data, JOSM editor for visualizing and examining the data -ironically never for editing.
+
+Background and Purpose
+We wanted to limit use of ways that are strictly inside in a given region.
+A region is defined by one or more simple polygons.">
+	<meta name="keywords" content="English, cursor, osmium">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	
+	
+
+<meta property="og:title" content="Fixing 9 Years Old OSS Bug With Cursor | Muhammed Can Küçükaslan">
+
+
+
+<meta property="og:description" content=" Last things first: this is the revisionist history of a PR fixing a few years old bug in osmium-tool, an opensource tool for working with OpenStreetMap (OSM) data.
+First things second: osmium is one …">
+
+
+
+
+
+  
+  
+<meta property="og:image" content="http://localhost:1313/img/knuth_taocp.png">
+
+
+<meta property="og:url" content="http://localhost:1313/debugging_with_cursor/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Muhammed Can Küçükaslan">
+
+
+<meta property="article:author" content="Muhammed Can Küçükaslan">
+<meta property="article:published_time" content="2026-02-21T00:36:12+03:00">
+<meta property="article:modified_time" content="2026-02-21T00:36:12+03:00">
+<meta property="article:tag" content="English"><meta property="article:tag" content="cursor"><meta property="article:tag" content="osmium">
+
+
+</head>
+<body>
+<nav>
+    <ul>
+	<li><a href="http://localhost:1313/"><span class="pre"></span><span class="menuname">Home</span></a></li>
+	<li><a href="http://localhost:1313/about/"><span class="pre"></span><span class="menuname">About</span></a></li>
+    </ul>
+</nav>
+
+<main>
+<header><h1 id="tag_Fixing 9 Years Old OSS Bug with Cursor">Fixing 9 Years Old OSS Bug with Cursor</h1></header>
+<article>
+
+<blockquote>
+<p>Last things first: this is the revisionist history of a <a href="https://github.com/osmcode/osmium-tool/pull/305">PR fixing a few years old bug in osmium-tool</a>, an opensource tool for working with OpenStreetMap (OSM) data.</p>
+</blockquote>
+<blockquote>
+<p>First things second: <a href="https://github.com/osmcode/osmium-tool">osmium</a> is one of my favourite tools when I work with the OSM data, along with the <a href="https://josm.openstreetmap.de/">JOSM editor</a>. I use osmium-tool for manipulating data, JOSM editor for visualizing and examining the data -ironically never for editing.</p>
+</blockquote>
+<h2 id="background-and-purpose">Background and Purpose</h2>
+<p>We wanted to limit use of ways that are strictly inside in a given region.
+A region is defined by one or more <a href="https://en.wikipedia.org/wiki/Simple_polygon">simple polygon</a>s.</p>
+<p>Ways on the other hand have an obvious common sense definition<sup id="fnref:1"><a href="http://localhost:1313/debugging_with_cursor/#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<p>In the OSM, we need to define <code>node</code>s first as points (coordinates) in the space with some additional data (i.e. tags).
+Then a <code>way</code> in OSM is defined as a (finite) sequence of nodes with some additional data (e.g. speed limits, access restrictions).
+We can informally call way segment to a portion of the way that connects two consecutive nodes in the wat.</p>
+<p>Since a physical way may have different lanes, speed limits etc. OSM splits a single physical way into multiple pieces.</p>
+<p>As if this discrepancy wasn’t enough, we needed to handle arbitrary regions.
+Thus a region may include only a portion of the ways. Even OSM’s ways weren’t precise enough for our needs.
+We could merely tolerate exclusions at way segment precision.</p>
+<p>In short we needed to find all way segments inside a given polygon.</p>
+<h2 id="enter-osmium-tool">Enter <a href="https://github.com/osmcode/osmium-tool">osmium-tool</a></h2>
+<p>osmium-tool has a feature to <em><a href="https://osmcode.org/osmium-tool/manual.html#creating-geographic-extracts">create a geographical extract</a> of OSM data that only contains the data for a specific region</em>.
+That’s exactly what we wanted, right?
+Almost. The inclusion of the roads that intersects the region boundary, the nodes on such nodes that are inside or outside the region depends on the use case.
+osmium-tool provides 3 extraction strategies:</p>
+<h3 id="simple">simple</h3>
+<blockquote>
+<p>When using the simple strategy, all nodes inside the specified region are included and all nodes that are outside the region are not included. All ways that have at least one node inside the region are included, but they might be missing some nodes, they are not reference-complete.</p>
+</blockquote>
+<!-- render the svg image /img/extract-strategy-simple.svg -->
+<img src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/extract-strategy-simple.svg" alt="Demonstration of simple extraction strategy">
+<details>
+<summary> Expand for complete_ways and smart strategies</summary>
+<h3 id="complete_ways">complete_ways</h3>
+<blockquote>
+<p>When using the complete_ways strategy, all nodes inside the specified region as well as all nodes used by ways that are partially inside the specified region will be in the output.</p>
+</blockquote>
+<!-- render the svg image /img/extract-strategy-complete-ways.svg -->
+<img src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/extract-strategy-complete-ways.svg" alt="Demonstration of complete_ways extraction strategy">
+<h3 id="smart">smart</h3>
+<p>When using the smart strategy, everything is done as in the complete_ways strategy, but multipolygon relations that have at least one node in the region will also be completely included.</p>
+<!-- render the svg image /img/extract-strategy-smart.svg -->
+<img src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/extract-strategy-smart.svg" alt="Demonstration of smart extraction strategy">
+</details>
+<p>the simple strategy sounds great for our needs.
+Beware that it extracts nodes and ways. But we need to find way segments (consecutive node pairs that are part of those ways) inside the region.
+When we extract the region we are interested with simple strategy it will give ways that intersects the region boundary, so some segments of those ways rest outside the region. So we need to filter out those segments by checking if both of their nodes are inside the extraction as well.</p>
+<h2 id="first-draft-and-noticing-the-problem">First Draft and Noticing the Problem</h2>
+<p>It’s implementation was pretty straightforward.
+Then we started testing it multiple regions on random places.
+Areas highlighted in red in the left side are the regions we want to examine/extract.
+The points are the nodes and the lines are the way segments.
+Brown segments are all the segments we founded in the regions (other segments are colored in orange, cyan, green etc.):
+<img src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/osmium-polyon-overlay.png" alt="image"></p>
+<p>Disappointingly, there were non-brown segments inside the region (even if their both nodes were inside the region).
+First, I went over my implementation nothing suspicious. It was a straightforward code anyway.
+Then I started examining the wrong segments if they have any common thing: same road type, same tags, etc. with <a href="https://josm.openstreetmap.de/">JOSM editor</a>.
+In fact, for a specific way whose multiple segments were inside the region, only a single segment was included.<sup id="fnref:2"><a href="http://localhost:1313/debugging_with_cursor/#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>I was stuck: there was nothing common for the wrong segments, my code seems to correctly handle edge cases, my logic -obviously- was sound.</p>
+<p>I need to check the state at every step to find where the code failed.</p>
+<h2 id="enter-cursor--claude-sonnetopus">Enter Cursor + Claude Sonnet|Opus</h2>
+<p>I decided that it was the time I plea to AI overlords!</p>
+<p>Ana mesaj: Technically we could have debugged it ourselves but it wouldn’t have been feasible to put the effort required to reliably reproduce and fix it.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Nooo, it ain’t the asphalt!
+It’s a continuous curve where things can move along.
+But it’s formal definition in the OSM data neither includes all ways nor exludes all non-ways in the the real-world (common sense) conceptualization.&nbsp;<a href="http://localhost:1313/debugging_with_cursor/#fnref:1" class="footnote-backref" role="doc-backlink">↩︎</a></p>
+</li>
+<li id="fn:2">
+<p>In retrospect we understood that this happened because we have two overlapping regions. The way was correctly included for one of them but it was incorrectly excluded for the other one.&nbsp;<a href="http://localhost:1313/debugging_with_cursor/#fnref:2" class="footnote-backref" role="doc-backlink">↩︎</a></p>
+</li>
+</ol>
+</div>
+
+
+<div id="nextprev">
+<a href="http://localhost:1313/notes_on_uvicorn/"><div id="prevart">Previous:<br>Notes on Uvicorn on Production</div></a>
+</div>
+<div style="clear:both" class="taglist">Related<br><a id="tag_english" href="http://localhost:1313/tags/english">English</a> · <a id="tag_cursor" href="http://localhost:1313/tags/cursor">Cursor</a> · <a id="tag_osmium" href="http://localhost:1313/tags/osmium">Osmium</a></div>
+</article>
+</main>
+
+<footer>
+	<a href="http://localhost:1313/">http://localhost:1313/</a><br><br><a href="http://localhost:1313/index.xml"><img src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+</footer>
+
+
+
+
+
+
+<script src="./Fixing 9 Years Old OSS Bug With Cursor _ Muhammed Can Küçükaslan_files/theme-switcher.js"></script>
+
+
+
+<button class="theme-toggle" aria-label="Toggle theme" title="Toggle theme" type="button" role="button" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">🌙</button></body></html>

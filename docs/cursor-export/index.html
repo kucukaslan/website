@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title> | Muhammed Can Küçükaslan</title>
+	<link rel="canonical" href="https://kucukaslan.com.tr/cursor-export/">
+	<link rel='alternate' type='application/rss+xml' title="Muhammed Can Küçükaslan RSS" href='/index.xml'>
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/computer-modern@0.0.1/dist/cmu-serif.css">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="Map segment speed changes within polygons
+Exported on 2/25/2026 at 00:00:08 GMT&#43;3 from Cursor (2.5.20)
+
+User
+Examine the image.
+I wanted to change the speed of the way segments inside the polygons to 0.1.
+On the right you see tiles of an area. dark-gray lines are the ones with speed 0.1.
+On the left you see the polygon bans applied on them.
+Do you see my intention and can evaluate the result?">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+	
+
+<meta property="og:title" content="Muhammed Can Küçükaslan">
+
+
+
+<meta property="og:description" content="Map segment speed changes within polygons Exported on 2/25/2026 at 00:00:08 GMT&#43;3 from Cursor (2.5.20)
+User
+Examine the image. I wanted to change the speed of the way segments inside the polygons to …">
+
+
+
+
+
+  
+  
+<meta property="og:image" content="https://kucukaslan.com.tr/img/knuth_taocp.png">
+
+
+<meta property="og:url" content="https://kucukaslan.com.tr/cursor-export/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Muhammed Can Küçükaslan">
+
+
+<meta property="article:author" content="Muhammed Can Küçükaslan">
+
+
+
+
+
+</head>
+<body>
+<nav>
+    <ul>
+	<li><a href="/"><span class=pre></span><span class=menuname>Home</span></a></li>
+	<li><a href="/about/"><span class=pre></span><span class=menuname>About</span></a></li>
+    </ul>
+</nav>
+
+<main>
+<header><h1 id="tag_"></h1></header>
+<article>
+
+<h1 id="map-segment-speed-changes-within-polygons">Map segment speed changes within polygons</h1>
+<p><em>Exported on 2/25/2026 at 00:00:08 GMT+3 from Cursor (2.5.20)</em></p>
+<hr>
+<p><strong>User</strong></p>
+<p>Examine the image.
+I wanted to change the speed of the way segments inside the polygons to 0.1.
+On the right you see tiles of an area. dark-gray lines are the ones with speed 0.1.
+On the left you see the polygon bans applied on them.
+Do you see my intention and can evaluate the result?</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<p>Looking at the image, I can see your intention:</p>
+<ol>
+<li><strong>Left map</strong>: Shows red/pink polygon overlay areas (the &ldquo;banned area polygons&rdquo;)</li>
+<li><strong>Right map</strong>: Shows the resulting road network where dark-gray lines represent way segments with speed set to 0.1</li>
+</ol>
+<p><strong>My Observation:</strong></p>
+<p>The dark-gray segments on the right appear to correspond to roads that pass through or intersect with the polygon areas on the left. However, I notice some potential issues:</p>
+<ol>
+<li><strong>Some roads inside polygons appear to still be cyan</strong> (normal speed) on the right side</li>
+<li><strong>Some dark-gray roads seem to extend beyond</strong> the polygon boundaries on the left</li>
+</ol>
+<p>To properly evaluate whether the implementation is working correctly, I need to examine the code that handles this polygon-based speed modification. Let me look at the <code>osm_processor.py</code> file you have open:</p>
+<p>Now I understand the implementation. Let me examine how the segments are used for speed updates:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e"># Only include segments where both nodes are inside the polygon</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> from_node <span style="color:#f92672">in</span> valid_nodes <span style="color:#f92672">and</span> to_node <span style="color:#f92672">in</span> valid_nodes:
+</span></span></code></pre></div><p>Let me check the osmium extract strategy being used:</p>
+<p>Now I have a complete understanding of your implementation. Let me evaluate the result:</p>
+<h2 id="understanding-the-implementation">Understanding the Implementation</h2>
+<p>Your code in <code>osm_processor.py</code> uses a <strong>conservative approach</strong> for applying speed 0.1 to segments:</p>
+<ol>
+<li><strong>osmium extract</strong> with <code>-s simple</code> strategy extracts data within the polygon</li>
+<li>Only <strong>nodes that are physically inside the polygon</strong> are collected in <code>valid_nodes</code></li>
+<li><strong>Segment generation</strong> (lines 306-322) only includes segments where <strong>BOTH nodes</strong> are inside the polygon:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-311:316:job/osm_processor.py" data-lang="311:316:job/osm_processor.py"><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(len(node_ids) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>            from_node <span style="color:#f92672">=</span> node_ids[i]
+</span></span><span style="display:flex;"><span>            to_node <span style="color:#f92672">=</span> node_ids[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Only include segments where both nodes are inside the polygon</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> from_node <span style="color:#f92672">in</span> valid_nodes <span style="color:#f92672">and</span> to_node <span style="color:#f92672">in</span> valid_nodes:
+</span></span></code></pre></div><h2 id="evaluation-of-the-result">Evaluation of the Result</h2>
+<p><strong>Based on the image:</strong></p>
+<table>
+  <thead>
+      <tr>
+          <th>Observation</th>
+          <th>Status</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Dark-gray lines (speed 0.1) appear within polygon areas</td>
+          <td>Expected behavior</td>
+      </tr>
+      <tr>
+          <td>Some roads crossing polygon boundaries remain cyan</td>
+          <td>Expected - segments straddling boundaries are skipped</td>
+      </tr>
+      <tr>
+          <td>Some roads inside polygons appear to still be cyan</td>
+          <td>Potential issue - needs investigation</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Potential causes for unexpected behavior:</strong></p>
+<ol>
+<li><strong>Boundary segments excluded</strong>: Road segments that cross the polygon edge (one node inside, one outside) are intentionally skipped by your current logic</li>
+<li><strong>OSM way structure</strong>: Long ways with sparse node density might have few segments fully contained within narrow polygon strips</li>
+<li><strong>Node position vs line geometry</strong>: A road segment might visually appear inside the polygon, but if either of its endpoint nodes is outside, it won&rsquo;t be affected</li>
+</ol>
+<hr>
+<p>I have a clarifying question to ensure I understand your intent correctly:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(len(node_ids) <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>):
+</span></span><span style="display:flex;"><span>            from_node <span style="color:#f92672">=</span> node_ids[i]
+</span></span><span style="display:flex;"><span>            to_node <span style="color:#f92672">=</span> node_ids[i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># Only include segments where both nodes are inside the polygon</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> from_node <span style="color:#f92672">in</span> valid_nodes <span style="color:#f92672">and</span> to_node <span style="color:#f92672">in</span> valid_nodes:
+</span></span></code></pre></div><p>Thank you for clarifying! So the issue is that <strong>some roads that are clearly inside the polygons are still showing as cyan</strong> (normal speed) instead of dark-gray (speed 0.1).</p>
+<p>This is likely due to <strong>OSM node sparsity</strong> - a road segment can visually pass through a polygon, but if both of its endpoint nodes happen to be outside the polygon, the segment won&rsquo;t be captured.</p>
+<p>Let me investigate the current logic more closely and propose a fix:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>     Node A (outside) -----&gt; Node B (inside) -----&gt; Node C (outside)
+</span></span><span style="display:flex;"><span>                            [polygon]
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>     Node A (outside) ----------------&gt; Node B (outside)
+</span></span><span style="display:flex;"><span>                  [polygon is narrow, no nodes inside]
+</span></span></code></pre></div><p>Now I understand the root cause. Let me check if we can access node coordinates for a more accurate solution:</p>
+<p>Now I have a complete understanding of the issue. Let me create a plan to fix the missing segments problem:</p>
+<hr>
+<p><strong>User</strong></p>
+<blockquote>
+<p>Segments crossing polygon boundary: included (line intersects polygon)</p>
+</blockquote>
+<p>???</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<p>You&rsquo;re right to question that - I contradicted your earlier answer! Let me clarify:</p>
+<p>Got it! So you want strict node-based logic:</p>
+<ul>
+<li>Both nodes inside → include</li>
+<li>Any node outside → skip</li>
+</ul>
+<p>This is exactly what the current code does. So the question becomes: <strong>why are some segments that appear fully inside the polygon being missed?</strong></p>
+<p>Possible causes:</p>
+<ol>
+<li><strong>Osmium extraction boundary precision</strong> - nodes appearing visually inside might be outside at coordinate level</li>
+<li><strong>Visualization mismatch</strong> - the polygon overlay on the left vs the tile data on the right might be from different processing runs</li>
+<li><strong>Polygon coordinate precision</strong> - small differences between DB geometry and what was processed</li>
+</ol>
+<p>Please share the specific location - you can provide:</p>
+<ul>
+<li><strong>Coordinates</strong> (lon, lat) of a road segment that should be affected but isn&rsquo;t</li>
+<li><strong>OSM way ID</strong> if you know it</li>
+<li><strong>Screenshot</strong> with the specific area highlighted</li>
+<li><strong>Node IDs</strong> from the tile info panel</li>
+</ul>
+<p>With a specific example, I can trace through the code logic to identify exactly why that segment is being skipped.</p>
+<hr>
+<p><strong>User</strong></p>
+<p>here is the osm file and ids that are incorrectly missed from edge segments:
+way 91747534
+node 5992278830
+node 36245618</p>
+<p>@debug.osm (1357-1368)</p>
+<p>I highlighted them with green drawing on the same tile map image</p>
+<p>These were the road banning polygons:</p>
+<pre tabindex="0"><code>&#34;POLYGON ((30.71538 36.903661, 30.717053 36.90385, 30.716216 36.899285, 30.714563 36.899457, 30.71538 36.903661))&#34;
+&#34;POLYGON ((30.714627 36.909529, 30.714487 36.902268, 30.717836 36.9022, 30.717106 36.909784, 30.714627 36.909529))&#34;
+</code></pre><hr>
+<p><strong>Cursor</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;way</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#39;91747534&#39;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;1066161581&#39;</span> <span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;6178281621&#39;</span> <span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;1066161527&#39;</span> <span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;1066161550&#39;</span> <span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;1066161526&#39;</span> <span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;5992278830&#39;</span> <span style="color:#f92672">/&gt;</span>  <span style="color:#75715e">&lt;!-- This node should be included --&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&lt;nd</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#39;36245618&#39;</span> <span style="color:#f92672">/&gt;</span>    <span style="color:#75715e">&lt;!-- This node should be included --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/way&gt;</span>
+</span></span></code></pre></div><p>Let me examine the <code>debug.osm</code> file to find the coordinates of the nodes in question and verify if they&rsquo;re inside the polygons:</p>
+<p>I found the node coordinates:</p>
+<ul>
+<li><strong>Node 36245618</strong>: lon=30.7161436, lat=36.905057</li>
+<li><strong>Node 5992278830</strong>: lon=30.7154932, lat=36.9050989</li>
+</ul>
+<p>Now let me verify if these nodes should be inside Polygon 2:</p>
+<pre tabindex="0"><code>Polygon 2: POLYGON ((30.714627 36.909529, 30.714487 36.902268, 30.717836 36.9022, 30.717106 36.909784, 30.714627 36.909529))
+
+Polygon bounds:
+  - lon: 30.7144 to 30.7178
+  - lat: 36.9022 to 36.9098
+
+Node 5992278830: lon=30.7155, lat=36.9051 → SHOULD be inside ✓
+Node 36245618:   lon=30.7161, lat=36.9051 → SHOULD be inside ✓
+</code></pre><p><strong>Both nodes geometrically ARE inside Polygon 2!</strong> So why are they being missed?</p>
+<p>Let me check the polygon file creation to investigate potential issues:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>Polygon 2: POLYGON ((30.714627 36.909529, 30.714487 36.902268, 30.717836 36.9022, 30.717106 36.909784, 30.714627 36.909529))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Polygon bounds:
+</span></span><span style="display:flex;"><span>  - lon: 30.7144 to 30.7178
+</span></span><span style="display:flex;"><span>  - lat: 36.9022 to 36.9098
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Node 5992278830: lon=30.7155, lat=36.9051 → SHOULD be inside ✓
+</span></span><span style="display:flex;"><span>Node 36245618:   lon=30.7161, lat=36.9051 → SHOULD be inside ✓
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> lon, lat <span style="color:#f92672">in</span> polygon_coords:
+</span></span><span style="display:flex;"><span>    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;    </span><span style="color:#e6db74">{</span>lon<span style="color:#e6db74">}</span><span style="color:#e6db74">    </span><span style="color:#e6db74">{</span>lat<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>POLYGON ((30.714627 36.909529, 30.714487 36.902268, 30.717836 36.9022, 30.717106 36.909784, 30.714627 36.909529))
+</span></span></code></pre></div><p>Let me check how multiple polygons are processed and if there could be an issue with the polygon data flow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> lon, lat <span style="color:#f92672">in</span> polygon_coords:
+</span></span><span style="display:flex;"><span>    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;    </span><span style="color:#e6db74">{</span>lon<span style="color:#e6db74">}</span><span style="color:#e6db74">    </span><span style="color:#e6db74">{</span>lat<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><p>I see - both nodes <strong>should geometrically be inside Polygon 2</strong>. Let me investigate the potential causes by checking if there&rsquo;s any coordinate precision or polygon processing issue.</p>
+<p>Let me check how the polygons are stored and retrieved:</p>
+<p>Based on my analysis:</p>
+<p><strong>The nodes SHOULD be inside Polygon 2:</strong></p>
+<ul>
+<li>Node 5992278830: (lon=30.7155, lat=36.9051)</li>
+<li>Node 36245618: (lon=30.7161, lat=36.9051)</li>
+<li>Polygon 2 spans: lon 30.7144→30.7178, lat 36.9022→36.9098</li>
+</ul>
+<p>Both nodes are geometrically <strong>well inside</strong> the polygon. The current logic should capture them.</p>
+<p><strong>Possible causes for the miss:</strong></p>
+<ol>
+<li><strong>Polygon not processed</strong> - Maybe only Polygon 1 was processed (which has lat max ~36.904, below the nodes at lat ~36.905)</li>
+<li><strong>Geometry data mismatch</strong> - The polygon stored in DB differs from what you showed</li>
+<li><strong>OSM PBF file issue</strong> - The PBF file used for extraction might have different coordinates for these nodes</li>
+<li><strong>osmium extraction edge case</strong> - Some precision issue with the .poly file</li>
+</ol>
+<p><strong>To debug this, I need to verify:</strong></p>
+<ul>
+<li>Which polygon(s) were actually processed by the job</li>
+<li>What coordinates were written to the .poly file</li>
+<li>Whether osmium extracted these specific node IDs</li>
+</ul>
+<hr>
+<p><strong>User</strong></p>
+<p>I already given you the geometry from the DB.
+I can give you list of edge segments if necessary.</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<p>Yes, please share the edge segments that were created for these polygons (especially Polygon 2). This will show exactly which node pairs were captured vs missed.</p>
+<p>If you can share:</p>
+<ol>
+<li>The edge segments for the polygon that should contain nodes 5992278830 and 36245618</li>
+<li>Or just confirm: is there <strong>any</strong> edge segment with <code>from_node=5992278830</code> or <code>to_node=5992278830</code> or similar for node 36245618?</li>
+</ol>
+<p>This will tell us if:</p>
+<ul>
+<li><strong>No segments at all</strong> for these nodes → osmium didn&rsquo;t extract them</li>
+<li><strong>Some segments exist</strong> but not the specific pair → segment generation logic issue</li>
+</ul>
+<hr>
+<p><strong>User</strong></p>
+<p>I saced segments for 694149c0345bafbade608b30 in @maps-service-osrm-updater/active_edge_segments.csv  file</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<p>Interesting! I found:</p>
+<ul>
+<li><strong>5992278830 ↔ 5992278828</strong> exists (both directions)</li>
+<li><strong>5992278830 ↔ 36245618</strong> is <strong>MISSING</strong>!</li>
+</ul>
+<p>Let me verify that node 36245618 has no segments at all:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>POLYGON ((30.714627 36.909529, 30.714487 36.902268, 30.717836 36.9022, 30.717106 36.909784, 30.714627 36.909529))
+</span></span></code></pre></div><p><strong>Key finding: Node 36245618 has ZERO edge segments!</strong></p>
+<p>This confirms:</p>
+<ul>
+<li>Node <strong>5992278830</strong> was extracted by osmium (it has segments with neighbor 5992278828)</li>
+<li>Node <strong>36245618</strong> was <strong>NOT extracted</strong> by osmium (no segments at all)</li>
+</ul>
+<p>But both nodes should be inside Polygon 2 based on coordinates:</p>
+<ul>
+<li>Node 5992278830: lon=30.7155, lat=36.9051 ✓ captured</li>
+<li>Node 36245618: lon=30.7161, lat=36.9051 ✗ <strong>NOT captured</strong></li>
+</ul>
+<p>Let me check the CSV structure and verify the polygon ID:</p>
+<p>Let me check if there are multiple polygon IDs in the CSV - you mentioned two polygon WKTs:</p>
+<p>There&rsquo;s only <strong>one polygon_id</strong> (694149c0345bafbade608b30) with 900 segments in the CSV.</p>
+<p>But you showed me <strong>two</strong> polygon WKTs:</p>
+<ol>
+<li><code>POLYGON ((30.71538 36.903661, ...))</code> - lat range: 36.899 to 36.904</li>
+<li><code>POLYGON ((30.714627 36.909529, ...))</code> - lat range: 36.902 to 36.910</li>
+</ol>
+<p>The nodes in question (5992278830 and 36245618) are at lat ~36.905, which is:</p>
+<ul>
+<li><strong>OUTSIDE Polygon 1</strong> (max lat is 36.904)</li>
+<li><strong>INSIDE Polygon 2</strong> (lat range 36.902-36.910)</li>
+</ul>
+<p><strong>Critical question:</strong> Does polygon_id <code>694149c0345bafbade608b30</code> correspond to Polygon 1 or Polygon 2?</p>
+<p>If it&rsquo;s Polygon 1, then the nodes at lat ~36.905 are correctly outside that polygon, and Polygon 2 must have a <strong>different polygon_id</strong> that needs to be checked separately.</p>
+<p>So polygon_id <code>694149c0345bafbade608b30</code> = Polygon 2 (lat 36.902-36.910).</p>
+<p>This confirms the bug: <strong>Node 36245618 at (lon=30.7161, lat=36.9051) SHOULD be inside Polygon 2 but wasn&rsquo;t extracted by osmium.</strong></p>
+<p>Let me check the node definition in the debug.osm file more closely:</p>
+<p>I see the node definition:</p>
+<pre tabindex="0"><code>&lt;node id=&#39;36245618&#39; lat=&#39;36.905057&#39; lon=&#39;30.7161436&#39; /&gt;
+</code></pre><p><strong>Both nodes should be inside Polygon 2:</strong></p>
+<ul>
+<li>Node 5992278830: lon=30.7155, lat=36.9051 ✓ captured</li>
+<li>Node 36245618: lon=30.7161, lat=36.9051 ✗ NOT captured</li>
+</ul>
+<p>They&rsquo;re at nearly identical latitudes, just 0.0006° apart in longitude. This is very suspicious.</p>
+<p>Let me create a quick test to verify if osmium is correctly extracting this node. Can you run this manual test?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>&lt;node id=&#39;36245618&#39; lat=&#39;36.905057&#39; lon=&#39;30.7161436&#39; /&gt;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>polygon
+</span></span><span style="display:flex;"><span>1
+</span></span><span style="display:flex;"><span>    30.714627    36.909529
+</span></span><span style="display:flex;"><span>    30.714487    36.902268
+</span></span><span style="display:flex;"><span>    30.717836    36.9022
+</span></span><span style="display:flex;"><span>    30.717106    36.909784
+</span></span><span style="display:flex;"><span>    30.714627    36.909529
+</span></span><span style="display:flex;"><span>END
+</span></span><span style="display:flex;"><span>END
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>        <span style="color:#75715e"># Close ring by repeating first coordinate if not already closed</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> polygon_coords <span style="color:#f92672">and</span> polygon_coords[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">!=</span> polygon_coords[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]:
+</span></span><span style="display:flex;"><span>            lon, lat <span style="color:#f92672">=</span> polygon_coords[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>            f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;    </span><span style="color:#e6db74">{</span>lon<span style="color:#e6db74">}</span><span style="color:#e6db74">    </span><span style="color:#e6db74">{</span>lat<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>1    30.714627    36.909529
+</span></span><span style="display:flex;"><span>    30.714487    36.902268
+</span></span><span style="display:flex;"><span>    30.717836    36.9022
+</span></span><span style="display:flex;"><span>    30.717106    36.909784
+</span></span><span style="display:flex;"><span>    30.714627    36.909529
+</span></span><span style="display:flex;"><span>END
+</span></span><span style="display:flex;"><span>END, I think I see a potential issue! The .poly format expects coordinates to be in a SPECIFIC winding order. According to the osmium documentation:&gt; The polygon must be given in the counter-clockwise direction.Let me check if the polygon is counter-clockwise...
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Actually, for the .poly format used by osmium, the exterior ring should go counter-clockwise (CCW). Let me verify:Starting at (30.714627, 36.909529):1. 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>→ (30.714487, 36.902268): moving left-down (decreasing lon, decreasing lat)2. → (30.717836, 36.9022): moving right (increasing lon, slight decrease in lat)3. → (30.717106, 36.909784): moving left-up (decreasing lon, increasing lat)4. → (30.714627, 36.909529): moving left-down (decreasing lon, decreasing lat)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>In standard coordinates where longitude increases rightward and latitude increases upward, I need to determine if this traces counter-clockwise. The winding order might be the culprit here—if osmium expects CCW but I&#39;ve provided CW coordinates, it could reject the polygon or behave unexpectedly.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Let me verify by checking which side the interior falls on as I traverse each edge. Walking from (30.714627, 36.909529) toward (30.714487, 36.902268) heads south; the interior should lie to my left, which means eastward (higher longitude). That aligns with an interior around lon 30.716. Moving from (30.714487, 36.902268) to (30.717836, 36.9022) goes east; the interior should be to my left, pointing north (higher latitude), consistent with an interior near lat 36.905. The segment from (30.717836, 36.9022) to (30.717106, 36.909784) travels mostly north with a slight westward component; the interior should be to my left, which is westward.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>This confirms counter-clockwise winding, which is correct for an exterior ring. The polygon orientation itself appears sound, so the problem lies elsewhere. I should examine the `geometry_to_coordinates` function to see if the WKB geometry stored in the database differs from the WKT representation shown. Though actually, osmium&#39;s point-in-polygon test shouldn&#39;t be sensitive to winding order anyway. Perhaps the issue is in how the .poly file gets written, or there&#39;s something specific about node 36245618 that&#39;s causing the mismatch.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Let me check which ways in the debug.osm file actually contain node 36245618.
+</span></span></code></pre></div><p><strong>Shapely confirms BOTH nodes are inside the polygon!</strong></p>
+<p>This means the issue is somewhere in the osmium extraction process, not the polygon geometry itself.</p>
+<p>Let me check if there&rsquo;s something special about way 91747534 or if node 36245618 is referenced by other ways:</p>
+<p>Node 36245618 is used in <strong>two ways</strong>:</p>
+<ol>
+<li><strong>Way 91747534</strong> (794. Sokak - residential) - 36245618 is the LAST node</li>
+<li><strong>Way 221287339</strong> (Kızılırmak Caddesi - primary) - 36245618 is in the middle</li>
+</ol>
+<p>Let me check if there are segments for the neighbors of 36245618 in way 221287339:</p>
+<p>Node 990339773 has segments, but node 4339961951 doesn&rsquo;t appear. Let me check their coordinates:</p>
+<p>Let me verify all three nodes with Shapely:</p>
+<p><strong>CONFIRMED: All 4 nodes are geometrically INSIDE the polygon</strong>, but only 2 were captured:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Node</th>
+          <th>lon</th>
+          <th>lat</th>
+          <th>Inside Polygon</th>
+          <th>Captured</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>990339773</td>
+          <td>30.7162</td>
+          <td>36.9046</td>
+          <td>✓</td>
+          <td>✓</td>
+      </tr>
+      <tr>
+          <td>5992278830</td>
+          <td>30.7155</td>
+          <td>36.9051</td>
+          <td>✓</td>
+          <td>✓</td>
+      </tr>
+      <tr>
+          <td>4339961951</td>
+          <td>30.7161</td>
+          <td>36.9057</td>
+          <td>✓</td>
+          <td>✗</td>
+      </tr>
+      <tr>
+          <td>36245618</td>
+          <td>30.7161</td>
+          <td>36.9051</td>
+          <td>✓</td>
+          <td>✗</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>This is a critical finding!</strong> The issue is NOT with the polygon geometry or the containment logic. Something is wrong with the <strong>osmium extraction</strong> or the <strong>PBF file</strong> being used.</p>
+<p>Key question: Is the <code>debug.osm</code> file the same data source as the PBF file used for extraction?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> lon, lat <span style="color:#f92672">in</span> polygon_coords:    f<span style="color:#f92672">.</span>write(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;    </span><span style="color:#e6db74">{</span>lon<span style="color:#e6db74">}</span><span style="color:#e6db74">    </span><span style="color:#e6db74">{</span>lat<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)d the geometry_to_coordinates function:
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> [[coord[<span style="color:#ae81ff">0</span>], coord[<span style="color:#ae81ff">1</span>]] <span style="color:#66d9ef">for</span> coord <span style="color:#f92672">in</span> coords]<span style="color:#960050;background-color:#1e0010">```</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>The polygon_coords coming <span style="color:#f92672">from</span> geometry_to_coordinates are <span style="color:#f92672">in</span> <span style="color:#960050;background-color:#1e0010">`</span>[lon, lat]<span style="color:#960050;background-color:#1e0010">`</span> format<span style="color:#f92672">.</span> And create_polygon_file iterates <span style="color:#66d9ef">with</span> <span style="color:#960050;background-color:#1e0010">`</span><span style="color:#66d9ef">for</span> lon, lat <span style="color:#f92672">in</span> polygon_coords<span style="color:#960050;background-color:#1e0010">`</span>, which should correctly unpack <span style="color:#66d9ef">as</span> lon<span style="color:#f92672">=</span>coord[<span style="color:#ae81ff">0</span>], lat<span style="color:#f92672">=</span>coord[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>This seems correct<span style="color:#f92672">...</span>Let me check <span style="color:#66d9ef">if</span> there<span style="color:#e6db74">&#39;s something weird happening with the .poly file. Maybe I should test osmium directly with the polygon and PBF file.</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Actually, I should ask the user to run osmium extract manually to see what nodes get extracted<span style="color:#f92672">.</span>
+</span></span></code></pre></div><p>Since it&rsquo;s the same PBF file, this is very strange. Let me check if there&rsquo;s an issue with osmium&rsquo;s extraction.</p>
+<p>Can you run this command to extract nodes using the polygon and check if node 36245618 is in the output?</p>
+<p>Let me check the extraction function more closely - specifically how the filtered PBF is parsed:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>polygon_name
+</span></span><span style="display:flex;"><span>ring_name
+</span></span><span style="display:flex;"><span>    lon lat
+</span></span><span style="display:flex;"><span>    lon lat    ...END
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>polygon_name2
+</span></span><span style="display:flex;"><span>...END
+</span></span></code></pre></div><p>Wait! I just realized something critical:</p>
+<p><strong>The .poly format expects CLOCKWISE winding for exterior rings</strong>, but our polygon is <strong>counter-clockwise</strong>!</p>
+<p>Let me verify this is causing the issue:</p>
+<p>The winding order doesn&rsquo;t affect Shapely&rsquo;s containment check. Let me investigate precision - perhaps there&rsquo;s a floating-point precision issue when writing the .poly file:</p>
+<p>The precision is fine. Let me check one more thing - can you verify what PBF file is being used and whether we can run a direct osmium test?</p>
+<p>Actually, let me try a different approach. What if the issue is with osmium&rsquo;s &ldquo;simple&rdquo; strategy? Let me check the osmium extract command:</p>
+<p>I think I&rsquo;ve identified the issue. Let me propose a solution:</p>
+<p><strong>Root Cause Hypothesis:</strong> osmium&rsquo;s &ldquo;simple&rdquo; strategy point-in-polygon check might have edge cases or precision differences compared to Shapely, causing some nodes to be incorrectly excluded.</p>
+<p><strong>Solution:</strong> Instead of relying on osmium to determine which nodes are &ldquo;inside&rdquo; the polygon, we should:</p>
+<ol>
+<li>Extract node coordinates from the filtered PBF (<code>locations=True</code>)</li>
+<li>Use Shapely to verify which nodes are actually inside the polygon</li>
+<li>This ensures consistent containment logic with the same algorithm we used for verification</li>
+</ol>
+<hr>
+<p><strong>User</strong></p>
+<p>We can write a script/notebook to reproduce the issue on @debug.osm.pbf file first.</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<p>Great idea! Let me create a reproduction script that will:</p>
+<ol>
+<li>Run osmium extract on the debug.osm.pbf with the polygon</li>
+<li>Compare osmium&rsquo;s extracted nodes vs Shapely&rsquo;s containment check</li>
+<li>Show exactly which nodes are missing</li>
+</ol>
+<p><strong>Surprising result!</strong> osmium correctly extracts ALL 4 nodes from <code>debug.osm.pbf</code>!</p>
+<p>This means the issue is NOT with osmium. Let me now trace the full segment generation to find where the segments are being lost:</p>
+<p><strong>Found the issue!</strong> Way 91747534 is NOT in the filtered PBF!</p>
+<p>The nodes (36245618, 5992278830) ARE inside the polygon, but the WAY that contains them is missing. Let me investigate why:</p>
+<p><strong>CRITICAL FINDING!</strong></p>
+<p>Way 91747534 has <strong>2 nodes inside the polygon</strong> (5992278830 and 36245618), so osmium&rsquo;s &ldquo;simple&rdquo; strategy should include it, but <strong>it&rsquo;s NOT in the filtered output!</strong></p>
+<p>This is an osmium bug or edge case. Let me compare with ways that ARE included:</p>
+<p><strong>Major discovery!</strong> osmium is missing <strong>28 ways</strong> that should be included!</p>
+<p>Let me check if there&rsquo;s a pattern - maybe osmium is only including ways that START inside the polygon:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>INCLUDED ways with first node INSIDE: 83
+</span></span><span style="display:flex;"><span>INCLUDED ways with first node OUTSIDE: 0
+</span></span><span style="display:flex;"><span>MISSING ways with first node INSIDE: 0
+</span></span><span style="display:flex;"><span>MISSING ways with first node OUTSIDE: 28
+</span></span></code></pre></div><p><strong>ROOT CAUSE FOUND!</strong></p>
+<table>
+  <thead>
+      <tr>
+          <th>Category</th>
+          <th>Count</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>INCLUDED ways with first node INSIDE</td>
+          <td>83</td>
+      </tr>
+      <tr>
+          <td>INCLUDED ways with first node OUTSIDE</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>MISSING ways with first node INSIDE</td>
+          <td>0</td>
+      </tr>
+      <tr>
+          <td>MISSING ways with first node OUTSIDE</td>
+          <td>28</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>osmium&rsquo;s &ldquo;simple&rdquo; strategy only includes ways where the FIRST node is inside the polygon!</strong> Ways that start outside but enter the polygon are incorrectly skipped!</p>
+<p>Let me try the &ldquo;smart&rdquo; strategy to see if it fixes this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>  Missing ways: 28
+</span></span><span style="display:flex;"><span>  Way 91747534 included: ✗ NO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Strategy &#39;smart&#39;:
+</span></span><span style="display:flex;"><span>  Missing ways: 0  Way 91747534 included: ✓ YESStrategy &#39;complete_ways&#39;:
+</span></span><span style="display:flex;"><span>  Missing ways: 0
+</span></span><span style="display:flex;"><span>  Way 91747534 included: ✓ YES fix is simple: change `-s simple` to `-s smart` in the osmium extract command!Now let me verify that with &#34;smart&#34; strategy, all the target segments are correctly generated.
+</span></span></code></pre></div><p><strong>SOLUTION FOUND!</strong></p>
+<table>
+  <thead>
+      <tr>
+          <th>Strategy</th>
+          <th>Ways Included</th>
+          <th>Missing</th>
+          <th>Way 91747534</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>simple</td>
+          <td>83</td>
+          <td>28</td>
+          <td>✗ NO</td>
+      </tr>
+      <tr>
+          <td><strong>smart</strong></td>
+          <td>111</td>
+          <td>0</td>
+          <td><strong>✓ YES</strong></td>
+      </tr>
+      <tr>
+          <td>complete_ways</td>
+          <td>111</td>
+          <td>0</td>
+          <td>✓ YES</td>
+      </tr>
+  </tbody>
+</table>
+<p>The fix is simple: <strong>change <code>-s simple</code> to <code>-s smart</code></strong> in the osmium extract command!</p>
+<p>Let me verify the full segment generation works with the &ldquo;smart&rdquo; strategy:</p>
+<p><strong>Wait!</strong> There&rsquo;s a problem. With &ldquo;smart&rdquo; strategy, ALL nodes of way 91747534 are now in <code>valid_nodes</code>, including nodes that are <strong>OUTSIDE</strong> the polygon!</p>
+<p>This means segments like <code>1066161581 -&gt; 6178281621</code> (both outside the polygon) would be incorrectly included.</p>
+<p>Let me verify this is an issue:</p>
+<p><strong>Complete solution verified!</strong></p>
+<p>The fix requires <strong>two changes</strong>:</p>
+<ol>
+<li><strong>Use &ldquo;smart&rdquo; strategy</strong> for osmium extract (to include ways that start outside)</li>
+<li><strong>Use Shapely for node filtering</strong> (to correctly identify nodes inside polygon)</li>
+</ol>
+<p>This gives us the correct result:</p>
+<ul>
+<li>Segment <code>5992278830 -&gt; 36245618</code>: ✓ INCLUDED (both inside)</li>
+<li>Segments outside: ✗ SKIPPED (correctly)</li>
+</ul>
+<p>Let me update the plan:</p>
+<hr>
+<p><strong>User</strong></p>
+<p>Can you examine @osmium-tool/src/extract/strategy_simple.cpp</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// &lt;-- BUG! This returns after checking ONLY THE FIRST NODE!
+</span></span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// &lt;-- Should be inside the if block
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Looking at the osmium-tool source code, I found <strong>the bug</strong>!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-75:83:osmium-tool/src/extract/strategy_simple.cpp" data-lang="75:83:osmium-tool/src/extract/strategy_simple.cpp"><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>                    e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>                    e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p><strong>The <code>return;</code> on line 81 is OUTSIDE the <code>if</code> block but INSIDE the <code>for</code> loop!</strong></p>
+<p>This means:</p>
+<ol>
+<li>It checks <strong>only the FIRST node</strong> of the way</li>
+<li>If the first node is inside → write the way</li>
+<li>Then it <strong>immediately returns</strong> without checking any other nodes!</li>
+</ol>
+<p>The correct code should be:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// &lt;-- Should be INSIDE the if block!
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>This is a confirmed bug in osmium-tool!</strong> The indentation makes it look correct, but the <code>return</code> statement exits after checking only the first node, regardless of whether it&rsquo;s inside the polygon.</p>
+<p>This explains exactly what we observed:</p>
+<ul>
+<li>Ways with first node inside: 83 included</li>
+<li>Ways with first node outside: 0 included (all 28 missing)</li>
+</ul>
+<p>Would you like to:</p>
+<ol>
+<li>Report this bug to osmium-tool maintainers?</li>
+<li>Proceed with our workaround (use &ldquo;smart&rdquo; strategy + Shapely filtering)?</li>
+<li>Both?</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>                    e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>                    e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// &lt;-- Should be INSIDE the if block!
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<p><strong>User</strong></p>
+<p>Can we fix it? We already have the repo cloned.
+Can we prepare minimal reproducible test as well  @extract</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<p>Yes! Let me examine the existing test structure to create a proper fix and test:</p>
+<p>Now I understand the test structure. Let me create a plan for fixing the bug and adding a test:</p>
+<hr>
+<p><strong>User</strong></p>
+<p>Implement the plan as specified, it is attached for your reference. Do NOT edit the plan file itself.</p>
+<p>To-do&rsquo;s from the plan have already been created. Do not create them again. Mark them as in_progress as you work, starting with the first one. Don&rsquo;t stop until you have completed all the to-dos.</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">Osmium -- OpenStreetMap data manipulation command line tool
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">https://osmcode.org/osmium-tool/
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">Copyright (C) 2013-2025  Jochen Topf &lt;jochen@topf.org&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">This program is free software: you can redistribute it and/or modify
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">it under the terms of the GNU General Public License as published by
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">the Free Software Foundation, either version 3 of the License, or
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">(at your option) any later version.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">This program is distributed in the hope that it will be useful,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">but WITHOUT ANY WARRANTY; without even the implied warranty of
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">GNU General Public License for more details.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">You should have received a copy of the GNU General Public License
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;strategy_simple.hpp&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;../util.hpp&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;osmium/handler/check_order.hpp&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;cstdlib&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;memory&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;vector&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> strategy_simple {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Strategy<span style="color:#f92672">::</span>Strategy(<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>vector<span style="color:#f92672">&lt;</span>std<span style="color:#f92672">::</span>unique_ptr<span style="color:#f92672">&lt;</span>Extract<span style="color:#f92672">&gt;&gt;&amp;</span> extracts, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Options<span style="color:#f92672">&amp;</span> options) {
+</span></span><span style="display:flex;"><span>        m_extracts.reserve(extracts.size());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> extract : extracts) {
+</span></span><span style="display:flex;"><span>            m_extracts.emplace_back(<span style="color:#f92672">*</span>extract);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> option : options) {
+</span></span><span style="display:flex;"><span>            warning(std<span style="color:#f92672">::</span>string{<span style="color:#e6db74">&#34;Ignoring unknown option &#39;&#34;</span>} <span style="color:#f92672">+</span> option.first <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;&#39; for &#39;simple&#39; strategy.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">char</span><span style="color:#f92672">*</span> Strategy<span style="color:#f92672">::</span>name() <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">noexcept</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;simple&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Pass1</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">public</span> Pass<span style="color:#f92672">&lt;</span>Strategy, Pass1<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        osmium<span style="color:#f92672">::</span>handler<span style="color:#f92672">::</span>CheckOrder m_check_order;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">explicit</span> Pass1(Strategy<span style="color:#f92672">*</span> strategy) <span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            Pass(strategy) {
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">node</span>(<span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Node<span style="color:#f92672">&amp;</span> node) {
+</span></span><span style="display:flex;"><span>            m_check_order.node(node);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">enode</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Node<span style="color:#f92672">&amp;</span> node) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>contains(node.location())) {
+</span></span><span style="display:flex;"><span>                e<span style="color:#f92672">-&gt;</span>write(node);
+</span></span><span style="display:flex;"><span>                e<span style="color:#f92672">-&gt;</span>node_ids.set(node.positive_id());
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">way</span>(<span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>            m_check_order.way(way);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>                    e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>                    e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">relation</span>(<span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Relation<span style="color:#f92672">&amp;</span> relation) {
+</span></span><span style="display:flex;"><span>            m_check_order.relation(relation);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">erelation</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Relation<span style="color:#f92672">&amp;</span> relation) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> member : relation.members()) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">switch</span> (member.type()) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">case</span> osmium<span style="color:#f92672">::</span>item_type<span style="color:#f92672">::</span>node:
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(member.positive_ref())) {
+</span></span><span style="display:flex;"><span>                            e<span style="color:#f92672">-&gt;</span>write(relation);
+</span></span><span style="display:flex;"><span>                        }
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">case</span> osmium<span style="color:#f92672">::</span>item_type<span style="color:#f92672">::</span>way:
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>way_ids.get(member.positive_ref())) {
+</span></span><span style="display:flex;"><span>                            e<span style="color:#f92672">-&gt;</span>write(relation);
+</span></span><span style="display:flex;"><span>                        }
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }; <span style="color:#75715e">// class Pass1
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> Strategy<span style="color:#f92672">::</span>run(osmium<span style="color:#f92672">::</span>VerboseOutput<span style="color:#f92672">&amp;</span> vout, <span style="color:#66d9ef">bool</span> display_progress, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>io<span style="color:#f92672">::</span>File<span style="color:#f92672">&amp;</span> input_file) {
+</span></span><span style="display:flex;"><span>        vout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Running &#39;simple&#39; strategy in one pass...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>size_t file_size <span style="color:#f92672">=</span> input_file.filename().empty() <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> osmium<span style="color:#f92672">::</span>file_size(input_file.filename());
+</span></span><span style="display:flex;"><span>        osmium<span style="color:#f92672">::</span>ProgressBar progress_bar{file_size, display_progress};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Pass1 pass1{<span style="color:#66d9ef">this</span>};
+</span></span><span style="display:flex;"><span>        pass1.run(progress_bar, input_file);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        progress_bar.done();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>} <span style="color:#75715e">// namespace strategy_simple
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39;?&gt;
+</span></span><span style="display:flex;"><span>&lt;osm version=&#34;0.6&#34; upload=&#34;false&#34; generator=&#34;testdata&#34;&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;100&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;1&#34; lon=&#34;5&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;101&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;2&#34; lon=&#34;1&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;102&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;3&#34; lon=&#34;1&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;way id=&#34;200&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34;&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;100&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;101&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;102&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;tag k=&#34;highway&#34; v=&#34;residential&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;/way&gt;
+</span></span><span style="display:flex;"><span>&lt;/osm&gt;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39;?&gt;
+</span></span><span style="display:flex;"><span>&lt;osm version=&#34;0.6&#34; upload=&#34;false&#34; generator=&#34;test&#34;&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;101&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;2&#34; lon=&#34;1&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;102&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;3&#34; lon=&#34;1&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;way id=&#34;200&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34;&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;100&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;101&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;102&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;tag k=&#34;highway&#34; v=&#34;residential&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;/way&gt;
+</span></span><span style="display:flex;"><span>&lt;/osm&gt;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span><span style="color:#75715e">#-----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#  CMake Config
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#  Osmium Tool Tests - extract
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#-----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>function(<span style="color:#e6db74">check_extract</span> <span style="color:#e6db74">_name</span> <span style="color:#e6db74">_input</span> <span style="color:#e6db74">_output</span> <span style="color:#e6db74">_opts</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>    check_output(<span style="color:#e6db74">extract</span> <span style="color:#f92672">${</span>_name<span style="color:#f92672">}</span> <span style="color:#e6db74">&#34;extract --generator=test -f osm extract/${_input} ${_opts} -b 0,0,1.5,10&#34;</span> <span style="color:#e6db74">&#34;extract/${_output}&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>endfunction()<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>function(<span style="color:#e6db74">check_extract_cfg</span> <span style="color:#e6db74">_name</span> <span style="color:#e6db74">_input</span> <span style="color:#e6db74">_output</span> <span style="color:#e6db74">_opts</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>    check_output(<span style="color:#e6db74">extract</span> <span style="color:#e6db74">cfg_</span><span style="color:#f92672">${</span>_name<span style="color:#f92672">}</span> <span style="color:#e6db74">&#34;extract --generator=test extract/${_input} ${_opts} -c ${CMAKE_CURRENT_SOURCE_DIR}/config.json&#34;</span> <span style="color:#e6db74">&#34;extract/${_output}&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>endfunction()<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>function(<span style="color:#e6db74">check_extract_opl</span> <span style="color:#e6db74">_name</span> <span style="color:#e6db74">_input</span> <span style="color:#e6db74">_output</span> <span style="color:#e6db74">_opts</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>    check_output(<span style="color:#e6db74">extract</span> <span style="color:#f92672">${</span>_name<span style="color:#f92672">}</span> <span style="color:#e6db74">&#34;extract --generator=test -f opl extract/${_input} ${_opts}&#34;</span> <span style="color:#e6db74">&#34;extract/${_output}&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>endfunction()<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#-----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">clean</span>                <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-clean.osm</span> <span style="color:#e6db74">&#34;--clean version --clean uid&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">simple</span>               <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-simple.osm</span> <span style="color:#e6db74">&#34;-s simple --output-header=xml_josm_upload!&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">complete_ways</span>        <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-complete-ways.osm</span> <span style="color:#e6db74">&#34;-s complete_ways&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">complete_ways_norels</span> <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-complete-ways-norels.osm</span> <span style="color:#e6db74">&#34;-s complete_ways -S relations=false&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_default</span>        <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-smart.osm</span> <span style="color:#e6db74">&#34;-s smart&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_mp</span>             <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-smart.osm</span> <span style="color:#e6db74">&#34;-s smart -S types=multipolygon&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_any</span>            <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-smart.osm</span> <span style="color:#e6db74">&#34;-s smart -S types=any&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_nonmp</span>          <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-smart-nonmp.osm</span> <span style="color:#e6db74">&#34;-s smart -S types=x&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"># Test for way that starts outside polygon but has nodes inside (bug fix test)
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">simple_way_starts_outside</span> <span style="color:#e6db74">input-way-starts-outside.osm</span> <span style="color:#e6db74">output-simple-way-starts-outside.osm</span> <span style="color:#e6db74">&#34;-s simple&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_cfg(<span style="color:#e6db74">simple</span>           <span style="color:#e6db74">input1.osm</span> <span style="color:#e6db74">output-simple.osm</span> <span style="color:#e6db74">&#34;-s simple --output-header=xml_josm_upload=false&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#-----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">clean64</span>                <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-clean64.osm</span> <span style="color:#e6db74">&#34;--clean version --clean uid&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">simple64</span>               <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-simple64.osm</span> <span style="color:#e6db74">&#34;-s simple --output-header=xml_josm_upload!&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">complete_ways64</span>        <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-complete-ways64.osm</span> <span style="color:#e6db74">&#34;-s complete_ways&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">complete_ways_norels64</span> <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-complete-ways-norels64.osm</span> <span style="color:#e6db74">&#34;-s complete_ways -S relations=false&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_default64</span>        <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-smart64.osm</span> <span style="color:#e6db74">&#34;-s smart&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_mp64</span>             <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-smart64.osm</span> <span style="color:#e6db74">&#34;-s smart -S types=multipolygon&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_any64</span>            <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-smart64.osm</span> <span style="color:#e6db74">&#34;-s smart -S types=any&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">smart_nonmp64</span>          <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-smart-nonmp64.osm</span> <span style="color:#e6db74">&#34;-s smart -S types=x&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_cfg(<span style="color:#e6db74">simple64</span>           <span style="color:#e6db74">input64.osm</span> <span style="color:#e6db74">output-simple64.osm</span> <span style="color:#e6db74">&#34;-s simple --output-header=xml_josm_upload=false&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#-----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-east-bbox</span> <span style="color:#e6db74">antimeridian.opl</span> <span style="color:#e6db74">output-antimeridian-east.opl</span> <span style="color:#e6db74">&#34;--bbox=160,60,180,80&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-west-bbox</span> <span style="color:#e6db74">antimeridian.opl</span> <span style="color:#e6db74">output-antimeridian-west.opl</span> <span style="color:#e6db74">&#34;--bbox=-180,60,-160,80&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-east-poly</span> <span style="color:#e6db74">antimeridian.opl</span> <span style="color:#e6db74">output-antimeridian-east.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-russia-east.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-west-poly</span> <span style="color:#e6db74">antimeridian.opl</span> <span style="color:#e6db74">output-antimeridian-west.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-russia-west.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-both-poly</span> <span style="color:#e6db74">antimeridian.opl</span> <span style="color:#e6db74">output-antimeridian-both.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-russia-all.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-reverse-poly</span> <span style="color:#e6db74">antimeridian.opl</span> <span style="color:#e6db74">output-antimeridian-both.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-russia-reverse.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-alaska-east-json</span> <span style="color:#e6db74">w42394837.osm</span> <span style="color:#e6db74">w42394837.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-us-alaska.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-alaska-west-json</span> <span style="color:#e6db74">w46113981.osm</span> <span style="color:#e6db74">w46113981.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-us-alaska.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-alaska-east-poly</span> <span style="color:#e6db74">w42394837.osm</span> <span style="color:#e6db74">w42394837.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-us-alaska.poly&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-alaska-west-poly</span> <span style="color:#e6db74">w46113981.osm</span> <span style="color:#e6db74">w46113981.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-us-alaska.poly&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>check_extract_opl(<span style="color:#e6db74">antimeridian-alaska-east-json-no-feature</span> <span style="color:#e6db74">w42394837.osm</span> <span style="color:#e6db74">w42394837.opl</span> <span style="color:#e6db74">&#34;--polygon=extract/polygon-us-alaska-no-feature.geojson&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#-----------------------------------------------------------------------------
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39;?&gt;
+</span></span><span style="display:flex;"><span>&lt;osm version=&#34;0.6&#34; generator=&#34;test&#34;&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;101&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;2&#34; lon=&#34;1&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;node id=&#34;102&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34; lat=&#34;3&#34; lon=&#34;1&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;way id=&#34;200&#34; version=&#34;1&#34; timestamp=&#34;2015-01-01T01:00:00Z&#34; uid=&#34;1&#34; user=&#34;test&#34; changeset=&#34;1&#34;&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;100&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;101&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;nd ref=&#34;102&#34;/&gt;
+</span></span><span style="display:flex;"><span>    &lt;tag k=&#34;highway&#34; v=&#34;residential&#34;/&gt;
+</span></span><span style="display:flex;"><span>  &lt;/way&gt;
+</span></span><span style="display:flex;"><span>&lt;/osm&gt;
+</span></span></code></pre></div><p>Now let me run all existing extract tests to ensure the fix doesn&rsquo;t break anything:</p>
+<p>All 31 extract tests pass. Let me mark the final todo as complete:</p>
+<p>All tasks completed successfully. Here&rsquo;s a summary:</p>
+<h2 id="summary-of-changes">Summary of Changes</h2>
+<h3 id="1-bug-fix-in-srcextractstrategy_simplecpp">1. Bug Fix in <code>src/extract/strategy_simple.cpp</code></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">// Before (buggy):
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// BUG: exits after first node!
+</span></span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// After (fixed):
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// Now inside if block - exits after finding match
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="2-new-test-files-created">2. New Test Files Created</h3>
+<ul>
+<li><strong><code>test/extract/input-way-starts-outside.osm</code></strong> - Input file with a way starting outside polygon</li>
+<li><strong><code>test/extract/output-simple-way-starts-outside.osm</code></strong> - Expected output showing way is included</li>
+</ul>
+<h3 id="3-updated-cmakeliststxt">3. Updated CMakeLists.txt</h3>
+<p>Added test case:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">simple_way_starts_outside</span> <span style="color:#e6db74">input-way-starts-outside.osm</span> <span style="color:#e6db74">output-simple-way-starts-outside.osm</span> <span style="color:#e6db74">&#34;-s simple&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h3 id="4-test-results">4. Test Results</h3>
+<ul>
+<li><strong>31/31 extract tests pass</strong> ✓</li>
+<li>New test verifies the fix works correctly ✓</li>
+<li>Existing tests confirm no regressions ✓</li>
+</ul>
+<p>Would you like to create a git commit and/or submit a pull request to the osmium-tool repository?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#75715e">// Before (buggy):
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// BUG: exits after first node!
+</span></span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// After (fixed):
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>write(way);
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// Now inside if block - exits after finding match
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span>check_extract(<span style="color:#e6db74">simple_way_starts_outside</span> <span style="color:#e6db74">input-way-starts-outside.osm</span> <span style="color:#e6db74">output-simple-way-starts-outside.osm</span> <span style="color:#e6db74">&#34;-s simple&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><hr>
+<p><strong>User</strong></p>
+<p>where is the polygon defined for this test case?</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span>function(<span style="color:#e6db74">check_extract</span> <span style="color:#e6db74">_name</span> <span style="color:#e6db74">_input</span> <span style="color:#e6db74">_output</span> <span style="color:#e6db74">_opts</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>    check_output(<span style="color:#e6db74">extract</span> <span style="color:#f92672">${</span>_name<span style="color:#f92672">}</span> <span style="color:#e6db74">&#34;extract --generator=test -f osm extract/${_input} ${_opts} -b 0,0,1.5,10&#34;</span> <span style="color:#e6db74">&#34;extract/${_output}&#34;</span>)<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span>endfunction()<span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Good question! Looking at the <code>check_extract</code> function in CMakeLists.txt:</p>
+<p>The polygon is <strong>hardcoded as a bounding box</strong> in the <code>check_extract</code> function on line 10:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">-b</span> <span style="color:#960050;background-color:#1e0010">0,0,1.5,10
+</span></span></span></code></pre></div><p>This means: <strong>minlon=0, minlat=0, maxlon=1.5, maxlat=10</strong></p>
+<p>So all tests using <code>check_extract</code> use this same bounding box. In my test input file:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Node</th>
+          <th>lat</th>
+          <th>lon</th>
+          <th>Inside bbox?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>100</td>
+          <td>1</td>
+          <td><strong>5</strong></td>
+          <td>✗ NO (lon 5 &gt; 1.5)</td>
+      </tr>
+      <tr>
+          <td>101</td>
+          <td>2</td>
+          <td>1</td>
+          <td>✓ YES</td>
+      </tr>
+      <tr>
+          <td>102</td>
+          <td>3</td>
+          <td>1</td>
+          <td>✓ YES</td>
+      </tr>
+  </tbody>
+</table>
+<p>The way starts with node 100 (outside), then enters the bbox with nodes 101 and 102. This tests exactly the bug scenario: a way that starts outside but has nodes inside should be included.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmake" data-lang="cmake"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">-b</span> <span style="color:#960050;background-color:#1e0010">0,0,1.5,10
+</span></span></span></code></pre></div><hr>
+<p><strong>User</strong></p>
+<p>Is there any similar bugs for @osmium-tool/src/extract/strategy_complete_ways.cpp and itger strategies?</p>
+<hr>
+<p><strong>Cursor</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>                e<span style="color:#f92672">-&gt;</span>extra_node_ids.set(nr.ref());
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Let me examine <code>strategy_complete_ways.cpp</code> and check for other strategy files:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>    for (const auto&amp; nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        if (e-&gt;node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e-&gt;write(way);
+</span></span><span style="display:flex;"><span>            e-&gt;way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            return;  // NOW CORRECT - inside the if block
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>        if (e-&gt;node_ids.get(nr.positive_ref())) {            e-&gt;way_ids.set(way.positive_id());            for (const auto&amp; nr : way.nodes()) {                e-&gt;extra_node_ids.set(nr.ref());            }
+</span></span><span style="display:flex;"><span>            return;  // CORRECT - inside the if block        }    }}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Check if ALL nodes of the way are inside the extract    if (way.nodes().empty()) {        return;
+</span></span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> all_nodes_inside <span style="color:#f92672">=</span> true;    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {            all_nodes_inside <span style="color:#f92672">=</span> false;            <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }    <span style="color:#66d9ef">if</span> (all_nodes_inside) {
+</span></span><span style="display:flex;"><span>        e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-plaintext" data-lang="plaintext"><span style="display:flex;"><span>    for (const auto&amp; nr : way.nodes()) {        if (e-&gt;node_ids.get(nr.positive_ref())) {            e-&gt;way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            return;  // CORRECT - inside the if block        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// CORRECT - inside the if block        }    }}
+</span></span></span></code></pre></div><p>Let me analyze each strategy&rsquo;s <code>eway</code> function for similar bugs:</p>
+<h2 id="analysis-results">Analysis Results</h2>
+<table>
+  <thead>
+      <tr>
+          <th>Strategy</th>
+          <th><code>eway</code> function</th>
+          <th>Status</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>strategy_simple.cpp</strong></td>
+          <td><code>return</code> was outside <code>if</code> block</td>
+          <td>✅ <strong>FIXED</strong></td>
+      </tr>
+      <tr>
+          <td><strong>strategy_complete_ways.cpp</strong></td>
+          <td>Lines 91-101: <code>return</code> inside <code>if</code> block</td>
+          <td>✅ <strong>Correct</strong></td>
+      </tr>
+      <tr>
+          <td><strong>strategy_smart.cpp</strong></td>
+          <td>Lines 191-198: <code>return</code> inside <code>if</code> block</td>
+          <td>✅ <strong>Correct</strong></td>
+      </tr>
+      <tr>
+          <td><strong>strategy_complete_ways_with_history.cpp</strong></td>
+          <td>Lines 91-98: <code>return</code> inside <code>if</code> block</td>
+          <td>✅ <strong>Correct</strong></td>
+      </tr>
+      <tr>
+          <td><strong>strategy_strict.cpp</strong></td>
+          <td>Lines 76-93: Different logic (ALL nodes inside)</td>
+          <td>✅ <strong>Correct</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Summary:</strong></p>
+<p>The bug was <strong>unique to <code>strategy_simple.cpp</code></strong>. All other strategies have the <code>return</code> statement correctly placed inside the <code>if</code> block:</p>
+<p><strong>strategy_complete_ways.cpp</strong> (correct):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>                e<span style="color:#f92672">-&gt;</span>extra_node_ids.set(nr.ref());
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// ✅ Correct - inside if block
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>strategy_smart.cpp</strong> (correct):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// ✅ Correct - inside if block
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The bug in <code>strategy_simple.cpp</code> appears to have been a typo where the <code>return</code> statement was accidentally placed outside the closing brace of the <code>if</code> block.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>                e<span style="color:#f92672">-&gt;</span>extra_node_ids.set(nr.ref());
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// ✅ Correct - inside if block
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">eway</span>(extract_data<span style="color:#f92672">*</span> e, <span style="color:#66d9ef">const</span> osmium<span style="color:#f92672">::</span>Way<span style="color:#f92672">&amp;</span> way) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> nr : way.nodes()) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (e<span style="color:#f92672">-&gt;</span>node_ids.get(nr.positive_ref())) {
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">-&gt;</span>way_ids.set(way.positive_id());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;  <span style="color:#75715e">// ✅ Correct - inside if block
+</span></span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+
+<div id="nextprev">
+<a href="/cursor_map_segment_speed_changes_within/"><div id="prevart">Previous:<br>Cursor Export: Map segment speed changes within polygons</div></a>
+<a href="/about/"><div id="nextart">Next:<br>About</div></a>
+</div>
+
+</article>
+</main>
+
+<footer>
+	<a href="https://kucukaslan.com.tr/">https://kucukaslan.com.tr/</a><br><br><a href="/index.xml"><img src="/rss.svg" style="max-height:1.5em" alt="RSS Feed" title="Subscribe via RSS for updates."></a>
+</footer>
+
+
+
+
+
+
+<script src="/js/theme-switcher.js"></script>
+</body>
+</html>
+

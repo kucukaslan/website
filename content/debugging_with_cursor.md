@@ -1,6 +1,6 @@
 ---
 title: "Fixing 9 Years Old OSS Bug with Cursor"
-date: 2026-02-21T00:36:12+03:00
+date: 2026-02-25T12:00:00+03:00
 draft: false
 tags: ['English', 'cursor', 'osmium']
 ---
@@ -35,8 +35,8 @@ In short we needed to find all way segments inside a given polygon.
 
 ## Enter [osmium-tool](https://github.com/osmcode/osmium-tool)
 osmium-tool has a feature to _[create a geographical extract](https://osmcode.org/osmium-tool/manual.html#creating-geographic-extracts) of OSM data that only contains the data for a specific region_.
-That's exactly what we wanted, right?
-Almost. The inclusion of the roads that intersects the region boundary, the nodes on such nodes that are inside or outside the region depends on the use case.
+That's exactly what we wanted, right?\
+Almost: inclusion of the roads that intersects the region boundary, the nodes on such nodes that are inside or outside the region depends on the use case. 
 osmium-tool provides 3 extraction strategies:
 
 ### simple
@@ -210,7 +210,22 @@ A few days later the PR was merged, and the fix was included in the next [releas
 
 
 ## Conclusion and Reflections
+I guess we all have heard how Cursor/LLMs helps non-technical people to create apps, quickly spin up beautiful landing pages, writing compilers etc.\
+These are certainly impressive use cases of Cursor and I believe they received, arguably, deserved hype for it.\
+However, when I reflect on how Cursor helped solving this issue, I can't help but noticing that, in this particular case, the Cursor did not bring any extra technical expertize. I already knew:
+* how it should use the osmium-tool as my original code was accurate (assuming osmium-tool conforms the specs/documentation)
+* how can it reproduce the issue as I identified the issue, found problematic node and ways, prepared OSM file for the relevant region
+* where the actual implementation of the osmium's extraction was as I found and gave the corresponding file to Cursor. \
 
-
-Ana mesaj: Technically we could have debugged it ourselves but it wouldn't have been feasible to put the effort required to reliably reproduce and fix it. 
-
+On one hand Cursor did not help me debug a problem that I couldn't already debug.\
+On the other hand, without Cursor I would not have gone this much way for an issue that I could workaround by writing my own extraction logic and call it a day.\
+In this case the problem would be solved as far as I was concerned, but I would neither learn what the actual root cause was nor fix it for all the people using osmium-tool. A missed learning opportunity for me and wasted hours or buggy software for the users. 
+Cursor helped to come up with hypothesis on what went wrong, quickly test the hypothesis and iterate until we found the problem in a reasonable with a reasonable cost, in other words Cursor made it feasible to debug the issue until we found the root cause and fix it.\
+In addition to debugging it makes many more things feasible.
+I have prepared many dashboards that gave us precious insights on the quality of our data analysis results which helped us identify a major bug, that helped us to easily visualize how our customizations affects our route planning.\
+I have used it to create custom tools that saved me a lot of time: creating test data, [a visualizer to decode/encode Teltonika's Communication Protocol binary data](/html/teltonika_codec_8_8ext.html).\
+These tools gives immeasurable quality of life during development and debugging.\
+Efforts required to create them were not usually justified unless they were to be used for really long time by a lot of people.
+But, since we can have the LLMs prepare them in a few prompts with a little bit of guidance,
+I can write quick scripts, jupyter notebooks for my own specific needs.\
+I really appreciate how these simple things my life easier and my code better, this post was a means to show my appreciation.
