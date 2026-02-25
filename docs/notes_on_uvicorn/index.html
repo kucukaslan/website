@@ -95,7 +95,7 @@ It&rsquo;s used to manage multiple copies of the server in the same machine: dis
 <h2 id="bonus-gzip-middleware-for-fastapi">Bonus: GZip Middleware for FastAPI</h2>
 <p>It seems that GZip middleware (that compresses request payload/body) is not enabled by default in FastAPI.
 You need to explicitly add it to your application.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>app <span style="color:#f92672">=</span> FastAPI(lifespan<span style="color:#f92672">=</span>lifespan)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>app <span style="color:#f92672">=</span> FastAPI(lifespan<span style="color:#f92672">=</span>lifespan)
 </span></span><span style="display:flex;"><span>app<span style="color:#f92672">.</span>add_middleware(GZipMiddleware, minimum_size<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, compresslevel<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
 </span></span></code></pre></div><p>(<a href="https://github.com/kucukaslan/uvicorn-demo/blob/main/main.py#L43-L45">Source</a>)</p>
 <p>It may reduce the response size significantly, obviously at the cost of some CPU time.
@@ -122,6 +122,7 @@ So, there might be some magic under the hood that ensures the code/configuration
 
 <div id="nextprev">
 <a href="/faq/"><div id="prevart">Previous:<br>Frequently Asked Questions</div></a>
+<a href="/debugging_with_cursor/"><div id="nextart">Next:<br>Fixing 9 Years Old OSS Bug with Cursor</div></a>
 </div>
 <div style="clear:both" class=taglist>Related<br><a id="tag_english" href="https://kucukaslan.com.tr/tags/english">English</a> &middot; <a id="tag_python" href="https://kucukaslan.com.tr/tags/python">Python</a> &middot; <a id="tag_uvicorn" href="https://kucukaslan.com.tr/tags/uvicorn">Uvicorn</a> &middot; <a id="tag_fastapi" href="https://kucukaslan.com.tr/tags/fastapi">Fastapi</a> &middot; <a id="tag_production" href="https://kucukaslan.com.tr/tags/production">Production</a></div>
 </article>

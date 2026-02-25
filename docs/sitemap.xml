@@ -2,8 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://kucukaslan.com.tr/tags/cursor/</loc>
+    <lastmod>2026-02-25T12:00:00+03:00</lastmod>
+  </url><url>
     <loc>https://kucukaslan.com.tr/tags/english/</loc>
-    <lastmod>2025-10-29T20:25:10+03:00</lastmod>
+    <lastmod>2026-02-25T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/debugging_with_cursor/</loc>
+    <lastmod>2026-02-25T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/osmium/</loc>
+    <lastmod>2026-02-25T12:00:00+03:00</lastmod>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/tags/</loc>
+    <lastmod>2026-02-25T12:00:00+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/tags/fastapi/</loc>
     <lastmod>2025-10-29T20:25:10+03:00</lastmod>
@@ -15,9 +27,6 @@
     <lastmod>2025-10-29T20:25:10+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/tags/python/</loc>
-    <lastmod>2025-10-29T20:25:10+03:00</lastmod>
-  </url><url>
-    <loc>https://kucukaslan.com.tr/tags/</loc>
     <lastmod>2025-10-29T20:25:10+03:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/tags/uvicorn/</loc>
@@ -60,5 +69,7 @@
     <lastmod>2019-08-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://kucukaslan.com.tr/categories/</loc>
+  </url><url>
+    <loc>https://kucukaslan.com.tr/cursor_map_segment_speed_changes_within/</loc>
   </url>
 </urlset>
