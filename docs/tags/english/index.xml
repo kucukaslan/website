@@ -5,15 +5,15 @@
 	<description>Recent content in English on Muhammed Can Küçükaslan</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>tr-tr</language>
-	<lastBuildDate>Wed, 25 Feb 2026 12:00:00 +0300</lastBuildDate>
+	<lastBuildDate>Mon, 02 Mar 2026 12:00:00 +0300</lastBuildDate>
     
         <atom:link href="https://kucukaslan.com.tr/tags/english/index.xml" rel="self" type="application/rss+xml" />
 	
 	
 	<item>
-		<title>Fixing a 9-Year-Old OSS Bug with Cursor</title>
+		<title>Fixing an OSS Bug with Cursor</title>
 		<link>https://kucukaslan.com.tr/debugging_with_cursor/</link>
-		<pubDate>Wed, 25 Feb 2026 12:00:00 +0300</pubDate>
+		<pubDate>Mon, 02 Mar 2026 12:00:00 +0300</pubDate>
 		
 		<guid>https://kucukaslan.com.tr/debugging_with_cursor/</guid>
 		<description>&lt;blockquote&gt;
@@ -23,34 +23,14 @@
 &lt;p&gt;First things second: &lt;a href=&#34;https://github.com/osmcode/osmium-tool&#34;&gt;osmium&lt;/a&gt; is one of my favourite tools when I work with OSM data, along with the &lt;a href=&#34;https://josm.openstreetmap.de/&#34;&gt;JOSM editor&lt;/a&gt;. I use osmium-tool for manipulating data and JOSM editor for visualizing and examining the data, ironically, never for editing.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;h2 id=&#34;background-and-purpose&#34;&gt;Background and Purpose&lt;/h2&gt;
-&lt;svg viewBox=&#34;0 0 500 280&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; style=&#34;max-width: 100%; height: auto; background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px;&#34;&gt;
-  &lt;polygon points=&#34;100,40 400,70 350,240 80,210&#34; fill=&#34;#fde8e8&#34; stroke=&#34;#f87171&#34; stroke-width=&#34;2&#34; stroke-dasharray=&#34;5,5&#34;/&gt;
-  &lt;text x=&#34;110&#34; y=&#34;65&#34; font-family=&#34;monospace&#34; font-size=&#34;14&#34; fill=&#34;#ef4444&#34; font-weight=&#34;bold&#34;&gt;Extraction Region&lt;/text&gt;
-  &lt;line x1=&#34;40&#34; y1=&#34;140&#34; x2=&#34;160&#34; y2=&#34;110&#34; stroke=&#34;#9ca3af&#34; stroke-width=&#34;4&#34; /&gt;
-  &lt;line x1=&#34;160&#34; y1=&#34;110&#34; x2=&#34;290&#34; y2=&#34;170&#34; stroke=&#34;#22c55e&#34; stroke-width=&#34;6&#34; /&gt;
-  &lt;line x1=&#34;290&#34; y1=&#34;170&#34; x2=&#34;460&#34; y2=&#34;130&#34; stroke=&#34;#9ca3af&#34; stroke-width=&#34;4&#34; /&gt;
-  &lt;circle cx=&#34;40&#34; cy=&#34;140&#34; r=&#34;6&#34; fill=&#34;#4b5563&#34; /&gt;
-  &lt;text x=&#34;25&#34; y=&#34;165&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#4b5563&#34;&gt;Node A&lt;/text&gt;
-  &lt;text x=&#34;20&#34; y=&#34;180&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;(Outside)&lt;/text&gt;
-  &lt;circle cx=&#34;160&#34; cy=&#34;110&#34; r=&#34;6&#34; fill=&#34;#16a34a&#34; /&gt;
-  &lt;text x=&#34;145&#34; y=&#34;95&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#16a34a&#34;&gt;Node B&lt;/text&gt;
-  &lt;text x=&#34;140&#34; y=&#34;80&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#16a34a&#34;&gt;(Inside)&lt;/text&gt;
-  &lt;circle cx=&#34;290&#34; cy=&#34;170&#34; r=&#34;6&#34; fill=&#34;#16a34a&#34; /&gt;
-  &lt;text x=&#34;275&#34; y=&#34;195&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#16a34a&#34;&gt;Node C&lt;/text&gt;
-  &lt;text x=&#34;270&#34; y=&#34;210&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#16a34a&#34;&gt;(Inside)&lt;/text&gt;
-  &lt;circle cx=&#34;460&#34; cy=&#34;130&#34; r=&#34;6&#34; fill=&#34;#4b5563&#34; /&gt;
-  &lt;text x=&#34;445&#34; y=&#34;115&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#4b5563&#34;&gt;Node D&lt;/text&gt;
-  &lt;text x=&#34;435&#34; y=&#34;100&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;(Outside)&lt;/text&gt;
-  &lt;text x=&#34;180&#34; y=&#34;135&#34; font-family=&#34;monospace&#34; font-size=&#34;12&#34; fill=&#34;#15803d&#34; font-weight=&#34;bold&#34;&gt;Target Segment&lt;/text&gt;
-  &lt;text x=&#34;50&#34; y=&#34;115&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;Crosses&lt;/text&gt;
-  &lt;text x=&#34;330&#34; y=&#34;140&#34; font-family=&#34;monospace&#34; font-size=&#34;10&#34; fill=&#34;#6b7280&#34;&gt;Crosses&lt;/text&gt;
-&lt;/svg&gt;
+&lt;!-- /img/nodes-ways.svg --&gt;
+&lt;p&gt;&lt;img src=&#34;https://kucukaslan.com.tr/img/nodes-ways.svg&#34; alt=&#34;OSM nodes and ways&#34;&gt;&lt;/p&gt;
 &lt;p&gt;We wanted to limit the use of ways that are strictly inside a given region.
 A region is defined by one or more &lt;a href=&#34;https://en.wikipedia.org/wiki/Simple_polygon&#34;&gt;simple polygons&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Ways, on the other hand, have an obvious common-sense definition&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
 &lt;p&gt;A way is a continuous curve along which things can move. But its formal definition in the OSM data structure doesn&amp;rsquo;t perfectly align with our real-world, common-sense conceptualization of a road.&lt;/p&gt;
-&lt;p&gt;In OSM, the fundamental building blocks are &lt;strong&gt;&lt;code&gt;node&lt;/code&gt;s&lt;/strong&gt;: points (coordinates) in space with some additional data (e.g., tags).
-A &lt;strong&gt;&lt;code&gt;way&lt;/code&gt;&lt;/strong&gt; is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions).
+&lt;p&gt;In OSM, the fundamental building blocks are &lt;strong&gt;node&lt;/strong&gt;s: points (coordinates) in space with some additional data (e.g., tags).
+A &lt;strong&gt;way&lt;/strong&gt; is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions).
 For our purposes, we can informally refer to the direct line connecting two consecutive nodes as a &lt;strong&gt;way segment&lt;/strong&gt;.&lt;/p&gt;
 &lt;pre class=&#34;mermaid&#34;&gt;
   graph TD
@@ -78,7 +58,7 @@ For our purposes, we can informally refer to the direct line connecting two cons
     end
 &lt;/pre&gt;
 
-&lt;p&gt;Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate &lt;code&gt;way&lt;/code&gt; entities.&lt;/p&gt;
+&lt;p&gt;Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate &lt;em&gt;way&lt;/em&gt; entities.&lt;/p&gt;
 &lt;p&gt;As if this structural discrepancy wasn&amp;rsquo;t enough, we needed to handle arbitrary geographic regions. A polygon boundary might cut right through the middle of an OSM way.&lt;/p&gt;
 &lt;p&gt;Because OSM&amp;rsquo;s standard &lt;code&gt;way&lt;/code&gt; definitions weren&amp;rsquo;t granular enough for our geometric needs, we couldn&amp;rsquo;t just include or exclude entire ways.&lt;/p&gt;
 &lt;p&gt;We could merely tolerate exclusions at the precision of a &lt;em&gt;way segment&lt;/em&gt;. In short, we needed to isolate and extract all individual way segments that fall completely inside a given polygon.&lt;/p&gt;
@@ -284,26 +264,24 @@ Right away, I committed the changes to my fork and opened a &lt;a href=&#34;http
 Two of the CI checks failed, but I verified that they were not related to the changes and informed the maintainers.
 A few days later the PR was merged, and the fix was included in the next &lt;a href=&#34;https://github.com/osmcode/osmium-tool/releases/tag/v1.19.0&#34;&gt;release&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;conclusion-and-reflections&#34;&gt;Conclusion and Reflections&lt;/h2&gt;
-&lt;p&gt;I guess we all have heard how Cursor/LLMs help non-technical people create apps, quickly spin up beautiful landing pages, write compilers, etc.&lt;br&gt;
-These are certainly impressive use cases for Cursor, and I believe they&amp;rsquo;ve received, arguably, deserved hype for it.&lt;br&gt;
-However, when I reflect on how Cursor helped solve this issue, I can&amp;rsquo;t help but notice that, in this particular case, Cursor did not bring any extra technical expertise. I already knew:&lt;/p&gt;
+&lt;p&gt;I guess we all have heard how Cursor and LLMs help non-technical people create apps, quickly spin up beautiful landing pages, write compilers, etc. These are certainly impressive use cases, and they&amp;rsquo;ve received arguably deserved hype.&lt;/p&gt;
+&lt;p&gt;However, when I reflect on how Cursor helped solve this issue, I can&amp;rsquo;t help but notice that in this particular case, it didn&amp;rsquo;t bring any extra technical expertise to the table. I already knew:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;how to use the osmium-tool, as my original code was accurate (assuming osmium-tool conformed to the specs/documentation).&lt;/li&gt;
-&lt;li&gt;how to reproduce the issue, as I identified the issue, found the problematic nodes and ways, and prepared an OSM file for the relevant region.&lt;/li&gt;
-&lt;li&gt;where the actual implementation of osmium&amp;rsquo;s extraction was, as I found and gave the corresponding file to Cursor. \&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;How to use &lt;code&gt;osmium-tool&lt;/code&gt;&lt;/strong&gt;, as my original code was accurate based on the docs.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;How to reproduce the issue&lt;/strong&gt;, as I isolated the problematic nodes, and prepared the specific OSM file.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Where the actual implementation was&lt;/strong&gt;, as I found and pointed Cursor to the exact C++ file.
+On one hand, Cursor did not help me debug a problem that I couldn&amp;rsquo;t already debug myself.
+On the other hand, without Cursor, I would have just written my own extraction logic as a workaround and called it a day&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;On one hand, Cursor did not help me debug a problem that I couldn&amp;rsquo;t already debug myself.&lt;br&gt;
-On the other hand, without Cursor, I would not have gone this far for an issue that I could work around by writing my own extraction logic and calling it a day.&lt;br&gt;
-In that case, the problem would be solved as far as I was concerned, but I would neither have learned what the actual root cause was, nor fixed it for all the people using osmium-tool. It would have been a missed learning opportunity for me, and wasted hours or buggy software for the users.
-Cursor helped come up with a hypothesis on what went wrong, quickly test the hypothesis, and iterate until we found the problem in a reasonable amount of time with a reasonable cost. In other words, Cursor made it feasible to debug the issue until we found the root cause and fixed it.&lt;br&gt;
-In addition to debugging, it makes many more things feasible.
-I have prepared many dashboards that gave us precious insights into the quality of our data analysis results, which helped us identify a major bug, and easily visualize how our customizations affect our route planning.&lt;br&gt;
-I have used it to create custom tools that saved me a lot of time: creating test data, and &lt;a href=&#34;https://kucukaslan.com.tr/html/teltonika_codec_8_8ext.html&#34;&gt;a visualizer to decode/encode Teltonika&amp;rsquo;s Communication Protocol binary data&lt;/a&gt;.&lt;br&gt;
-These tools give an immeasurable quality of life boost during development and debugging.&lt;br&gt;
-The effort required to create them was not usually justified unless they were to be used for a really long time by a lot of people.
-But, since we can have LLMs prepare them in a few prompts with a little bit of guidance,
-I can write quick scripts and Jupyter notebooks for my own specific needs.&lt;br&gt;
-I really appreciate how these simple things make my life easier and my code better; this post was a means to show my appreciation.&lt;/p&gt;
+&lt;p&gt;In that case, my immediate problem would be solved, but I would never have learned the actual root cause, nor fixed it for everyone else using &lt;code&gt;osmium-tool&lt;/code&gt;. It would have been a missed learning opportunity for me, and wasted hours (or buggy software) for other users.&lt;/p&gt;
+&lt;p&gt;Cursor helped come up with hypotheses, quickly test them, and iterate until we found the exact problem at a reasonable time cost. In other words, Cursor made it feasible to debug the issue until we found the root cause and fixed it.&lt;/p&gt;
+&lt;p&gt;This reduction in time/effort makes a lot of other things feasible, too. I&amp;rsquo;ve started building internal tools that previously wouldn&amp;rsquo;t have justified the effort unless a whole team was going to use them for years:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dashboards that give us precious insights into our data analysis, helping us identify major bugs and visualize how customizations affect route planning.&lt;/li&gt;
+&lt;li&gt;Custom developer tools that save me a lot of time, like test data generators and &lt;a href=&#34;https://kucukaslan.com.tr/html/teltonika_codec_8_8ext.html&#34;&gt;a visualizer to decode/encode Teltonika&amp;rsquo;s Communication Protocol binary data&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These tools provide an immeasurable quality-of-life boost during development. Since LLMs can now prepare them in a few prompts with a little guidance, I can write quick scripts and Jupyter notebooks just for my own specific, temporary needs.&lt;/p&gt;
+&lt;p&gt;I really appreciate how these simple things make my life easier and my code better. This post was just a means to show my appreciation.&lt;/p&gt;
 &lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
 &lt;hr&gt;
 &lt;ol&gt;

@@ -1,8 +1,9 @@
 ---
-title: "Fixing a 9-Year-Old OSS Bug with Cursor"
-date: 2026-02-25T12:00:00+03:00
+title: "Fixing an OSS Bug with Cursor"
+date: 2026-03-02T12:00:00+03:00
 draft: false
 tags: ['English', 'cursor', 'osmium']
+images: ['/img/nodes-ways.svg']
 ---
 
 > Last things first: this is the revisionist history of a [PR fixing a multi-year-old bug in osmium-tool](https://github.com/osmcode/osmium-tool/pull/305), an open-source tool for working with OpenStreetMap (OSM) data.
@@ -11,28 +12,8 @@ tags: ['English', 'cursor', 'osmium']
 
 
 ## Background and Purpose
-<svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; background: #fafafa; border: 1px solid #eaeaea; border-radius: 8px;">
-  <polygon points="100,40 400,70 350,240 80,210" fill="#fde8e8" stroke="#f87171" stroke-width="2" stroke-dasharray="5,5"/>
-  <text x="110" y="65" font-family="monospace" font-size="14" fill="#ef4444" font-weight="bold">Extraction Region</text>
-  <line x1="40" y1="140" x2="160" y2="110" stroke="#9ca3af" stroke-width="4" />
-  <line x1="160" y1="110" x2="290" y2="170" stroke="#22c55e" stroke-width="6" />
-  <line x1="290" y1="170" x2="460" y2="130" stroke="#9ca3af" stroke-width="4" />
-  <circle cx="40" cy="140" r="6" fill="#4b5563" />
-  <text x="25" y="165" font-family="monospace" font-size="12" fill="#4b5563">Node A</text>
-  <text x="20" y="180" font-family="monospace" font-size="10" fill="#6b7280">(Outside)</text>
-  <circle cx="160" cy="110" r="6" fill="#16a34a" />
-  <text x="145" y="95" font-family="monospace" font-size="12" fill="#16a34a">Node B</text>
-  <text x="140" y="80" font-family="monospace" font-size="10" fill="#16a34a">(Inside)</text>
-  <circle cx="290" cy="170" r="6" fill="#16a34a" />
-  <text x="275" y="195" font-family="monospace" font-size="12" fill="#16a34a">Node C</text>
-  <text x="270" y="210" font-family="monospace" font-size="10" fill="#16a34a">(Inside)</text>
-  <circle cx="460" cy="130" r="6" fill="#4b5563" />
-  <text x="445" y="115" font-family="monospace" font-size="12" fill="#4b5563">Node D</text>
-  <text x="435" y="100" font-family="monospace" font-size="10" fill="#6b7280">(Outside)</text>
-  <text x="180" y="135" font-family="monospace" font-size="12" fill="#15803d" font-weight="bold">Target Segment</text>
-  <text x="50" y="115" font-family="monospace" font-size="10" fill="#6b7280">Crosses</text>
-  <text x="330" y="140" font-family="monospace" font-size="10" fill="#6b7280">Crosses</text>
-</svg>
+<!-- /img/nodes-ways.svg -->
+![OSM nodes and ways](/img/nodes-ways.svg)
 
 We wanted to limit the use of ways that are strictly inside a given region.
 A region is defined by one or more [simple polygons](https://en.wikipedia.org/wiki/Simple_polygon). 
@@ -42,8 +23,8 @@ Ways, on the other hand, have an obvious common-sense definition[^asphalt].
 
 A way is a continuous curve along which things can move. But its formal definition in the OSM data structure doesn't perfectly align with our real-world, common-sense conceptualization of a road.
 
-In OSM, the fundamental building blocks are **`node`s**: points (coordinates) in space with some additional data (e.g., tags).
-A **`way`** is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions). 
+In OSM, the fundamental building blocks are **node**s: points (coordinates) in space with some additional data (e.g., tags).
+A **way** is then defined as a finite sequence of these nodes, holding its own additional data (e.g., speed limits, access restrictions). 
 For our purposes, we can informally refer to the direct line connecting two consecutive nodes as a **way segment**.
 ```mermaid
 graph TD
@@ -71,7 +52,7 @@ graph TD
     end
 ```
 
-Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate `way` entities.
+Because a single physical road might change properties halfway down the street (e.g., the speed limit drops, or lanes are added), OSM splits what we see as one continuous physical road into multiple separate _way_ entities.
 
 
 As if this structural discrepancy wasn't enough, we needed to handle arbitrary geographic regions. A polygon boundary might cut right through the middle of an OSM way. 
@@ -254,22 +235,24 @@ A few days later the PR was merged, and the fix was included in the next [releas
 
 
 ## Conclusion and Reflections
-I guess we all have heard how Cursor/LLMs help non-technical people create apps, quickly spin up beautiful landing pages, write compilers, etc.\
-These are certainly impressive use cases for Cursor, and I believe they've received, arguably, deserved hype for it.\
-However, when I reflect on how Cursor helped solve this issue, I can't help but notice that, in this particular case, Cursor did not bring any extra technical expertise. I already knew:
-* how to use the osmium-tool, as my original code was accurate (assuming osmium-tool conformed to the specs/documentation).
-* how to reproduce the issue, as I identified the issue, found the problematic nodes and ways, and prepared an OSM file for the relevant region.
-* where the actual implementation of osmium's extraction was, as I found and gave the corresponding file to Cursor. \
 
-On one hand, Cursor did not help me debug a problem that I couldn't already debug myself.\
-On the other hand, without Cursor, I would not have gone this far for an issue that I could work around by writing my own extraction logic and calling it a day.\
-In that case, the problem would be solved as far as I was concerned, but I would neither have learned what the actual root cause was, nor fixed it for all the people using osmium-tool. It would have been a missed learning opportunity for me, and wasted hours or buggy software for the users. 
-Cursor helped come up with a hypothesis on what went wrong, quickly test the hypothesis, and iterate until we found the problem in a reasonable amount of time with a reasonable cost. In other words, Cursor made it feasible to debug the issue until we found the root cause and fixed it.\
-In addition to debugging, it makes many more things feasible.
-I have prepared many dashboards that gave us precious insights into the quality of our data analysis results, which helped us identify a major bug, and easily visualize how our customizations affect our route planning.\
-I have used it to create custom tools that saved me a lot of time: creating test data, and [a visualizer to decode/encode Teltonika's Communication Protocol binary data](/html/teltonika_codec_8_8ext.html).\
-These tools give an immeasurable quality of life boost during development and debugging.\
-The effort required to create them was not usually justified unless they were to be used for a really long time by a lot of people.
-But, since we can have LLMs prepare them in a few prompts with a little bit of guidance,
-I can write quick scripts and Jupyter notebooks for my own specific needs.\
-I really appreciate how these simple things make my life easier and my code better; this post was a means to show my appreciation.
+I guess we all have heard how Cursor and LLMs help non-technical people create apps, quickly spin up beautiful landing pages, write compilers, etc. These are certainly impressive use cases, and they've received arguably deserved hype. 
+
+However, when I reflect on how Cursor helped solve this issue, I can't help but notice that in this particular case, it didn't bring any extra technical expertise to the table. I already knew:
+* **How to use `osmium-tool`**, as my original code was accurate based on the docs.
+* **How to reproduce the issue**, as I isolated the problematic nodes, and prepared the specific OSM file.
+* **Where the actual implementation was**, as I found and pointed Cursor to the exact C++ file.
+On one hand, Cursor did not help me debug a problem that I couldn't already debug myself.
+On the other hand, without Cursor, I would have just written my own extraction logic as a workaround and called it a day
+
+In that case, my immediate problem would be solved, but I would never have learned the actual root cause, nor fixed it for everyone else using `osmium-tool`. It would have been a missed learning opportunity for me, and wasted hours (or buggy software) for other users. 
+
+Cursor helped come up with hypotheses, quickly test them, and iterate until we found the exact problem at a reasonable time cost. In other words, Cursor made it feasible to debug the issue until we found the root cause and fixed it.
+
+This reduction in time/effort makes a lot of other things feasible, too. I've started building internal tools that previously wouldn't have justified the effort unless a whole team was going to use them for years:
+* Dashboards that give us precious insights into our data analysis, helping us identify major bugs and visualize how customizations affect route planning.
+* Custom developer tools that save me a lot of time, like test data generators and [a visualizer to decode/encode Teltonika's Communication Protocol binary data](/html/teltonika_codec_8_8ext.html).
+
+These tools provide an immeasurable quality-of-life boost during development. Since LLMs can now prepare them in a few prompts with a little guidance, I can write quick scripts and Jupyter notebooks just for my own specific, temporary needs. 
+
+I really appreciate how these simple things make my life easier and my code better. This post was just a means to show my appreciation.
