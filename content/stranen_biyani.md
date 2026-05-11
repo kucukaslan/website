@@ -17,6 +17,11 @@ Bo niha (12ê tebaxê) ez bi tenê stranekî dest pê bikim
 ### Yaşamadın Sen
 {{< youtube VrGxsbBCO-Q >}}
 
+## Alpay
+### Fabrika Kızı
+{{< youtube 9-garWPAdHk >}}
+
+
 <!--
 Johnny Paycheck
 Someone to give my love to
