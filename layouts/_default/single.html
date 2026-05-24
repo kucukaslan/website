@@ -19,7 +19,7 @@
     {{- end -}}
   </header>
 
-  {{- if and (gt .WordCount 800) (.TableOfContents) -}}
+  {{- if and (gt .WordCount 500) (.TableOfContents) -}}
   <aside class="toc">
     <details class="toc__details">
       <summary class="toc__summary">Contents</summary>
@@ -32,7 +32,7 @@
     {{ .Content }}
   </div>
 
-  {{- if .Param "nextprev" -}}
+  {{- if and (.Param "nextprev") (eq .Section "posts") -}}
   {{ partial "nextprev.html" . }}
   {{- end -}}
 

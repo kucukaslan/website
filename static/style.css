@@ -762,7 +762,6 @@ a:hover {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--text-muted);
 }
 
@@ -901,6 +900,11 @@ a:hover {
 .youtube-lazy.active::before,
 .youtube-lazy.active::after {
   display: none;
+}
+
+[data-theme="dark"] iframe[src*="calendar.google.com"] {
+  filter: invert(0.85) hue-rotate(180deg);
+  border-radius: 8px;
 }
 
 /* Footer */

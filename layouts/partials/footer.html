@@ -1,7 +1,7 @@
 <footer class="site-footer">
   <div class="site-footer__inner">
     <p class="site-footer__copy">
-      <a href="{{ .Site.BaseURL }}">{{ replace .Site.BaseURL "https://" "" | replace "http://" "" | strings.TrimSuffix "/" }}</a>
+      <a href="{{ .Site.BaseURL }}">{{ with urls.Parse .Site.BaseURL }}{{ .Host }}{{ end }}</a>
       · {{ now.Format "2006" }}
     </p>
     {{- if .Site.Params.showrss -}}
