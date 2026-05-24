@@ -1,7 +1,13 @@
-<!-- ...existing code... -->
-{{ $ytLazyCSS := resources.Get "css/youtube-lazy.css" | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $ytLazyCSS.RelPermalink }}" integrity="{{ $ytLazyCSS.Data.Integrity }}">
-
-{{ $ytLazyJS := resources.Get "js/youtube-lazy.js" | minify | fingerprint }}
-<script src="{{ $ytLazyJS.RelPermalink }}" integrity="{{ $ytLazyJS.Data.Integrity }}"></script>
-<!-- ...existing code... -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__copy">
+      <a href="{{ .Site.BaseURL }}">{{ with urls.Parse .Site.BaseURL }}{{ .Host }}{{ end }}</a>
+      · {{ now.Format "2006" }}
+    </p>
+    {{- if .Site.Params.showrss -}}
+    <a class="site-footer__rss" href="{{ "/index.xml" | absURL }}" title="Subscribe via RSS">
+      <img src="{{ "/rss.svg" | absURL }}" alt="RSS" width="20" height="20">
+    </a>
+    {{- end -}}
+  </div>
+</footer>

@@ -1,9 +1,28 @@
-<nav>
-    <ul>
-	{{- $sec := .Page.Section }}{{ $file := "" }}{{ if .File }}{{ $file = .File.TranslationBaseName }}{{ end -}}
-        {{ range.Site.Menus.main.ByWeight }}{{ $base := path.Base .URL }}
-	<li><a {{ if or ( eq $sec $base ) ( eq $file $base ) ( and (eq $sec "") ( eq $file "_index") (eq $base "/") ) }}class="menuactive" {{ end }}href="{{ .URL }}"><span class=pre>{{ .Pre }}</span><span class=menuname>{{ .Name }}</span></a></li>
-        {{- end }}
-    </ul>
-</nav>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-title" href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
 
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
+      <span class="nav-toggle__bar"></span>
+      <span class="nav-toggle__bar"></span>
+      <span class="nav-toggle__bar"></span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul class="site-nav__list">
+        {{- $sec := .Section -}}
+        {{- $url := .RelPermalink -}}
+        {{- range .Site.Menus.main.ByWeight -}}
+        {{- $active := or (eq $url .URL) (and (eq $sec "posts") (eq .URL "/posts/")) (and (eq $sec "songs") (eq .URL "/songs/")) (and (eq $sec "pages") (eq .URL "/about/") (eq $url "/about/")) -}}
+        <li class="site-nav__item">
+          <a class="site-nav__link{{ if $active }} is-active{{ end }}" href="{{ .URL }}">{{ .Name }}</a>
+        </li>
+        {{- end -}}
+      </ul>
+      <button class="theme-toggle" type="button" aria-label="Toggle color theme">
+        <span class="theme-toggle__icon theme-toggle__icon--light" aria-hidden="true">☀</span>
+        <span class="theme-toggle__icon theme-toggle__icon--dark" aria-hidden="true">☾</span>
+      </button>
+    </nav>
+  </div>
+</header>

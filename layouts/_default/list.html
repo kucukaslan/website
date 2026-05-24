@@ -1,23 +1,139 @@
-{{ define "title" -}}
-{{ .Title | title }}
-{{- end }}
-{{ define "main" -}}
-{{ .Content }}
-<ul>
-{{- range.Pages }}
-{{- if and (ne .Params.notablog true) (not .Date.IsZero) }}
-<li>
-	{{- if .Param "datesinlist" }}<time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006 Jan 02" }}</time> &ndash; {{ end -}}
-	<a href="{{ .RelPermalink }}">{{ .Title }}</a>
-	{{- if .Param "authorsinlist" }}
-	{{ with .Params.authors }}
-		by 
-		{{ delimit . ", " " and " }}
-	{{end}}
-	{{ end -}}
-</li>
-{{- end }}
-{{- end }}
-</ul>
-{{- end }}
+{{ define "main" }}
+{{ if .IsHome }}
+<section class="hero">
+  <p class="hero__eyebrow">Personal folio</p>
+  <h1 class="hero__title">{{ .Site.Title }}</h1>
+  <p class="hero__tagline">Engineering, software, and occasional musings — in Turkish, English, and Kurdish.</p>
+</section>
 
+<div class="home-content prose">
+  {{ .Content }}
+</div>
+
+<section class="section-block">
+  <div class="section-block__header">
+    <h2 class="section-block__title">Recent writing</h2>
+    <a class="section-block__link" href="{{ "/posts/" | absURL }}">All posts →</a>
+  </div>
+  <ul class="post-list post-list--home">
+    {{- range $i, $page := first 7 (where .Site.RegularPages "Section" "posts") -}}
+    {{- if and (not $page.Draft) (not $page.Date.IsZero) -}}
+    <li class="post-list__item" style="--i: {{ $i }}">
+      <time class="post-list__date" datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "Jan 02, 2006" }}</time>
+      <a class="post-list__title" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+      {{- with $page.Params.tags -}}
+      <span class="post-list__tags">
+        {{- range first 3 . -}}<span class="tag tag--sm">{{ . }}</span>{{- end -}}
+      </span>
+      {{- end -}}
+    </li>
+    {{- end -}}
+    {{- end -}}
+  </ul>
+</section>
+
+<section class="section-block section-block--links">
+  <h2 class="section-block__title">Explore</h2>
+  <div class="explore-grid">
+    <a class="explore-card" href="{{ "/posts/" | absURL }}">
+      <span class="explore-card__label">Posts</span>
+      <span class="explore-card__desc">Essays and notes on engineering</span>
+    </a>
+    <a class="explore-card" href="{{ "/about/" | absURL }}">
+      <span class="explore-card__label">About</span>
+      <span class="explore-card__desc">Who writes here</span>
+    </a>
+  </div>
+</section>
+
+{{ else if eq .Section "posts" }}
+<header class="page-header">
+  <h1 class="page-header__title">{{ .Title }}</h1>
+  {{ with .Content }}<div class="page-header__desc prose">{{ . }}</div>{{ end }}
+</header>
+
+<ul class="post-list">
+  {{- range $i, $page := .Paginator.Pages -}}
+  {{- if and (ne $page.Params.notablog true) (not $page.Date.IsZero) -}}
+  <li class="post-list__item" style="--i: {{ $i }}">
+    <time class="post-list__date" datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "Jan 02, 2006" }}</time>
+    <div class="post-list__body">
+      <a class="post-list__title" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+      {{- with $page.Params.tags -}}
+      <div class="post-list__tags">
+        {{- range . -}}<a class="tag" href="{{ "/tags/" | absURL }}{{ . | urlize }}">{{ . }}</a>{{- end -}}
+      </div>
+      {{- end -}}
+    </div>
+  </li>
+  {{- end -}}
+  {{- end -}}
+</ul>
+{{ partial "pagination.html" . }}
+
+{{ else if eq .Section "pages" }}
+<header class="page-header">
+  <h1 class="page-header__title">{{ .Title }}</h1>
+</header>
+<ul class="post-list post-list--simple">
+  {{- range .Pages -}}
+  <li class="post-list__item">
+    <a class="post-list__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+  </li>
+  {{- end -}}
+</ul>
+
+{{ else if eq .Section "tcp" }}
+<header class="page-header">
+  <h1 class="page-header__title">{{ .Title }}</h1>
+  {{ with .Content }}<div class="page-header__desc prose">{{ . }}</div>{{ end }}
+</header>
+<ul class="post-list">
+  {{- range .Pages.ByDate -}}
+  <li class="post-list__item">
+    <a class="post-list__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+    <time class="post-list__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 02, 2006" }}</time>
+  </li>
+  {{- end -}}
+</ul>
+
+{{ else if eq .Kind "taxonomy" }}
+<header class="page-header">
+  <h1 class="page-header__title">{{ .Title }}</h1>
+</header>
+<div class="tag-cloud">
+  {{- range .Pages -}}
+  <a class="tag tag--lg" href="{{ .RelPermalink }}">{{ .Title }} <span class="tag__count">{{ .Pages.Len }}</span></a>
+  {{- end -}}
+</div>
+
+{{ else if eq .Kind "term" }}
+<header class="page-header">
+  <p class="page-header__eyebrow">Tag</p>
+  <h1 class="page-header__title">{{ .Title }}</h1>
+</header>
+<ul class="post-list">
+  {{- range .Pages.ByDate.Reverse -}}
+  <li class="post-list__item">
+    <time class="post-list__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 02, 2006" }}</time>
+    <a class="post-list__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+  </li>
+  {{- end -}}
+</ul>
+
+{{ else }}
+<header class="page-header">
+  <h1 class="page-header__title">{{ .Title }}</h1>
+</header>
+<div class="prose">
+  {{ .Content }}
+</div>
+<ul class="post-list">
+  {{- range .Pages -}}
+  <li class="post-list__item">
+    <a class="post-list__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+  </li>
+  {{- end -}}
+</ul>
+{{ end }}
+{{ end }}
