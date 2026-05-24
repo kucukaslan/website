@@ -10,3 +10,4 @@ cluster-dump.mongodump
 *workspace.code-workspace
 docs/
 public/
+.docs

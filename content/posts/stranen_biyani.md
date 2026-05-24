@@ -3,7 +3,6 @@ title: "Guldesteyek Ji Stranên Biyanî"
 date: 2026-05-13T02:56:00+03:00
 tags: ['personal', 'kurdî', 'stranbêj', 'stran']
 draft: false
-layout: stran
 url: /stranen_biyani/
 ---
 
