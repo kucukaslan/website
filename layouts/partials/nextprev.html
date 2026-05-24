@@ -1,0 +1,16 @@
+{{ if or .Next .Prev -}}
+<nav class="post-nav" aria-label="Post navigation">
+{{- with .Prev }}
+<a class="post-nav__link post-nav__link--prev" href="{{ .RelPermalink }}">
+  <span class="post-nav__label">Previous</span>
+  <span class="post-nav__title">{{ .Title }}</span>
+</a>
+{{ end -}}
+{{- with .Next -}}
+<a class="post-nav__link post-nav__link--next" href="{{ .RelPermalink }}">
+  <span class="post-nav__label">Next</span>
+  <span class="post-nav__title">{{ .Title }}</span>
+</a>
+{{ end -}}
+</nav>
+{{ end -}}

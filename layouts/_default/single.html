@@ -1,0 +1,43 @@
+{{ define "main" }}
+<article class="article">
+  <header class="article__header">
+    <h1 class="article__title">{{ .Title }}</h1>
+    <div class="article__meta">
+      {{- if and (not .Params.nodate) (not .Date.IsZero) -}}
+      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      {{- end -}}
+      {{- if gt .ReadingTime 0 -}}
+      <span class="article__reading-time">{{ .ReadingTime }} min read</span>
+      {{- end -}}
+    </div>
+    {{- if .Params.tags -}}
+    <div class="article__tags">
+      {{- range .Params.tags -}}
+      <a class="tag" href="{{ "/tags/" | absURL }}{{ . | urlize }}">{{ . }}</a>
+      {{- end -}}
+    </div>
+    {{- end -}}
+  </header>
+
+  {{- if and (gt .WordCount 800) (.TableOfContents) -}}
+  <aside class="toc">
+    <details class="toc__details">
+      <summary class="toc__summary">Contents</summary>
+      <nav class="toc__nav">{{ .TableOfContents }}</nav>
+    </details>
+  </aside>
+  {{- end -}}
+
+  <div class="prose article__content">
+    {{ .Content }}
+  </div>
+
+  {{- if .Param "nextprev" -}}
+  {{ partial "nextprev.html" . }}
+  {{- end -}}
+
+  {{- if .Param "taglist" -}}
+  {{ partial "taglist.html" . }}
+  {{- end -}}
+</article>
+{{ end }}

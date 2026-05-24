@@ -6,6 +6,7 @@ tmp
 static/code
 docs/code
 .idea/
-*.DS_Store
 cluster-dump.mongodump
 *workspace.code-workspace
+docs/
+public/
