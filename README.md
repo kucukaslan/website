@@ -68,13 +68,16 @@ To deploy manually:
 | Layouts | `layouts/` |
 | Navigation | `config.toml` → `[menu.main]` |
 | Site metadata | `config.toml` → `[params]` |
-| Open Graph | `layouts/partials/opengraph.html` |
+| Open Graph / Twitter Cards | `layouts/partials/opengraph.html` |
 
 ## Features
 
 - Editorial typography (CMU Serif, Cormorant Garamond, DM Sans, JetBrains Mono)
 - Light/dark mode with `localStorage` persistence and `prefers-color-scheme` fallback
 - RSS feed at `/index.xml`
+- `robots.txt` at `/robots.txt` (origin file in `static/`; Cloudflare may prepend its managed AI-crawler policy)
+- `llms.txt` at `/llms.txt` (AI crawler context; served from `static/llms.txt`)
+- Open Graph and Twitter Card meta tags (X: [@kucukaslancomtr](https://x.com/kucukaslancomtr))
 - Tag pages at `/tags/`
 - Mermaid diagram support
 - Lazy-loaded YouTube embeds on song pages

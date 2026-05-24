@@ -3,6 +3,7 @@
 <meta name="robots" content="index, follow">
 <title>{{ if not .IsHome }}{{ .Title }} · {{ end }}{{ .Site.Title }}</title>
 <link rel="canonical" href="{{ .Permalink }}">
+<link rel="icon" href="{{ "/favicon.ico" | absURL }}" sizes="any">
 <link rel="alternate" type="application/rss+xml" title="{{ .Site.Title }} RSS" href="{{ "/index.xml" | absURL }}">
 <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ with .Summary }}{{ . | plainify | truncate 160 }}{{ else }}{{ .Site.Params.description }}{{ end }}{{ end }}">
 {{ if isset .Params "tags" }}<meta name="keywords" content="{{ delimit .Params.tags ", " }}">{{ end }}
