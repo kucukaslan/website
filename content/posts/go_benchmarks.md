@@ -3,21 +3,22 @@ title: "A Commentary on Go Webserver Benchmarks"
 date: 2024-09-08T00:00:01+03:00
 tags: ['go', 'english', 'benchmarks', 'technical']
 draft: true
+description: "Fiber's benchmark graph looks impressive until you realize what it's actually measuring. A skeptical look at Go web framework benchmarks."
 url: /go_benchmarks/
 ---
 
 > TLDR is TLDR: [Fiber](https://github.com/gofiber/fiber) is not going to be that faster for you.
 
 > TLDR: [Fiber](https://github.com/gofiber/fiber) is not going to be that faster in your case unless 
-you can explain what particular feature of fiber will be advantageous
+you can explain what particular feature of Fiber will be advantageous
 for your specific use case.
 
-Let's start with the famous graph from  its [homepage](https://gofiber.io/assets/images/benchmark-pipeline.png):
+Let's start with the famous graph from its [homepage](https://gofiber.io/assets/images/benchmark-pipeline.png):
 ![Benchmark Graph with HTTP Pipelining where fiber is by far superior to the most of the alternatives even with 500ms jobs](/img/benchmark-pipeline.png)
 
-This graph obviously[^ack] proves that fiber can serve 10 times of the requests 
+This graph obviously[^ack] proves that Fiber can serve 10 times the requests 
 that net/http ("default"), chi, gin etc. can, and this is not affected by
-how much "business logic" takes (i.e. time spend for each request).
+how much "business logic" takes (i.e. time spent for each request).
 
 [^ack]: I reserve my right to retract the acknowledgements above, since they simulated 
  time spent on the business logic with [time.Sleep](https://github.com/smallnest/go-web-framework-benchmark/blob/b07cebd150aa2458ba2df1726a284ea4fd36fad4/server.go#L407).
@@ -39,7 +40,7 @@ how much "business logic" takes (i.e. time spend for each request).
     }
     ```
 
-Then what is the problem?
+## Then What Is the Problem?
 
 
 
@@ -49,5 +50,4 @@ Then what is the problem?
 
 This article is dedicated to relentless proponents of [Fiber](https://github.com/gofiber/fiber),
 and [Cunningham's Law](https://letmegooglethat.com/?q=Cunningham%27s+Law).
-
 
