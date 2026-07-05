@@ -1,6 +1,7 @@
 ---
 title: "TCP & HTTP"
 date: 2022-07-30T00:49:51+03:00
-draft: true
+draft: false
+description: "A series on what network protocols look like beneath the frameworks."
 ---
-Incoming series on HTTP and TCP/IP protocols.
+Articles on TCP, HTTP, and related protocols — from raw sockets to RFC specifications.

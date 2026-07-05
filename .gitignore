@@ -11,3 +11,4 @@ cluster-dump.mongodump
 docs/
 public/
 .docs
+benchmarks/
