@@ -11,6 +11,7 @@
   --border: #E0DAD0;
   --code-bg: #F0EBE3;
   --code-border: #D8D0C4;
+  --code-block-text: #F8F8F2;
   --blockquote-bg: #F3EFE8;
   --blockquote-border: #2A7F6F;
   --highlight-bg: #2D2A2E;
@@ -38,6 +39,7 @@
   --border: #3A3A3A;
   --code-bg: #2A2A2A;
   --code-border: #444444;
+  --code-block-text: #F8F8F2;
   --blockquote-bg: #242424;
   --blockquote-border: #3DA891;
   --highlight-bg: #1E1E1E;
@@ -701,6 +703,10 @@ a:hover {
 
 .prose pre {
   margin: 1.5rem 0;
+  padding: 1.25rem;
+  color: var(--text);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
   border-radius: var(--radius);
   overflow-x: auto;
   box-shadow: var(--shadow);
@@ -714,6 +720,8 @@ a:hover {
 
 .highlight {
   background: var(--highlight-bg);
+  color: var(--code-block-text);
+  border: 1px solid var(--code-border);
   border-radius: var(--radius);
   overflow-x: auto;
 }
@@ -721,6 +729,9 @@ a:hover {
 .highlight pre {
   margin: 0;
   padding: 1.25rem;
+  color: inherit;
+  background: transparent !important;
+  border: 0;
   box-shadow: none;
 }
 
