@@ -1,22 +1,27 @@
 {{ define "main" }}
+{{ if or (eq .Section "pages") (eq .Layout "page") }}
+<article class="article page">
+  <header class="article__header page__header">
+    <p class="article__eyebrow">Personal folio</p>
+    <h1 class="article__title">{{ .Title }}</h1>
+  </header>
+  <div class="prose article__content">
+    {{ .Content }}
+  </div>
+</article>
+{{ else }}
 <article class="article">
   <header class="article__header">
     <h1 class="article__title">{{ .Title }}</h1>
     <div class="article__meta">
       {{- if and (not .Params.nodate) (not .Date.IsZero) -}}
-      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
       {{- end -}}
       {{- if gt .ReadingTime 0 -}}
       <span class="article__reading-time">{{ .ReadingTime }} min read</span>
       {{- end -}}
     </div>
-    {{- if .Params.tags -}}
-    <div class="article__tags">
-      {{- range .Params.tags -}}
-      <a class="tag" href="{{ "/tags/" | absURL }}{{ . | urlize }}">{{ . }}</a>
-      {{- end -}}
-    </div>
-    {{- end -}}
+    {{ partial "writing-badges.html" . }}
   </header>
 
   {{- if and (gt .WordCount 500) (.TableOfContents) -}}
@@ -40,4 +45,5 @@
   {{ partial "taglist.html" . }}
   {{- end -}}
 </article>
+{{ end }}
 {{ end }}

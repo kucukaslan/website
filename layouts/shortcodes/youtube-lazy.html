@@ -1,7 +1,6 @@
 {{- $ytid := .Get 0 -}}
 <div class="youtube-container">
-  <div class="youtube-lazy" data-id="{{ $ytid }}">
-    <img src="https://i.ytimg.com/vi/{{ $ytid }}/hqdefault.jpg" alt="YouTube video thumbnail" id="youtube-{{ $ytid }}">
+  <div class="youtube-lazy" data-id="{{ $ytid }}" role="button" tabindex="0" aria-label="Play YouTube video">
+    <img src="https://i.ytimg.com/vi/{{ $ytid }}/hqdefault.jpg" alt="YouTube video thumbnail" id="youtube-{{ $ytid }}" loading="lazy" decoding="async">
   </div>
 </div>
-

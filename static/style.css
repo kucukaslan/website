@@ -68,6 +68,29 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1000;
+  padding: 0.65rem 0.9rem;
+  color: var(--bg);
+  background: var(--text);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:where(a, button, summary, [role="button"]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -149,6 +172,9 @@ a:hover {
 }
 
 .site-nav__link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
   font-family: var(--font-ui);
   font-size: 0.875rem;
   font-weight: 500;
@@ -173,8 +199,8 @@ a:hover {
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0.375rem;
   background: none;
   border: 1px solid var(--border);
@@ -208,8 +234,8 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   margin-left: 0.5rem;
   padding: 0;
   background: var(--surface);
@@ -285,6 +311,41 @@ a:hover {
   margin-inline: auto;
 }
 
+.language-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  max-width: var(--max-width);
+  margin: 0 auto 2rem;
+  font-family: var(--font-ui);
+}
+
+.hero .language-tabs {
+  margin-top: 1.5rem;
+  margin-bottom: 0;
+}
+
+.language-tabs__link {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  padding: 0.35rem 0.8rem;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.language-tabs__link:hover,
+.language-tabs__link.is-active {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
 /* Page headers */
 
 .page-header {
@@ -347,14 +408,18 @@ a:hover {
 
 .home-content {
   max-width: var(--max-width);
-  margin: 0 auto 3rem;
+  margin: 1.25rem auto 0;
+}
+
+.home-about {
+  padding-top: 0.25rem;
 }
 
 /* Explore grid */
 
 .explore-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
 }
 
@@ -419,10 +484,6 @@ a:hover {
   border-bottom: none;
 }
 
-.post-list--home .post-list__item {
-  grid-template-columns: 7.5rem 1fr auto;
-}
-
 .post-list--simple .post-list__item {
   grid-template-columns: 1fr auto;
 }
@@ -446,16 +507,32 @@ a:hover {
   color: var(--accent);
 }
 
-.post-list__tags {
+.post-list__tags,
+.writing-badges {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
   margin-top: 0.35rem;
 }
 
-.post-list--home .post-list__tags {
-  margin-top: 0;
-  align-self: center;
+.writing-badges {
+  margin-top: 0.55rem;
+}
+
+.post-list__description {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.tag--language {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.tag--type {
+  background: transparent;
 }
 
 /* Tags */
@@ -473,7 +550,7 @@ a:hover {
   transition: background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 
-.tag:hover {
+a.tag:hover {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--bg);
@@ -557,6 +634,14 @@ a:hover {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-top: 1rem;
+}
+
+.article__header .writing-badges {
+  margin-top: 1rem;
+}
+
+.page__header {
+  margin-bottom: 2rem;
 }
 
 /* Table of contents */
@@ -688,6 +773,35 @@ a:hover {
 
 .prose a:hover {
   text-decoration-color: var(--accent);
+}
+
+.button-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25rem;
+  padding: 0.55rem 1rem;
+  color: var(--bg);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+
+.button-link:hover {
+  color: var(--bg);
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.empty-state {
+  padding: 1.5rem 0;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* Code */

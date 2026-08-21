@@ -1,0 +1,7 @@
+{{- $active := .active | default "" -}}
+<nav class="language-tabs" aria-label="Writing languages">
+  <a class="language-tabs__link{{ if eq $active "all" }} is-active{{ end }}" href="{{ "/posts/" | relURL }}"{{ if eq $active "all" }} aria-current="page"{{ end }}>All</a>
+  <a class="language-tabs__link{{ if eq $active "en" }} is-active{{ end }}" href="{{ "/languages/english/" | relURL }}"{{ if eq $active "en" }} aria-current="page"{{ end }}>English</a>
+  <a class="language-tabs__link{{ if eq $active "tr" }} is-active{{ end }}" href="{{ "/languages/turkce/" | relURL }}"{{ if eq $active "tr" }} aria-current="page"{{ end }}>Türkçe</a>
+  <a class="language-tabs__link{{ if eq $active "ku" }} is-active{{ end }}" href="{{ "/languages/kurdi/" | relURL }}"{{ if eq $active "ku" }} aria-current="page"{{ end }}>kurdî</a>
+</nav>

@@ -2,7 +2,11 @@
 title: "Parsing HTTP Request Message"
 date: 2025-06-14T00:00:00+03:00
 tags: ['personal', 'english']
+language: en
+content_type: technical
+series: ['tcp-http']
 draft: true
+url: /tcp/http_request/
 ---
 > **Draft Notice:**  
 > This article is currently a draft. I welcome any and all feedback—especially harsh or critical comments—before its official release. \

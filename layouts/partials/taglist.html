@@ -6,7 +6,7 @@
   <div class="taglist__tags">
     {{- range $k, $v := .Params.tags -}}
     {{- $url := printf "/tags/%s" (. | urlize | lower) -}}
-    <a class="tag" href="{{ $url | absURL }}">{{ . | title }}</a>
+    <a class="tag" href="{{ $url | relURL }}">{{ . | title }}</a>
     {{- end -}}
   </div>
 </div>

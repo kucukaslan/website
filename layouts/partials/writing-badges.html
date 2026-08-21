@@ -1,0 +1,17 @@
+{{- $page := . -}}
+{{- $languageLabels := dict "en" "English" "tr" "Türkçe" "ku" "kurdî" -}}
+{{- $languagePaths := dict "en" "/languages/english/" "tr" "/languages/turkce/" "ku" "/languages/kurdi/" -}}
+{{- $typeLabels := dict "technical" "Technical" "opinion" "Opinion" "culture" "Arts & culture" "site-note" "Site note" -}}
+{{- with $page.Params.language -}}
+<div class="writing-badges">
+  <a class="tag tag--language" href="{{ index $languagePaths . | relURL }}">{{ index $languageLabels . | default (upper .) }}</a>
+  {{- with $page.Params.content_type }}
+  <span class="tag tag--type">{{ index $typeLabels . | default (humanize .) }}</span>
+  {{- end }}
+  {{- with $page.Params.tags }}
+    {{- range first 2 . }}
+    <a class="tag" href="{{ printf "/tags/%s" (. | urlize | lower) | relURL }}">{{ . | title }}</a>
+    {{- end }}
+  {{- end }}
+</div>
+{{- end }}
