@@ -1,0 +1,12 @@
+{{- $page := .page -}}
+{{- $index := .index | default 0 -}}
+<li class="post-list__item" lang="{{ $page.Params.language | default "en" }}" style="--i: {{ $index }}">
+  <time class="post-list__date" datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "2006-01-02" }}</time>
+  <div class="post-list__body">
+    <a class="post-list__title" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
+    {{- with $page.Params.description }}
+    <p class="post-list__description">{{ . }}</p>
+    {{- end }}
+    {{ partial "writing-badges.html" $page }}
+  </div>
+</li>

@@ -14,10 +14,9 @@ website/
 ├── assets/              # CSS/JS processed by Hugo's asset pipeline
 ├── content/
 │   ├── _index.md        # Homepage
-│   ├── posts/           # Blog posts
-│   ├── pages/           # Standalone pages (About, etc.)
-│   ├── songs/           # Kurdish song collections
-│   └── tcp/             # TCP/HTTP series
+│   ├── about.md         # Standalone About page
+│   ├── languages/       # Static language-filtered writing views
+│   └── posts/           # Published writing, drafts, and series members
 ├── layouts/             # Templates, partials, shortcodes
 ├── static/              # Static assets (CSS, images, JS)
 ├── public/              # Build output (gitignored)
@@ -44,11 +43,17 @@ hugo --buildDrafts
 
 Visit `http://localhost:1313` when running the dev server.
 
+Internal navigation and local assets use origin-relative URLs, so the same
+server can also be exposed through a forwarded hostname. Keep the production
+`baseURL` in `config.toml`; do not override it with a localhost URL when
+starting a forwarded preview.
+
 ## Content
 
-- **Posts** go in `content/posts/` — use the `url` frontmatter field to preserve existing URLs when moving files.
-- **Pages** go in `content/pages/` (e.g. About at `/about/`).
-- **Songs** go in `content/songs/` with `layout: stran` for YouTube embed support.
+- **Writing** goes in `content/posts/` — use the `url` frontmatter field to preserve existing URLs when moving files.
+- Add `language` (`en`, `tr`, or `ku`) and `content_type` (`technical`, `opinion`, `culture`, or `site-note`) to published writing.
+- Use optional `series` metadata for related articles; series pages appear when they contain published writing.
+- Standalone pages use `layout: page` and are excluded from writing lists and article metadata.
 - **Drafts** are excluded from production builds unless `--buildDrafts` is passed.
 
 ## Deployment

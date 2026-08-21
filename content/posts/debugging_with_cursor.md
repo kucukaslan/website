@@ -2,7 +2,9 @@
 title: "Fixing an OSS Bug with Cursor"
 date: 2026-03-02T12:00:00+03:00
 draft: false
-tags: ['English', 'cursor', 'osmium']
+tags: ['cursor', 'osmium']
+language: en
+content_type: technical
 images: ['/img/nodes-ways.svg']
 url: /debugging_with_cursor/
 ---

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang | default "tr" }}">
+<html lang="{{ .Params.language | default .Site.Language.Lang | default "en" }}">
 <head>
   {{ partial "head.html" . }}
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   {{ partial "nav.html" . }}
-  <main class="site-main page-enter">
+  <main class="site-main page-enter" id="main-content" tabindex="-1">
     {{ block "main" . }}{{ end }}
   </main>
   {{ block "footer" . }}
@@ -19,8 +20,8 @@
   </script>
   {{ end }}
 
-  <script src="{{ "/js/theme-switcher.js" | absURL }}"></script>
-  <script src="{{ "/js/nav.js" | absURL }}"></script>
+  <script src="{{ "/js/theme-switcher.js" | relURL }}"></script>
+  <script src="{{ "/js/nav.js" | relURL }}"></script>
   {{ partial "youtube-lazy-js.html" . }}
 </body>
 </html>

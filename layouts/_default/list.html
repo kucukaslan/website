@@ -4,44 +4,43 @@
   <p class="hero__eyebrow">Personal folio</p>
   <h1 class="hero__title">{{ .Site.Title }}</h1>
   <p class="hero__tagline">Engineering, software, and occasional musings — in Turkish, English, and Kurdish.</p>
+  {{ partial "language-tabs.html" (dict "active" "") }}
 </section>
-
-<div class="home-content prose">
-  {{ .Content }}
-</div>
 
 <section class="section-block">
   <div class="section-block__header">
     <h2 class="section-block__title">Recent writing</h2>
-    <a class="section-block__link" href="{{ "/posts/" | absURL }}">All posts →</a>
+    <a class="section-block__link" href="{{ "/posts/" | relURL }}">All writing →</a>
   </div>
   <ul class="post-list post-list--home">
-    {{- range $i, $page := first 7 (where .Site.RegularPages "Section" "posts") -}}
-    {{- if and (not $page.Draft) (not $page.Date.IsZero) -}}
-    <li class="post-list__item" style="--i: {{ $i }}">
-      <time class="post-list__date" datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "Jan 02, 2006" }}</time>
-      <a class="post-list__title" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
-      {{- with $page.Params.tags -}}
-      <span class="post-list__tags">
-        {{- range first 3 . -}}<span class="tag tag--sm">{{ . }}</span>{{- end -}}
-      </span>
-      {{- end -}}
-    </li>
-    {{- end -}}
-    {{- end -}}
+    {{- $writing := where (where .Site.RegularPages "Section" "posts") "Params.notablog" "ne" true -}}
+    {{- range $i, $page := first 6 $writing.ByDate.Reverse -}}
+      {{ partial "writing-item.html" (dict "page" $page "index" $i) }}
+    {{- end }}
   </ul>
+</section>
+
+<section class="section-block home-about">
+  <h2 class="section-block__title">About this site</h2>
+  <div class="home-content prose">
+    {{ .Content }}
+  </div>
 </section>
 
 <section class="section-block section-block--links">
   <h2 class="section-block__title">Explore</h2>
   <div class="explore-grid">
-    <a class="explore-card" href="{{ "/posts/" | absURL }}">
-      <span class="explore-card__label">Posts</span>
-      <span class="explore-card__desc">Essays and notes on engineering</span>
-    </a>
-    <a class="explore-card" href="{{ "/about/" | absURL }}">
+    <a class="explore-card" href="{{ "/about/" | relURL }}">
       <span class="explore-card__label">About</span>
       <span class="explore-card__desc">Who writes here</span>
+    </a>
+    <a class="explore-card" href="{{ "/cv.pdf" | relURL }}">
+      <span class="explore-card__label">CV</span>
+      <span class="explore-card__desc">Experience and education</span>
+    </a>
+    <a class="explore-card" href="{{ "/index.xml" | relURL }}">
+      <span class="explore-card__label">RSS</span>
+      <span class="explore-card__desc">Subscribe to new writing</span>
     </a>
   </div>
 </section>
@@ -51,25 +50,34 @@
   <h1 class="page-header__title">{{ .Title }}</h1>
   {{ with .Content }}<div class="page-header__desc prose">{{ . }}</div>{{ end }}
 </header>
+{{ partial "language-tabs.html" (dict "active" "all") }}
 
 <ul class="post-list">
-  {{- range $i, $page := .Paginator.Pages -}}
-  {{- if and (ne $page.Params.notablog true) (not $page.Date.IsZero) -}}
-  <li class="post-list__item" style="--i: {{ $i }}">
-    <time class="post-list__date" datetime="{{ $page.Date.Format "2006-01-02" }}">{{ $page.Date.Format "Jan 02, 2006" }}</time>
-    <div class="post-list__body">
-      <a class="post-list__title" href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
-      {{- with $page.Params.tags -}}
-      <div class="post-list__tags">
-        {{- range . -}}<a class="tag" href="{{ "/tags/" | absURL }}{{ . | urlize }}">{{ . }}</a>{{- end -}}
-      </div>
-      {{- end -}}
-    </div>
-  </li>
-  {{- end -}}
-  {{- end -}}
+  {{- $writing := where .RegularPages "Params.notablog" "ne" true -}}
+  {{- $paginator := .Paginate $writing.ByDate.Reverse -}}
+  {{- range $i, $page := $paginator.Pages -}}
+    {{ partial "writing-item.html" (dict "page" $page "index" $i) }}
+  {{- end }}
 </ul>
 {{ partial "pagination.html" . }}
+
+{{ else if eq .Section "languages" }}
+{{- $active := .Params.language_code | default "all" -}}
+<header class="page-header">
+  <p class="page-header__eyebrow">Writing</p>
+  <h1 class="page-header__title">{{ .Title }}</h1>
+  {{ with .Content }}<div class="page-header__desc prose">{{ . }}</div>{{ end }}
+</header>
+{{ partial "language-tabs.html" (dict "active" $active) }}
+{{- $writing := where (where .Site.RegularPages "Section" "posts") "Params.notablog" "ne" true -}}
+{{- if ne $active "all" }}{{ $writing = where $writing "Params.language" $active }}{{ end -}}
+<ul class="post-list">
+  {{- range $i, $page := $writing.ByDate.Reverse -}}
+    {{ partial "writing-item.html" (dict "page" $page "index" $i) }}
+  {{- else }}
+  <li class="empty-state">No published writing in this language yet.</li>
+  {{- end }}
+</ul>
 
 {{ else if eq .Section "pages" }}
 <header class="page-header">

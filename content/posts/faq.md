@@ -1,7 +1,9 @@
 ---
 title: "Frequently Asked Questions"
 date: 2024-08-15T00:00:00+03:00
-tags: [ 'personal', 'english' ]
+tags: ['personal']
+language: en
+content_type: site-note
 draft: false
 url: /faq/
 ---
@@ -12,7 +14,7 @@ I don't see any reason for it not to be.
 TBH, I do: a fancy website could've been more impressive for
 talent hunters/recruiters also it would amaze my colleagues.
 
-Personally I like [M. Çağrı Durgut](https://mcagridurgut.com/)'s website. It is fancy, displays his wit, its blog even
+Personally I like [M. Çağrı Durgut](https://old.cagri.kumbeyin.com/)'s (old) website (and [the new one](https://cagri.kumbeyin.com/) as well). It is fancy, displays his wit, its blog even
 has dark mode. What more do people want?
 
 Anyway.

@@ -1,14 +1,15 @@
 baseURL = 'https://kucukaslan.com.tr/'
-defaultContentLanguage = 'tr'
+defaultContentLanguage = 'en'
 title = 'Muhammed Can Küçükaslan'
 
-[languages.tr]
-  label = 'Türkçe'
+[languages.en]
+  label = 'English'
   weight = 1
-  locale = 'tr_TR'
+  locale = 'en_US'
 
 [taxonomies]
   tag = 'tags'
+  series = 'series'
 
 [pagination]
   pagerSize = 12
@@ -40,7 +41,7 @@ title = 'Muhammed Can Küçükaslan'
 
 [[menu.main]]
   weight = 2
-  name = "Posts"
+  name = "Writing"
   url = "/posts/"
 
 [[menu.main]]

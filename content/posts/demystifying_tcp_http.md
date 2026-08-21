@@ -2,6 +2,9 @@
 title: "Demystifying Network Requests: TCP, HTTP and More"
 date: 2025-06-13T00:00:00+03:00
 tags: ['professional', 'english']
+language: en
+content_type: technical
+series: ['tcp-http']
 draft: true
 description: "What do HTTP, WebSocket, gRPC, and GraphQL requests actually look like on the wire? I built a TCP Read-Print-Loop to find out."
 url: /demystifying_tcp_http/

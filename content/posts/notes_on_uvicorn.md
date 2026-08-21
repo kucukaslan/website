@@ -1,7 +1,9 @@
 ---
 title: "Notes on Uvicorn on Production"
 date: 2025-10-29T20:25:10+03:00
-tags: ['english', 'python', 'uvicorn', 'fastapi', 'production']
+tags: ['python', 'uvicorn', 'fastapi', 'production']
+language: en
+content_type: technical
 images: ['/img/uv_add_unicorn_standard.png']
 draft: false
 url: /notes_on_uvicorn/
@@ -90,4 +92,4 @@ Heads up: I also had some issues with using slim Docker images as they may not c
 The demo project's Dockerfile installs the `build-essential` etc., but I couldn't reproduce the issue ( not downloading did not break).
 
 I am not primarily a Python developer so I might be missing something. Moreover in my experience Python can be a magical language. 
-So, there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration. 
+So, there might be some magic under the hood that ensures the code/configuration you explicitly wrote is ignored in favor of some other preferred configuration.
