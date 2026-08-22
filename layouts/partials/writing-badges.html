@@ -4,7 +4,7 @@
 {{- $typeLabels := dict "technical" "Technical" "opinion" "Opinion" "culture" "Arts & culture" "site-note" "Site note" -}}
 {{- with $page.Params.language -}}
 <div class="writing-badges">
-  <a class="tag tag--language" href="{{ index $languagePaths . | relURL }}">{{ index $languageLabels . | default (upper .) }}</a>
+  <a class="tag tag--language{{ if eq . "ku" }} language-label--explained{{ end }}" href="{{ index $languagePaths . | relURL }}"{{ if eq . "ku" }} aria-label="kurdî. kurdî is lowercase by convention: Kurdish language names are not capitalized." data-language-note="kurdî is lowercase by convention: Kurdish language names are not capitalized."{{ end }}>{{ index $languageLabels . | default (upper .) }}</a>
   {{- with $page.Params.content_type }}
   <span class="tag tag--type">{{ index $typeLabels . | default (humanize .) }}</span>
   {{- end }}
