@@ -1,14 +1,11 @@
-*.DS_Store
-.venv
+.*
 *.log
 pg
 tmp
 static/code
 docs/code
-.idea/
 cluster-dump.mongodump
-*workspace.code-workspace
+*.code-workspace
 docs/
 public/
-.docs
 benchmarks/
