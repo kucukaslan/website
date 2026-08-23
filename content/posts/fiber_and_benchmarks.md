@@ -2,7 +2,7 @@
 title: "A Rant on Go Fiber's Infamous Chart: Benchmarking Web Frameworks"
 date: 2026-08-23T00:00:00+03:00
 tags: ['go', 'benchmarks']
-draft: true
+draft: false
 # url: /go_benchmarks/
 language: en
 content_type: technical
@@ -59,7 +59,7 @@ Did you learn it in the network course in university then totally forget about i
 
 If, at the very least, you don't remember the word `pipeline` from 
 the HTTP client config you prepared[^have_ai_prepared], probably you are not using it at all.
-[^have_ai_prepared]: configs you had AI/LLMs prepare
+[^have_ai_prepared]: configs you had had AI/LLMs prepare
 
 Whether you were aware or not you are not using the fiber with pipelines. 
 In fact many common HTTP client libraries intentionally does not support HTTP pipelining including but not limited to
@@ -80,13 +80,19 @@ Until the server replies to this request, it can't read another, ... \
 we're not going to implement HTTP pipelining because it
 was never deployed in the wild and the answer is HTTP/2.
 
+So, pipelining is largely abandoned —[^emdash]for good reasons!
 
-Pipelining is largely abandoned, for good reasons!
+[^emdash]: this emdash is technically AI generated,
+I wasn't aware at the time that Option+Shift+Hyphen is the emdash shortcut in MacOS,
+so I just googled `emdash` and copied from AI overview.
 
 #1 reason being the head of line blocking (per responses)!
 A slow or blocked request at the head of the (pipe)line can block all the requests coming after it.  
-So, pipelining, practically, at best, somewhat improves the performance but when it goes wrong it makes things terribly worse.
-Since it is not practically used, it is a bad metric to bench for.
+So, pipelining, practically, at best, somewhat improves the performance
+but when it goes wrong it makes things terribly worse.  
+For reasons like this, it never became popular and superseded by multiplexing in HTTP/2.
+
+Since, practically speaking, pipelining is not used anywhere, it is a bad metric to bench against.
 
 More on the HTTP Pipelining and Benchmarks:
 > HTTP Pipelining is useless and please **stop publishing benchmarks with Pipelining enabled. It’s just lying about real-world performance**...  
@@ -99,43 +105,164 @@ More on Head of line blocking and in particular how HTTP/1.1. Pipelining is affe
 https://calendar.perfplanet.com/2020/head-of-line-blocking-in-quic-and-http-3-the-details/#sec_pipelining
 
 ## Simulating the Work By time.Sleep
-Now we can return to the sleeping issue think about what your services do to process a request in reality I assume it doesn't merely sleep unless you are using all in all microservice architecture and Split all the time slip in locations into a dedicated microservices of its own along with it's all on database clusters credits Etc full setup…
-Heart, fine you didn't came to read my sarcasm
-An ordinary service usually do some of 
-Sleep
-I/O operations
-CPU Bond operations
+Now, we can return to the [sleep](https://pkg.go.dev/time#Sleep)ing issue.
+Think about what your services do to process a request in real production environment.
+I'd assume it doesn't merely sleep unless you are using
+all-in-all microservice architecture 
+and split all the `time.Sleep`s into a dedicated microservice
+of its own along with its own database clusters, its own ValKey etc. full setup…
 
-fill from the notes
+Fine, fine you didn't came to read my sarcasms...
 
-How do this affect how many requests in your service can serve in a time interval in a second
-First physical limitation is the CPU. you can only make one CPU second amount of work in a second. that is if your request actively uses/occupies  the CPU For exactly one milliseconds you can at Birth so at most 1,000 requests. you can't defeat the classical physics, not sure about the quantum one or the meta one.
- second one is the resource limit. do you have any pools for database or HTTP connections?
-Do you open files? in many Linux distributions there is a thousand and 24 open file limit. that is you can open at most 1024 files simultaneously 
-So If you open a file, spend one millisecond, and close it then you can repeat this a thousand times a second. assuming you can do this for 1024 files simultaneously done you have at Max want me on request per second theoretical limit. 
- obviously if you open a file you will use it so this certificate limit is Out Of Reach but this related to CPU operations you would need and we already discussed it
-Same goes for all kind of connection pullings concurrency limits semaphors Etc.
- now last examine IO operations we can rock the group I operations into doors use the same CPU with the service and others. if you want to be pedantic all of them use same CPU for some amount of time but the distinction the distinction is based on the significance based on the amount of CPU work required to achieve this task period new line in languages like Python and Node.js  it is customary to have a dedicated process / workers pool to offload CPU operations to avoid blocking the CPU in the Main Event loop.
- this kind of I operations obviously brings back the CPU limitations and discussed earlier.
- for external IO operations we are bounded by the Limited limitations of the external service it may be a TV Etc.
-It goes without saying that there is some amount of work at least sending writing a request and receiving reading response but it's negligible we usually assume that external parties are not the bottleneck they have unlimited resources and they can handle the lot whatever it amouns to,  since it's hard to estimate their capabilities and they are hardly ever the bottleneck, but when they are the bottleneck; your clients / customers will notice before you do call an ambulance
-And the overheads:
- always level overheads, process / threat scheduling, no matter allocations, cisco's, any Telemetry / observability instrumentations, garbage collection, and yours truly:
-Web server framework overheads.
- So finally this is where all these shiny web Frameworks will differ if they do differ and if the differences matter.
-First thing you should find is what your bottleneck is. after all the service will be as fast as its slowest part.
- you might not be able to definitely answer this in advance; so you need to take advantage of your past experience that trained your instincts and formed your taste. if you don't have it yet you are lucky to learn it along the way; all consult your colleagues, seniors and of course our AI overlords!
-Anyway once you have some idea about your probable bottlenecks you can examine the full Benchmark that the infamous chart was taken.
- most of my work is processing CPU heavy request so I want to include the Benchmark for CPU band operations as you can easily see any once you realize that why axis starts there isn't much a difference among the listed web Frameworks.
+### Request's Workload
+An ordinary backend service usually do some mixture of:
+* Sleep (lol): Yes, nobody is stopping you from writing sleeping service.
+* I/O operations:
+  * Network I/O: 
+    * Call other services (HTTP, gRPC etc.)
+    * Querying database: SQL, NoSQL, Redis etc.
+  * Filesystem I/O    
+    * reading files
+    * writing files
+    * writing logs synchronously (if it were async, you wouldn't wait it)
+    * SQLite (You thought it was included in "_Querying database_", didn't you?)
+* CPU Bound operations:
+  * Floating-Point Operations as in FLOPS (I mentioned it because it sounds cooler than general computations)
+  * JSON/protobuf parsing and serialization
+  * usual business code: conditionals, mappings, filters, sorting, mandatory [isRecord](https://x.com/tldraw/article/2075329561642840339) check
+  * ML inference (AI)
+* Waiting Resources and System Overheads:
+  * the eventloop (especially for python and Node.js services)
+  * server's conccurrency limits e.g. https://uvicorn.dev/server-behavior/#resource-limits 
+  * connection pools: aiohttp, DB connection pools etc.
+  * open file limits
+  * memory allocations
+  * garbage collections
+  * logging/telemetry instrumentation
+  * language/framework overheads
+
+How do each one of them affect number of requests your service can serve a second (or a minute, i.e. its througput)?
+
+### CPU
+First physical/hard limitation is the CPU.
+You can use a CPU at most 1 second per a second, duh.
+
+Let's define amount of work a specific CPU can do in a second as 1 CPU*second
+(less informally we could use # of CPU cycles).
+
+That means if your request do 1 milli CPU*second of CPU work
+(i.e. actively uses/occupies the CPU for exactly one milliseconds), 
+then you can, at best, serve at most 1,000 requests per second (RPS).
+You can't defeat the classical physics —[^emdash-handwritten]not sure about the quantum or the meta.
+[^emdash-handwritten]: this emdash was handwritten.
+
+### Resource Limits
+This is the second one.
+
+Do you have any pools for database or HTTP connections?  
+Do you open files?
+In many Linux distributions there is 1024 open file limit per process. 
+That is, your app can open at most 1024 files simultaneously[^per-process] 
+[^per-process]: per process. A backend service might have multiple processes I guess. 
+
+So, if every requests opens a file, spend one millisecond, and close it;
+then this can be repeated at most a thousand times in a second.  
+Assuming you can do this for 1024 files simultaneously,
+then you serve have at most 1,024,000 RPS theoretical limit.
+
+Obviously, if you open a file you will use it so this theoretical limit is out of reach.
+But this usage will make the CPU operations the bottleneck and we already discussed it
+
+Same goes for all kind of connection pullings concurrency limits semaphors etc.
+
+### I/O Operations
+Now, let's examine I/O operations:  
+As far as I'm concerned, we can group I/O operations into two groups those using the same CPU(and resources) with the service and others (external I/O)[^pedantic-cpu]
+[^pedantic-cpu]: if you want to be [pedantic](https://i.redd.it/a6ut63j7gaq41.png) all of them use CPU for some amount of time but I felt it is worth to distinguish them as the amount of direct CPU work required to achieve significantly differs in these categories. Please don't come and tell me that downloading 100s of petabytes of file over the network uses more CPU*time then computing 2x2 matrix's determinant in a dedicated process pool.
+
+In languages like Python and Node.js 
+it is customary to have a dedicated process / workers pool 
+to offload CPU operations
+to avoid blocking the CPU in the main event loop.
+Although, they do not block the main event loop,
+they still compete with it for the CPU time (and the GIL for python).  
+This kind of I/O operations are related more
+to the CPU limitations (and the resource limitation) discusion(s) earlier.
+
+On the other hand, external IO operations are bounded 
+by the limitations of the external services, DBs etc.  
+The amount of CPU work is usually negligible,
+so we generally assume that external parties 
+are not the bottleneck.
+We assume they have unlimited resources 
+and they can handle the lot whatever it amouns to. 
+Probably beacuse it's hard to estimate their capabilities
+and they are hardly ever the bottleneck.
+However, when they are the bottleneck; your clients / customers will notice before you :lol:
+
+### Sytem Overheads
+And finally the system overheads:
+There are 
+- OS level overheads, 
+- process / threat scheduling, 
+- memory allocations, 
+- syscalls,
+- telemetry / observability instrumentations,
+- garbage collection
+and yours truly:
+- web server framework overheads.
+
+Finally, this is where all these shiny web frameworks
+will or would differ if they do differ and if the differences matter.
+The frameworks determines includes how the requests are routed, how the middlewares organized and what HTTP/gRPC protocols are used/implemented etc.  
+Hence, their performance will matter as much as these functionalities matter for your service performance.
+
+## Evaluating the Framework Performances for Your Needs 
+In order to evaluate how much the framework selection will affect your service problem, 
+first you should find what your bottleneck is.  
+After all the service will be as fast as its slowest part.  
+It might not be able to definitely answer this in advance; 
+so you need to take advantage of your past experiences
+that trained your instincts and formed your taste.  
+If you don't acquired them yet, you are lucky to learn it along the way;
+still, you can consult your colleagues, seniors and of course our AI overlords!
+
+Anyway, once you have some idea about your probable bottlenecks,
+you can examine all the varitions of benchmark by [smallnest](https://github.com/smallnest/go-web-framework-benchmark/tree/master#basic-test), that the infamous chart was taken from (?).[^source]
+[^source]: trust me bro.  
+I decied to write a post about this around September 2024 and noted this repo as the source for the benchmark.
+But I'm not sure whether it was really taken from there,
 
 
+Nowadays, most of my work is on services that are processing CPU heavy requests,
+so I want to include the benchmark for CPU bounds operations.
+![CPU Bound Benchmark](https://github.com/smallnest/go-web-framework-benchmark/blob/master/cpubound_benchmark.png?raw=true)
+As you can easily see, adjusting for the y-axis crime,
+there isn't much a difference among the listed web Frameworks.
+Upper bound is 1360, lower bound is 1160.
+So at most %17 percent higher throughput.
+Remembering from the earlier discussion on CPU bound operations,
+we can guess that it assumes CPU job that take 1ms worth of all available compute.
+When operating on large matrices, as one would need in duration/distance matrices, mathematical solvers, ML Model inferences;
+one usually needs more than 1ms worth of compute (unless the operation is not offloaded to the GPUs).
+So these numbers gets smaller, and the gap between the frameworks gets narrower (both in absolute and relative terms).
 
-This article is dedicated to relentless proponents of [Fiber](https://github.com/gofiber/fiber),
+## Conclusion and the Return of the Prodigal Developer
+I'm not writing a new microservice every other day,
+but I must admit that I've chosen Fiber multiple times.  
+If someone were to ask me which web framework to use,
+I would say use standard library, fiber, chi, gin or whatever looks more usable/familiar to use.  
+I believe that when our service's workload and bottlenecks are not clear to use,
+or when we don't have sufficient knowledge
+about in what way do these frameworks differ,
+and what are the major shortcomings of each;
+it is wiser to choose one of the most popular frameworks.  
+Because, at that point we don't have enough information to make the ideal/correct choice,
+so it is likely that our choice will be suboptimal
+and choosing a framework that is bad for our use case is much worse than choosing a popular framework that is not the best, but sufficiently good[^local-maxima].
+[^local-maxima]: OTOH, if we make a sufficiently good decision we get stuck in the local maxima,
+but if we make a bad decision we may get to make a rewrite to strengthen our performance review case and our CV.
+As you see there are many trade-offs to make...
+
+Finally, I want to dedicated this post to relentless proponents of [Fiber](https://github.com/gofiber/fiber),
 and [Cunningham's Law](https://letmegooglethat.com/?q=Cunningham%27s+Law).
-
-https://chatgpt.com/s/t_6a88c9a185d88191a7519aa309064e57
-https://go.dev/src/net/http/server.go?s=70171%3A70186&utm_source=chatgpt.com#:~:text=//%20But%20we%27re%20not,is%20HTTP/2.
-
-
-
-https://github.com/smallnest/go-web-framework-benchmark/tree/b07cebd150aa2458ba2df1726a284ea4fd36fad4
