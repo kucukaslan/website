@@ -129,6 +129,34 @@
                 opacity: 0.45;
                 cursor: not-allowed;
             }
+            button:focus-visible,
+            input:focus-visible,
+            select:focus-visible {
+                outline: 3px solid rgba(70, 120, 223, 0.35);
+                outline-offset: 2px;
+            }
+            .presets {
+                grid-column: 1/-1;
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                flex-wrap: wrap;
+                padding: 0;
+                border: 0;
+                margin: 0;
+            }
+            .presets legend {
+                float: left;
+                margin-right: 4px;
+                color: var(--muted);
+                font-size: 11px;
+                font-weight: 800;
+            }
+            .preset {
+                min-height: 32px;
+                padding: 5px 10px;
+                font-size: 11px;
+            }
             .statebar {
                 display: flex;
                 justify-content: space-between;
@@ -211,6 +239,38 @@
             .legend-line.active {
                 border-color: var(--green);
             }
+            .legend-line.pinned {
+                height: 3px;
+                border: 0;
+                background: linear-gradient(
+                    90deg,
+                    #d06b43 0 20%,
+                    #477fc7 20% 40%,
+                    #8a69b8 40% 60%,
+                    #3c9273 60% 80%,
+                    #bc8a32 80% 100%
+                );
+            }
+            .legend-dot,
+            .legend-ring {
+                width: 12px;
+                height: 12px;
+                flex: 0 0 12px;
+                border-radius: 50%;
+            }
+            .legend-dot {
+                background: var(--blue);
+                border: 2px solid var(--panel);
+                box-shadow: 0 0 0 1px var(--blue);
+            }
+            .cluster .legend-dot {
+                background: var(--orange);
+                box-shadow: 0 0 0 1px var(--orange);
+            }
+            .legend-ring {
+                border: 3px solid var(--green);
+                background: transparent;
+            }
             .legend-heat {
                 width: 32px;
                 height: 10px;
@@ -230,6 +290,12 @@
             }
             .stage-wrap {
                 padding: 12px 14px 8px;
+            }
+            .scroll-hint {
+                display: none;
+                padding: 0 16px 8px;
+                color: var(--muted);
+                font-size: 10px;
             }
             .stage {
                 position: relative;
@@ -308,11 +374,31 @@
             .node.route.ingress-route {
                 color: var(--blue);
             }
+            .node.route {
+                flex-direction: column;
+            }
+            .node.route small,
+            .pin-target {
+                display: block;
+                margin-top: 1px;
+                color: var(--muted);
+                font-size: 8px;
+                font-weight: 800;
+                line-height: 1.05;
+                white-space: nowrap;
+            }
+            .node.pin-node {
+                flex-direction: column;
+                border-left: 4px solid var(--pin-color);
+            }
             .node.active {
                 border-color: var(--green);
                 background: #eaf6f0;
                 color: var(--green);
                 transform: scale(1.025);
+            }
+            .cluster .node.pin-node.active {
+                border-left-color: var(--pin-color);
             }
             .node.unestablished {
                 opacity: 0.4;
@@ -335,6 +421,17 @@
                 justify-content: space-between;
                 gap: 7px;
                 padding-left: 9px;
+            }
+            .compact .stack .node {
+                min-height: 20px;
+                padding-top: 2px;
+                padding-bottom: 2px;
+                font-size: 9px;
+            }
+            .compact .pod-served {
+                min-width: 74px;
+                padding: 2px 5px;
+                font-size: 9px;
             }
             .pod-served {
                 --load: 0%;
@@ -370,6 +467,57 @@
                 background: var(--green);
                 color: #fff;
             }
+            .request-token {
+                stroke: var(--panel);
+                stroke-width: 3;
+                paint-order: stroke fill;
+                filter: drop-shadow(0 1px 2px rgba(23, 32, 51, 0.35));
+                transform-box: view-box;
+                transform-origin: 0 0;
+            }
+            .request-token.new {
+                animation: request-created 0.55s ease-out;
+            }
+            .request-complete {
+                fill: transparent;
+                stroke: var(--green);
+                stroke-width: 4;
+                transform-box: fill-box;
+                transform-origin: center;
+                animation: request-completed 0.7s ease-out;
+            }
+            .request-complete-dot {
+                stroke: var(--panel);
+                stroke-width: 3;
+                paint-order: stroke fill;
+            }
+            @keyframes request-created {
+                0% {
+                    opacity: 0.2;
+                    r: 3px;
+                }
+                55% {
+                    opacity: 1;
+                    r: 10px;
+                }
+                100% {
+                    r: 6px;
+                }
+            }
+            @keyframes request-completed {
+                0% {
+                    opacity: 1;
+                    transform: scale(0.45);
+                }
+                70% {
+                    opacity: 0.65;
+                    transform: scale(1.5);
+                }
+                100% {
+                    opacity: 0.75;
+                    transform: scale(1);
+                }
+            }
             .statusline {
                 padding: 7px 16px 13px;
                 color: var(--muted);
@@ -378,6 +526,37 @@
             }
             .statusline strong {
                 color: var(--text);
+            }
+            .summary {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 8px;
+                margin: 0 14px 14px;
+            }
+            .summary[hidden] {
+                display: none;
+            }
+            .summary-item {
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                background: var(--panel2);
+                padding: 9px 10px;
+            }
+            .summary-label {
+                display: block;
+                color: var(--muted);
+                font-size: 9px;
+                font-weight: 800;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+            }
+            .summary-value {
+                display: block;
+                margin-top: 3px;
+                color: var(--text);
+                font-size: 14px;
+                font-weight: 800;
+                font-variant-numeric: tabular-nums;
             }
             .explain {
                 display: grid;
@@ -415,26 +594,48 @@
                     padding: 10px;
                 }
                 .controls {
-                    top: 4px;
+                    position: static;
                     grid-template-columns: 1fr 1fr;
+                }
+                .actions {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    width: 100%;
+                }
+                .actions button {
+                    min-width: 0;
+                    padding-left: 8px;
+                    padding-right: 8px;
+                }
+                .actions .primary {
+                    grid-column: 1/-1;
+                }
+                .presets legend {
+                    float: none;
+                    width: 100%;
                 }
                 .explain {
                     grid-template-columns: 1fr;
                 }
+                .stage-wrap {
+                    overflow-x: auto;
+                    overscroll-behavior-x: contain;
+                    scrollbar-gutter: stable;
+                }
+                .stage {
+                    min-width: 680px;
+                }
+                .scroll-hint {
+                    display: block;
+                }
                 .columns {
-                    grid-template-columns: 75px 92px 80px 122px;
+                    grid-template-columns: minmax(90px, 0.9fr) minmax(
+                            135px,
+                            1.2fr
+                        ) minmax(95px, 0.9fr) minmax(130px, 1.2fr);
                 }
-                .node {
-                    font-size: 9px !important;
-                    padding: 3px !important;
-                }
-                .stack .node.pod-node {
-                    padding-left: 6px !important;
-                }
-                .pod-served {
-                    min-width: 55px;
-                    font-size: 9px;
-                    padding: 3px 5px;
+                .summary {
+                    grid-template-columns: 1fr 1fr;
                 }
             }
             @media (prefers-color-scheme: dark) {
@@ -460,8 +661,11 @@
                 }
             }
             @media (prefers-reduced-motion: reduce) {
-                .node {
+                .node,
+                .request-token,
+                .request-complete {
                     transition: none;
+                    animation: none;
                 }
             }
         </style>
@@ -474,8 +678,9 @@
                     <p>
                         Start with no connections. Initialize the client pool to
                         see persistent connections appear in gray. Then process
-                        requests: the connection and route currently carrying a
-                        request are highlighted.
+                        requests: every connection and route carrying an active
+                        request is highlighted. This model uses persistent
+                        HTTP/1.1 with one in-flight request per connection.
                     </p>
                 </div>
             </div>
@@ -486,7 +691,7 @@
                         type="number"
                         min="1"
                         max="5000"
-                        value="200"
+                        value="1000"
                 /></label>
                 <label
                     >Pool size<input
@@ -533,14 +738,43 @@
                         Reset requests
                     </button>
                 </div>
+                <fieldset class="presets">
+                    <legend>Try a connection-pool preset</legend>
+                    <button
+                        class="preset"
+                        type="button"
+                        data-pool="5"
+                        data-pods="10"
+                    >
+                        Few connections (5 / 10)
+                    </button>
+                    <button
+                        class="preset"
+                        type="button"
+                        data-pool="10"
+                        data-pods="10"
+                    >
+                        Connections = pods (10 / 10)
+                    </button>
+                    <button
+                        class="preset"
+                        type="button"
+                        data-pool="50"
+                        data-pods="10"
+                    >
+                        Many connections (50 / 10)
+                    </button>
+                </fieldset>
             </form>
             <div class="statebar">
                 <span class="statepill"
                     ><span id="state-dot" class="dotstate"></span
-                    ><span id="state-text"
+                    ><span id="state-text" role="status" aria-live="polite"
                         >No connections established</span
                     ></span
-                ><span id="progress">0 / 200 requests</span>
+                ><span id="progress" aria-live="polite"
+                    >0 / 1000 requests completed</span
+                >
             </div>
             <div class="scenarios">
                 <section class="scenario cluster">
@@ -556,11 +790,14 @@
                         </div>
                         <div class="legend">
                             <span class="legend-item"
-                                ><span class="legend-line"></span>established
-                                connection</span
+                                ><span class="legend-line pinned"></span>pinned
+                                connection flow</span
                             ><span class="legend-item"
-                                ><span class="legend-line active"></span>active
-                                request path</span
+                                ><span class="legend-dot"></span>request in
+                                flight</span
+                            ><span class="legend-item"
+                                ><span class="legend-ring"></span>completed this
+                                step</span
                             ><span class="legend-item"
                                 ><span class="legend-heat"></span>fewer → more
                                 requests</span
@@ -590,7 +827,8 @@
                                             class="node route cluster-route"
                                             id="cluster-route"
                                         >
-                                            ClusterIP
+                                            <span>ClusterIP</span>
+                                            <small>selects once</small>
                                         </div>
                                     </div>
                                 </div>
@@ -601,9 +839,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="scroll-hint">
+                        Scroll sideways to inspect the full topology →
+                    </div>
                     <div class="statusline" id="cluster-status">
                         Initialize the connection pool to begin.
                     </div>
+                    <div
+                        class="summary"
+                        id="cluster-summary"
+                        aria-label="ClusterIP result summary"
+                        hidden
+                    ></div>
                 </section>
                 <section class="scenario ingress">
                     <div class="scenario-head">
@@ -621,8 +868,11 @@
                                 ><span class="legend-line"></span>established
                                 connection</span
                             ><span class="legend-item"
-                                ><span class="legend-line active"></span>active
-                                request path</span
+                                ><span class="legend-dot"></span>request in
+                                flight</span
+                            ><span class="legend-item"
+                                ><span class="legend-ring"></span>completed this
+                                step</span
                             ><span class="legend-item"
                                 ><span class="legend-heat"></span>fewer → more
                                 requests</span
@@ -652,7 +902,8 @@
                                             class="node route ingress-route"
                                             id="ingress-route"
                                         >
-                                            L7 proxy
+                                            <span>L7 proxy</span>
+                                            <small>selects per request</small>
                                         </div>
                                     </div>
                                 </div>
@@ -663,25 +914,42 @@
                             </div>
                         </div>
                     </div>
+                    <div class="scroll-hint">
+                        Scroll sideways to inspect the full topology →
+                    </div>
                     <div class="statusline" id="ingress-status">
                         Initialize the connection pool to begin.
                     </div>
+                    <div
+                        class="summary"
+                        id="ingress-summary"
+                        aria-label="Ingress result summary"
+                        hidden
+                    ></div>
                 </section>
             </div>
             <div class="explain">
                 <div class="note">
-                    <strong>What the gray lines mean</strong><br />They are
-                    already-established persistent TCP connections. They remain
-                    present between requests. For ClusterIP, the backend
-                    association is part of that established flow, so the gray
-                    path continues all the way to a fixed pod.
+                    <strong>What the persistent lines mean</strong><br />They are
+                    already-established TCP connections and remain between
+                    requests. ClusterIP flows keep a connection color from the
+                    client through its fixed pod; the connection badge states
+                    that pin explicitly. Gray Ingress connections terminate at
+                    the proxy.
                 </div>
                 <div class="note">
                     <strong>Why the Ingress side is different</strong><br />The
                     client connection ends at the L7 proxy. Its gray connection
                     therefore stops at the proxy. The proxy-to-pod segment is
-                    chosen for each request, so that segment appears only while
-                    a request is being routed.
+                    chosen per request. A dot shows each active request's
+                    progress; a ring marks the pod where a request completed in
+                    the current step.
+                </div>
+                <div class="note">
+                    <strong>Model boundaries</strong><br />Requests have seeded,
+                    bounded durations. Pods are homogeneous, with no retries,
+                    failures, or session affinity. “Outstanding” means
+                    dispatched but not yet completed.
                 </div>
             </div>
         </div>
@@ -693,14 +961,21 @@
                     initialized: false,
                     playing: false,
                     summary: false,
-                    current: 0,
-                    total: 200,
-                    pool: 10,
-                    pods: 20,
+                    eventIndex: -1,
+                    time: 0,
+                    visualTime: 0,
+                    total: 1000,
+                    pool: 5,
+                    pods: 10,
+                    algo: "power",
+                    algoLabel: "Power of Two Choices",
                     pins: [],
-                    clusterReqs: [],
-                    ingressReqs: [],
+                    requests: [],
+                    frames: [],
+                    runtime: null,
+                    lastFrame: null,
                     timer: null,
+                    animationFrame: null,
                     seed: 1947,
                 };
                 function rndFactory(seed) {
@@ -717,8 +992,32 @@
                     v = parseInt(v, 10);
                     return Number.isFinite(v) ? Math.max(a, Math.min(b, v)) : d;
                 }
-                function svgLine(svg, a, b, color, width = 2, opacity = 1) {
-                    const stage = svg.parentElement.getBoundingClientRect(),
+                const connectionColors = [
+                    "#d06b43",
+                    "#477fc7",
+                    "#8a69b8",
+                    "#3c9273",
+                    "#bc8a32",
+                    "#bd5f86",
+                    "#388e9d",
+                    "#747c3e",
+                ];
+                function connectionColor(index) {
+                    return connectionColors[index % connectionColors.length];
+                }
+                function emptyRuntime() {
+                    const scenario = () => ({
+                        active: new Set(),
+                        activeByPod: Array(state.pods).fill(0),
+                        completedByPod: Array(state.pods).fill(0),
+                        peakByPod: Array(state.pods).fill(0),
+                        completed: 0,
+                    });
+                    return { cluster: scenario(), ingress: scenario() };
+                }
+                function svgLine(layer, a, b, color, width = 2, opacity = 1) {
+                    const svg = layer.ownerSVGElement || layer,
+                        stage = svg.parentElement.getBoundingClientRect(),
                         ra = a.getBoundingClientRect(),
                         rb = b.getBoundingClientRect();
                     const x1 = ra.right - stage.left,
@@ -737,13 +1036,95 @@
                     p.setAttribute("stroke-width", width);
                     p.setAttribute("stroke-linecap", "round");
                     p.setAttribute("opacity", opacity);
-                    svg.appendChild(p);
+                    layer.appendChild(p);
+                    return p;
+                }
+                function svgLayers(svg) {
+                    const ns = "http://www.w3.org/2000/svg";
+                    if (!svg.querySelector(".wire-paths")) {
+                        for (const className of [
+                            "wire-paths",
+                            "active-paths",
+                            "event-markers",
+                            "request-tokens",
+                        ]) {
+                            const layer = document.createElementNS(ns, "g");
+                            layer.setAttribute("class", className);
+                            svg.appendChild(layer);
+                        }
+                    }
+                    return {
+                        wires: svg.querySelector(".wire-paths"),
+                        active: svg.querySelector(".active-paths"),
+                        events: svg.querySelector(".event-markers"),
+                        tokens: svg.querySelector(".request-tokens"),
+                    };
+                }
+                function pointAlongPaths(paths, progress) {
+                    const lengths = paths.map((path) => path.getTotalLength()),
+                        total = lengths.reduce((sum, length) => sum + length, 0);
+                    let remaining = total * Math.max(0, Math.min(1, progress));
+                    for (let i = 0; i < paths.length; i++) {
+                        if (remaining <= lengths[i])
+                            return paths[i].getPointAtLength(remaining);
+                        remaining -= lengths[i];
+                    }
+                    return paths.at(-1).getPointAtLength(lengths.at(-1));
+                }
+                function syncRequestToken(layer, key, point, color, request, isNew) {
+                    const ns = "http://www.w3.org/2000/svg";
+                    let token = layer.querySelector(`[data-token="${key}"]`);
+                    if (!token) {
+                        token = document.createElementNS(ns, "circle");
+                        token.setAttribute("class", "request-token new");
+                        token.setAttribute("data-token", key);
+                        token.setAttribute("r", "6");
+                        token.setAttribute("fill", color);
+                        const title = document.createElementNS(ns, "title");
+                        title.textContent = `Request ${request.id + 1}: C${request.conn + 1}`;
+                        token.appendChild(title);
+                        layer.appendChild(token);
+                    } else {
+                        token.classList.toggle("new", isNew);
+                    }
+                    token.style.transform = `translate(${point.x}px, ${point.y}px)`;
+                }
+                function removeInactiveTokens(layer, activeKeys) {
+                    layer.querySelectorAll(".request-token").forEach((token) => {
+                        if (!activeKeys.has(token.dataset.token)) token.remove();
+                    });
+                }
+                function completionPulse(layer, target, request, color) {
+                    const ns = "http://www.w3.org/2000/svg",
+                        svg = layer.ownerSVGElement,
+                        stage = svg.parentElement.getBoundingClientRect(),
+                        rect = target.getBoundingClientRect(),
+                        pulse = document.createElementNS(ns, "circle"),
+                        dot = document.createElementNS(ns, "circle"),
+                        offset = ((request.id % 5) - 2) * 3,
+                        x = rect.left - stage.left,
+                        y = rect.top + rect.height / 2 - stage.top + offset;
+                    pulse.setAttribute("class", "request-complete");
+                    pulse.setAttribute("cx", x);
+                    pulse.setAttribute("cy", y);
+                    pulse.setAttribute("r", "8");
+                    const title = document.createElementNS(ns, "title");
+                    title.textContent = `Request ${request.id + 1} completed`;
+                    pulse.appendChild(title);
+                    layer.appendChild(pulse);
+                    dot.setAttribute("class", "request-complete-dot");
+                    dot.setAttribute("cx", x);
+                    dot.setAttribute("cy", y);
+                    dot.setAttribute("r", "5");
+                    dot.setAttribute("fill", color);
+                    layer.appendChild(dot);
                 }
                 function placeStack(container, count, prefix) {
                     container.innerHTML = "";
                     const height = container.clientHeight || 320,
                         usable = Math.max(10, height - 30),
-                        step = count <= 1 ? 0 : usable / (count - 1);
+                        step = count <= 1 ? 0 : usable / (count - 1),
+                        halfHeight = count > 20 ? 10 : 14;
                     for (let i = 0; i < count; i++) {
                         const n = document.createElement("div"),
                             isPod = prefix.includes("pod");
@@ -751,15 +1132,16 @@
                             "node unestablished" + (isPod ? " pod-node" : "");
                         n.id = `${prefix}-${i}`;
                         if (isPod)
-                            n.innerHTML = `<span>Pod ${i + 1}</span><span class="pod-served">0 served</span>`;
+                            n.innerHTML = `<span>Pod ${i + 1}</span><span class="pod-served">0 done</span>`;
                         else n.textContent = `C${i + 1}`;
-                        n.style.top = 15 + i * step - 14 + "px";
+                        n.style.top = 15 + i * step - halfHeight + "px";
                         container.appendChild(n);
                     }
                 }
                 function configureStageHeights() {
                     const count = Math.max(state.pool, state.pods),
-                        h = Math.max(410, Math.min(760, 130 + count * 27));
+                        h = Math.max(410, 130 + count * (count > 20 ? 22 : 27));
+                    root.classList.toggle("compact", count > 20);
                     root.querySelectorAll(".stage").forEach(
                         (x) => (x.style.height = h + "px"),
                     );
@@ -770,6 +1152,19 @@
                     placeStack($("ingress-conns"), state.pool, "ingress-conn");
                     placeStack($("cluster-pods"), state.pods, "cluster-pod");
                     placeStack($("ingress-pods"), state.pods, "ingress-pod");
+                    if (state.initialized) {
+                        for (let i = 0; i < state.pool; i++) {
+                            const connection = $(`cluster-conn-${i}`),
+                                pod = state.pins[i] + 1;
+                            connection.classList.add("pin-node");
+                            connection.style.setProperty(
+                                "--pin-color",
+                                connectionColor(i),
+                            );
+                            connection.innerHTML = `<span>C${i + 1}</span><span class="pin-target">pinned → Pod ${pod}</span>`;
+                            connection.title = `Connection C${i + 1} is pinned to Pod ${pod}`;
+                        }
+                    }
                     requestAnimationFrame(draw);
                 }
                 function clearHighlights() {
@@ -778,45 +1173,60 @@
                     );
                 }
                 function draw() {
-                    ["cluster-wires", "ingress-wires"].forEach(
-                        (id) => ($(id).innerHTML = ""),
-                    );
-                    if (!state.initialized) return;
+                    const clusterLayers = svgLayers($("cluster-wires")),
+                        ingressLayers = svgLayers($("ingress-wires"));
+                    for (const layers of [clusterLayers, ingressLayers]) {
+                        layers.wires.innerHTML = "";
+                        layers.active.innerHTML = "";
+                        layers.events.innerHTML = "";
+                    }
+                    if (!state.initialized) {
+                        clusterLayers.tokens.innerHTML = "";
+                        ingressLayers.tokens.innerHTML = "";
+                        return;
+                    }
                     const gray = getComputedStyle(root)
                             .getPropertyValue("--line")
                             .trim(),
                         green = getComputedStyle(root)
                             .getPropertyValue("--green")
+                            .trim(),
+                        orange = getComputedStyle(root)
+                            .getPropertyValue("--orange")
+                            .trim(),
+                        blue = getComputedStyle(root)
+                            .getPropertyValue("--blue")
                             .trim();
                     for (let i = 0; i < state.pool; i++) {
                         const cc = $(`cluster-conn-${i}`),
-                            ic = $(`ingress-conn-${i}`);
+                            ic = $(`ingress-conn-${i}`),
+                            pinColor = connectionColor(i);
                         svgLine(
-                            $("cluster-wires"),
+                            clusterLayers.wires,
                             $("cluster-client"),
                             cc,
-                            gray,
+                            pinColor,
                             2,
-                            0.72,
+                            0.62,
                         );
                         svgLine(
-                            $("cluster-wires"),
+                            clusterLayers.wires,
                             cc,
                             $("cluster-route"),
-                            gray,
+                            pinColor,
                             2,
-                            0.72,
+                            0.62,
                         );
                         svgLine(
-                            $("cluster-wires"),
+                            clusterLayers.wires,
                             $("cluster-route"),
                             $(`cluster-pod-${state.pins[i]}`),
-                            gray,
+                            pinColor,
                             2,
-                            0.48,
+                            0.62,
                         );
                         svgLine(
-                            $("ingress-wires"),
+                            ingressLayers.wires,
                             $("ingress-client"),
                             ic,
                             gray,
@@ -824,7 +1234,7 @@
                             0.72,
                         );
                         svgLine(
-                            $("ingress-wires"),
+                            ingressLayers.wires,
                             ic,
                             $("ingress-route"),
                             gray,
@@ -832,108 +1242,244 @@
                             0.72,
                         );
                     }
-                    if (state.current > 0 && !state.summary) {
-                        const idx = state.current - 1,
-                            c = state.clusterReqs[idx],
-                            g = state.ingressReqs[idx];
-                        svgLine(
-                            $("cluster-wires"),
-                            $("cluster-client"),
-                            $(`cluster-conn-${c.conn}`),
-                            green,
-                            4,
-                            1,
+                    if (!state.runtime || state.summary) {
+                        clusterLayers.tokens.innerHTML = "";
+                        ingressLayers.tokens.innerHTML = "";
+                        return;
+                    }
+                    const clusterKeys = new Set(),
+                        ingressKeys = new Set(),
+                        started = new Set(state.lastFrame?.starts || []);
+                    for (const id of state.runtime.cluster.active) {
+                        const request = state.requests[id],
+                            activePinColor = connectionColor(request.conn),
+                            paths = [
+                                svgLine(
+                                    clusterLayers.active,
+                                    $("cluster-client"),
+                                    $(`cluster-conn-${request.conn}`),
+                                    activePinColor,
+                                    3,
+                                    0.88,
+                                ),
+                                svgLine(
+                                    clusterLayers.active,
+                                    $(`cluster-conn-${request.conn}`),
+                                    $("cluster-route"),
+                                    activePinColor,
+                                    3,
+                                    0.88,
+                                ),
+                                svgLine(
+                                    clusterLayers.active,
+                                    $("cluster-route"),
+                                    $(`cluster-pod-${request.clusterPod}`),
+                                    activePinColor,
+                                    3,
+                                    0.88,
+                                ),
+                            ],
+                            progress =
+                                (state.visualTime - request.start) /
+                                request.duration,
+                            key = `cluster-${id}`;
+                        paths.forEach((path) =>
+                            path.setAttribute("data-route", key),
                         );
-                        svgLine(
-                            $("cluster-wires"),
-                            $(`cluster-conn-${c.conn}`),
-                            $("cluster-route"),
-                            green,
-                            4,
-                            1,
+                        clusterKeys.add(key);
+                        syncRequestToken(
+                            clusterLayers.tokens,
+                            key,
+                            pointAlongPaths(paths, progress),
+                            orange,
+                            request,
+                            started.has(id),
                         );
-                        svgLine(
-                            $("cluster-wires"),
-                            $("cluster-route"),
-                            $(`cluster-pod-${c.pod}`),
-                            green,
-                            4,
-                            1,
+                    }
+                    for (const id of state.runtime.ingress.active) {
+                        const request = state.requests[id],
+                            paths = [
+                                svgLine(
+                                    ingressLayers.active,
+                                    $("ingress-client"),
+                                    $(`ingress-conn-${request.conn}`),
+                                    green,
+                                    3,
+                                    0.88,
+                                ),
+                                svgLine(
+                                    ingressLayers.active,
+                                    $(`ingress-conn-${request.conn}`),
+                                    $("ingress-route"),
+                                    green,
+                                    3,
+                                    0.88,
+                                ),
+                                svgLine(
+                                    ingressLayers.active,
+                                    $("ingress-route"),
+                                    $(`ingress-pod-${request.ingressPod}`),
+                                    green,
+                                    3,
+                                    0.88,
+                                ),
+                            ],
+                            progress =
+                                (state.visualTime - request.start) /
+                                request.duration,
+                            key = `ingress-${id}`;
+                        paths.forEach((path) =>
+                            path.setAttribute("data-route", key),
                         );
-                        svgLine(
-                            $("ingress-wires"),
-                            $("ingress-client"),
-                            $(`ingress-conn-${g.conn}`),
-                            green,
-                            4,
-                            1,
+                        ingressKeys.add(key);
+                        syncRequestToken(
+                            ingressLayers.tokens,
+                            key,
+                            pointAlongPaths(paths, progress),
+                            blue,
+                            request,
+                            started.has(id),
                         );
-                        svgLine(
-                            $("ingress-wires"),
-                            $(`ingress-conn-${g.conn}`),
-                            $("ingress-route"),
-                            green,
-                            4,
-                            1,
+                    }
+                    removeInactiveTokens(clusterLayers.tokens, clusterKeys);
+                    removeInactiveTokens(ingressLayers.tokens, ingressKeys);
+                    for (const id of state.lastFrame?.completes || []) {
+                        const request = state.requests[id];
+                        completionPulse(
+                            clusterLayers.events,
+                            $(`cluster-pod-${request.clusterPod}`),
+                            request,
+                            orange,
                         );
-                        svgLine(
-                            $("ingress-wires"),
-                            $("ingress-route"),
-                            $(`ingress-pod-${g.pod}`),
-                            green,
-                            4,
-                            1,
+                        completionPulse(
+                            ingressLayers.events,
+                            $(`ingress-pod-${request.ingressPod}`),
+                            request,
+                            blue,
                         );
                     }
                 }
-                function buildWorkload() {
-                    const rng = rndFactory(state.seed),
-                        cluster = [],
-                        ingress = [];
-                    state.pins = Array.from({ length: state.pool }, () =>
-                        Math.floor(rng() * state.pods),
-                    );
-                    for (let i = 0; i < state.total; i++)
-                        cluster.push({
-                            conn: i % state.pool,
-                            pod: state.pins[i % state.pool],
-                        });
-                    let rr = 0,
-                        loads = Array(state.pods).fill(0);
-                    for (let i = 0; i < state.total; i++) {
-                        const conn = i % state.pool,
-                            algo = $("ingress-algo").value;
-                        let pod;
-                        if (algo === "round") pod = rr++ % state.pods;
-                        else if (algo === "random")
-                            pod = Math.floor(rng() * state.pods);
-                        else if (algo === "least") {
-                            const min = Math.min(...loads),
-                                choices = [];
-                            for (let j = 0; j < state.pods; j++)
-                                if (loads[j] === min) choices.push(j);
-                            pod = choices[Math.floor(rng() * choices.length)];
-                        } else {
-                            const a = Math.floor(rng() * state.pods),
-                                b = Math.floor(rng() * state.pods);
-                            pod = loads[a] <= loads[b] ? a : b;
+                function positionActiveTokens(simulatedTime) {
+                    for (const [scenario, runtime] of [
+                        ["cluster", state.runtime?.cluster],
+                        ["ingress", state.runtime?.ingress],
+                    ]) {
+                        if (!runtime) continue;
+                        const svg = $(`${scenario}-wires`);
+                        for (const id of runtime.active) {
+                            const request = state.requests[id],
+                                key = `${scenario}-${id}`,
+                                token = svg.querySelector(
+                                    `.request-token[data-token="${key}"]`,
+                                ),
+                                paths = [
+                                    ...svg.querySelectorAll(
+                                        `.active-paths path[data-route="${key}"]`,
+                                    ),
+                                ];
+                            if (!token || !paths.length) continue;
+                            const progress =
+                                    (simulatedTime - request.start) /
+                                    request.duration,
+                                point = pointAlongPaths(paths, progress);
+                            token.style.transform = `translate(${point.x}px, ${point.y}px)`;
                         }
-                        loads[pod]++;
-                        ingress.push({ conn, pod });
                     }
-                    state.clusterReqs = cluster;
-                    state.ingressReqs = ingress;
+                }
+                function chooseIngressPod(outstanding, rng, rrState) {
+                    const algo = state.algo;
+                    if (algo === "round") return rrState.value++ % state.pods;
+                    if (algo === "random") return Math.floor(rng() * state.pods);
+                    if (algo === "least") {
+                        const min = Math.min(...outstanding),
+                            choices = [];
+                        for (let i = 0; i < state.pods; i++)
+                            if (outstanding[i] === min) choices.push(i);
+                        return choices[Math.floor(rng() * choices.length)];
+                    }
+                    const a = Math.floor(rng() * state.pods);
+                    if (state.pods === 1) return a;
+                    let b = Math.floor(rng() * (state.pods - 1));
+                    if (b >= a) b++;
+                    if (outstanding[a] === outstanding[b])
+                        return rng() < 0.5 ? a : b;
+                    return outstanding[a] < outstanding[b] ? a : b;
+                }
+                function buildSimulation() {
+                    const workloadRng = rndFactory(state.seed),
+                        routingRng = rndFactory(state.seed ^ 0x9e3779b9),
+                        nextByConnection = Array(state.pool).fill(0),
+                        byTime = new Map();
+                    state.pins = Array.from({ length: state.pool }, () =>
+                        Math.floor(workloadRng() * state.pods),
+                    );
+                    state.requests = [];
+                    const eventAt = (time) => {
+                        if (!byTime.has(time))
+                            byTime.set(time, { time, starts: [], completes: [] });
+                        return byTime.get(time);
+                    };
+                    for (let id = 0; id < state.total; id++) {
+                        const conn = id % state.pool,
+                            start = nextByConnection[conn],
+                            duration = 1 + Math.floor(workloadRng() * 5),
+                            end = start + duration,
+                            request = {
+                                id,
+                                conn,
+                                start,
+                                duration,
+                                end,
+                                clusterPod: state.pins[conn],
+                                ingressPod: null,
+                            };
+                        nextByConnection[conn] = end;
+                        state.requests.push(request);
+                        eventAt(start).starts.push(id);
+                        eventAt(end).completes.push(id);
+                    }
+                    state.frames = [...byTime.values()].sort(
+                        (a, b) => a.time - b.time,
+                    );
+                    const outstanding = Array(state.pods).fill(0),
+                        rrState = { value: 0 };
+                    for (const frame of state.frames) {
+                        frame.completes.sort((a, b) => a - b);
+                        frame.starts.sort((a, b) => a - b);
+                        for (const id of frame.completes) {
+                            const pod = state.requests[id].ingressPod;
+                            if (pod !== null) outstanding[pod]--;
+                        }
+                        for (const id of frame.starts) {
+                            const pod = chooseIngressPod(
+                                outstanding,
+                                routingRng,
+                                rrState,
+                            );
+                            state.requests[id].ingressPod = pod;
+                            outstanding[pod]++;
+                        }
+                    }
                 }
                 function initialize() {
                     stop();
-                    state.total = clamp($("request-count").value, 1, 3000, 200);
-                    state.pool = clamp($("pool-size").value, 1, 40, 10);
-                    state.pods = clamp($("pod-count").value, 1, 40, 20);
-                    state.current = 0;
+                    state.total = clamp($("request-count").value, 1, 5000, 1000);
+                    state.pool = clamp($("pool-size").value, 1, 100, 5);
+                    state.pods = clamp($("pod-count").value, 1, 100, 10);
+                    state.algo = $("ingress-algo").value;
+                    state.algoLabel = $("ingress-algo").selectedOptions[0].text;
+                    $("request-count").value = state.total;
+                    $("pool-size").value = state.pool;
+                    $("pod-count").value = state.pods;
+                    state.eventIndex = -1;
+                    state.time = 0;
+                    state.visualTime = 0;
+                    state.lastFrame = null;
                     state.summary = false;
                     state.seed = (state.seed * 1664525 + 1013904223) >>> 0;
                     state.initialized = true;
-                    buildWorkload();
+                    buildSimulation();
+                    state.runtime = emptyRuntime();
                     buildNodes();
                     requestAnimationFrame(() => {
                         root.querySelectorAll(".stack .node").forEach((n) =>
@@ -953,6 +1499,8 @@
                         `Connections established. Each C1–C${state.pool} is now pinned to a backend pod.`;
                     $("ingress-status").textContent =
                         "Connections established to the L7 proxy. No client connection is pinned to a backend pod.";
+                    $("cluster-summary").hidden = true;
+                    $("ingress-summary").hidden = true;
                     updateProgress();
                     clearHighlights();
                 }
@@ -962,17 +1510,24 @@
                         clearTimeout(state.timer);
                         state.timer = null;
                     }
+                    if (state.animationFrame) {
+                        cancelAnimationFrame(state.animationFrame);
+                        state.animationFrame = null;
+                    }
                     $("play").textContent = "Play";
+                    $("play").setAttribute("aria-pressed", "false");
                 }
                 function updatePodCounts() {
-                    const cluster = Array(state.pods).fill(0),
-                        ingress = Array(state.pods).fill(0);
-                    for (let i = 0; i < state.current; i++) {
-                        cluster[state.clusterReqs[i].pod]++;
-                        ingress[state.ingressReqs[i].pod]++;
-                    }
-                    const clusterMax = Math.max(...cluster, 1),
-                        ingressMax = Math.max(...ingress, 1);
+                    const cluster = state.runtime?.cluster || {
+                            completedByPod: Array(state.pods).fill(0),
+                            activeByPod: Array(state.pods).fill(0),
+                        },
+                        ingress = state.runtime?.ingress || {
+                            completedByPod: Array(state.pods).fill(0),
+                            activeByPod: Array(state.pods).fill(0),
+                        },
+                        clusterMax = Math.max(...cluster.completedByPod, 1),
+                        ingressMax = Math.max(...ingress.completedByPod, 1);
                     for (let i = 0; i < state.pods; i++) {
                         const c = $(`cluster-pod-${i}`)?.querySelector(
                                 ".pod-served",
@@ -981,63 +1536,128 @@
                                 ".pod-served",
                             );
                         if (c) {
-                            const ratio = cluster[i] / clusterMax;
-                            c.textContent = `${cluster[i]} served`;
+                            const completed = cluster.completedByPod[i],
+                                active = cluster.activeByPod[i],
+                                ratio = completed / clusterMax;
+                            c.textContent = active
+                                ? `${completed} done · ${active} active`
+                                : `${completed} done`;
                             c.style.setProperty("--load", `${ratio * 100}%`);
                             c.style.setProperty(
                                 "--heat-alpha",
-                                cluster[i] ? 0.12 + ratio * 0.48 : 0,
+                                completed ? 0.12 + ratio * 0.48 : 0,
                             );
                         }
                         if (g) {
-                            const ratio = ingress[i] / ingressMax;
-                            g.textContent = `${ingress[i]} served`;
+                            const completed = ingress.completedByPod[i],
+                                active = ingress.activeByPod[i],
+                                ratio = completed / ingressMax;
+                            g.textContent = active
+                                ? `${completed} done · ${active} active`
+                                : `${completed} done`;
                             g.style.setProperty("--load", `${ratio * 100}%`);
                             g.style.setProperty(
                                 "--heat-alpha",
-                                ingress[i] ? 0.12 + ratio * 0.48 : 0,
+                                completed ? 0.12 + ratio * 0.48 : 0,
                             );
                         }
                     }
                 }
                 function updateProgress() {
-                    $("progress").textContent =
-                        `${state.current} / ${state.total} requests`;
+                    const completed = state.runtime?.cluster.completed || 0;
+                    $("progress").textContent = `${completed} / ${state.total} requests completed`;
                     updatePodCounts();
                 }
-                function showRequest(index) {
-                    if (index < 0 || index >= state.total) return;
+                function applyToScenario(scenario, ids, starting, podKey) {
+                    for (const id of ids) {
+                        const pod = state.requests[id][podKey];
+                        if (starting) {
+                            scenario.active.add(id);
+                            scenario.activeByPod[pod]++;
+                            scenario.peakByPod[pod] = Math.max(
+                                scenario.peakByPod[pod],
+                                scenario.activeByPod[pod],
+                            );
+                        } else if (scenario.active.delete(id)) {
+                            scenario.activeByPod[pod]--;
+                            scenario.completedByPod[pod]++;
+                            scenario.completed++;
+                        }
+                    }
+                }
+                function applyFrame(frame, render = true) {
+                    applyToScenario(
+                        state.runtime.cluster,
+                        frame.completes,
+                        false,
+                        "clusterPod",
+                    );
+                    applyToScenario(
+                        state.runtime.ingress,
+                        frame.completes,
+                        false,
+                        "ingressPod",
+                    );
+                    applyToScenario(
+                        state.runtime.cluster,
+                        frame.starts,
+                        true,
+                        "clusterPod",
+                    );
+                    applyToScenario(
+                        state.runtime.ingress,
+                        frame.starts,
+                        true,
+                        "ingressPod",
+                    );
+                    state.time = frame.time;
+                    state.visualTime = frame.time;
+                    if (!render) return;
+                    state.lastFrame = frame;
                     clearHighlights();
-                    state.summary = false;
-                    state.current = index + 1;
-                    const c = state.clusterReqs[index],
-                        g = state.ingressReqs[index];
-                    [
-                        "cluster-client",
-                        `cluster-conn-${c.conn}`,
-                        "cluster-route",
-                        `cluster-pod-${c.pod}`,
-                    ].forEach((id) => $(id)?.classList.add("active"));
-                    [
-                        "ingress-client",
-                        `ingress-conn-${g.conn}`,
-                        "ingress-route",
-                        `ingress-pod-${g.pod}`,
-                    ].forEach((id) => $(id)?.classList.add("active"));
-                    $("cluster-status").innerHTML =
-                        `<strong>Request ${index + 1}</strong>: connection C${c.conn + 1} → pinned Pod ${c.pod + 1}`;
-                    $("ingress-status").innerHTML =
-                        `<strong>Request ${index + 1}</strong>: connection C${g.conn + 1} → L7 proxy → Pod ${g.pod + 1}`;
+                    for (const id of state.runtime.cluster.active) {
+                        const request = state.requests[id];
+                        [
+                            "cluster-client",
+                            `cluster-conn-${request.conn}`,
+                            "cluster-route",
+                            `cluster-pod-${request.clusterPod}`,
+                        ].forEach((nodeId) =>
+                            $(nodeId)?.classList.add("active"),
+                        );
+                    }
+                    for (const id of state.runtime.ingress.active) {
+                        const request = state.requests[id];
+                        [
+                            "ingress-client",
+                            `ingress-conn-${request.conn}`,
+                            "ingress-route",
+                            `ingress-pod-${request.ingressPod}`,
+                        ].forEach((nodeId) =>
+                            $(nodeId)?.classList.add("active"),
+                        );
+                    }
+                    const eventText = `${frame.starts.length} started, ${frame.completes.length} completed`;
+                    $("cluster-status").innerHTML = `<strong>Time ${frame.time}</strong>: ${eventText}. ${state.runtime.cluster.active.size} active on pinned pod routes.`;
+                    $("ingress-status").innerHTML = `<strong>Time ${frame.time}</strong>: ${eventText}. ${state.runtime.ingress.active.size} active, routed by ${state.algoLabel}.`;
+                    $("state-text").textContent = `Time ${frame.time} · ${state.runtime.cluster.active.size} active requests`;
                     updateProgress();
                     draw();
                 }
                 function step() {
                     if (!state.initialized) return;
-                    if (state.current >= state.total) {
+                    if (state.eventIndex >= state.frames.length - 1) {
                         stop();
+                        showSummaries();
                         return;
                     }
-                    showRequest(state.current);
+                    state.summary = false;
+                    state.eventIndex++;
+                    applyFrame(state.frames[state.eventIndex]);
+                    if (state.eventIndex >= state.frames.length - 1) {
+                        stop();
+                        showSummaries();
+                    }
                 }
                 function play() {
                     if (!state.initialized) return;
@@ -1047,24 +1667,111 @@
                     }
                     state.playing = true;
                     $("play").textContent = "Pause";
-                    const tick = () => {
+                    $("play").setAttribute("aria-pressed", "true");
+                    const advance = () => {
                         if (!state.playing) return;
-                        if (state.current >= state.total) {
+                        if (state.eventIndex >= state.frames.length - 1) {
                             stop();
                             return;
                         }
-                        showRequest(state.current);
-                        state.timer = setTimeout(
-                            tick,
-                            Number($("speed").value) || 420,
-                        );
+                        if (state.eventIndex < 0) {
+                            step();
+                            if (!state.playing) return;
+                            state.timer = setTimeout(
+                                advance,
+                                Math.min(
+                                    140,
+                                    (Number($("speed").value) || 420) / 3,
+                                ),
+                            );
+                            return;
+                        }
+                        const nextFrame = state.frames[state.eventIndex + 1],
+                            from = state.visualTime,
+                            to = nextFrame.time,
+                            fullSpan = Math.max(1, to - state.time),
+                            remainingRatio = Math.max(
+                                0,
+                                Math.min(1, (to - from) / fullSpan),
+                            ),
+                            duration =
+                                (Number($("speed").value) || 420) *
+                                remainingRatio,
+                            hold = Math.min(90, Math.max(30, duration * 0.15));
+                        $("state-text").textContent = `Time ${state.time} → ${to} · ${state.runtime.cluster.active.size} requests in flight`;
+                        let startedAt = null;
+                        const move = (now) => {
+                            if (!state.playing) return;
+                            if (startedAt === null) startedAt = now;
+                            const progress = duration
+                                    ? Math.min(1, (now - startedAt) / duration)
+                                    : 1,
+                                simulatedTime = from + (to - from) * progress;
+                            state.visualTime = simulatedTime;
+                            positionActiveTokens(simulatedTime);
+                            if (progress < 1) {
+                                state.animationFrame = requestAnimationFrame(move);
+                                return;
+                            }
+                            state.animationFrame = null;
+                            state.timer = setTimeout(() => {
+                                state.timer = null;
+                                if (!state.playing) return;
+                                step();
+                                if (state.playing) advance();
+                            }, hold);
+                        };
+                        state.animationFrame = requestAnimationFrame(move);
                     };
-                    tick();
+                    advance();
+                }
+                function summaryMarkup(scenario) {
+                    const counts = scenario.completedByPod,
+                        used = counts.filter((count) => count > 0).length,
+                        min = Math.min(...counts),
+                        max = Math.max(...counts),
+                        average = state.total / state.pods,
+                        imbalance = average
+                            ? Math.round((max / average - 1) * 100)
+                            : 0,
+                        peak = Math.max(...scenario.peakByPod);
+                    const items = [
+                        ["Pods used", `${used} / ${state.pods}`],
+                        ["Completed range", `${min}–${max}`],
+                        ["Max above average", `${Math.max(0, imbalance)}%`],
+                        ["Peak active / pod", `${peak}`],
+                    ];
+                    return items
+                        .map(
+                            ([label, value]) =>
+                                `<div class="summary-item"><span class="summary-label">${label}</span><span class="summary-value">${value}</span></div>`,
+                        )
+                        .join("");
+                }
+                function showSummaries() {
+                    $("cluster-summary").innerHTML = summaryMarkup(
+                        state.runtime.cluster,
+                    );
+                    $("ingress-summary").innerHTML = summaryMarkup(
+                        state.runtime.ingress,
+                    );
+                    $("cluster-summary").hidden = false;
+                    $("ingress-summary").hidden = false;
+                    $("play").disabled = true;
+                    $("step").disabled = true;
+                    $("cluster-status").innerHTML = `<strong>Final result:</strong> all ${state.total} requests completed. Persistent connections concentrated traffic on their pinned pods.`;
+                    $("ingress-status").innerHTML = `<strong>Final result:</strong> all ${state.total} requests completed. The L7 proxy redistributed requests across the backend pods.`;
+                    $("state-text").textContent = `Complete at time ${state.time} · no active requests`;
                 }
                 function showResults() {
                     if (!state.initialized) return;
                     stop();
-                    state.current = state.total;
+                    state.runtime = emptyRuntime();
+                    for (const frame of state.frames) applyFrame(frame, false);
+                    state.eventIndex = state.frames.length - 1;
+                    state.time = state.frames.at(-1)?.time || 0;
+                    state.visualTime = state.time;
+                    state.lastFrame = null;
                     state.summary = true;
                     clearHighlights();
                     updateProgress();
@@ -1073,16 +1780,27 @@
                         `<strong>Final result:</strong> all ${state.total} requests completed. Persistent connections concentrated traffic on their pinned pods.`;
                     $("ingress-status").innerHTML =
                         `<strong>Final result:</strong> all ${state.total} requests completed. The L7 proxy redistributed requests across the backend pods.`;
+                    $("state-text").textContent = `Complete at time ${state.time} · no active requests`;
+                    showSummaries();
                 }
                 function resetRequests() {
                     stop();
-                    state.current = 0;
+                    state.eventIndex = -1;
+                    state.time = 0;
+                    state.visualTime = 0;
+                    state.lastFrame = null;
                     state.summary = false;
+                    state.runtime = emptyRuntime();
                     clearHighlights();
                     $("cluster-status").textContent =
                         "Connections remain established. Ready to process requests again.";
                     $("ingress-status").textContent =
                         "Connections remain established. Ready to process requests again.";
+                    $("state-text").textContent = `${state.pool} persistent connections established`;
+                    $("cluster-summary").hidden = true;
+                    $("ingress-summary").hidden = true;
+                    $("play").disabled = false;
+                    $("step").disabled = false;
                     updateProgress();
                     draw();
                 }
@@ -1094,9 +1812,25 @@
                 $("step").addEventListener("click", step);
                 $("results").addEventListener("click", showResults);
                 $("reset").addEventListener("click", resetRequests);
+                root.querySelectorAll(".preset").forEach((button) =>
+                    button.addEventListener("click", () => {
+                        $("pool-size").value = button.dataset.pool;
+                        $("pod-count").value = button.dataset.pods;
+                        initialize();
+                    }),
+                );
+                ["request-count", "pool-size", "pod-count", "ingress-algo"].forEach(
+                    (id) =>
+                        $(id).addEventListener("change", () => {
+                            if (!state.initialized) return;
+                            $("state-text").textContent =
+                                "Settings changed · re-initialize to apply";
+                        }),
+                );
                 window.addEventListener("resize", () =>
                     requestAnimationFrame(draw),
                 );
+                $("play").setAttribute("aria-pressed", "false");
                 buildNodes();
                 updateProgress();
             })();
