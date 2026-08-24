@@ -13,7 +13,7 @@
         {{- $sec := .Section -}}
         {{- $url := .RelPermalink -}}
         {{- range .Site.Menus.main.ByWeight -}}
-        {{- $active := or (eq $url .URL) (and (or (eq $sec "posts") (eq $sec "languages") (eq $sec "series")) (eq .URL "/posts/")) (and (eq $sec "pages") (eq .URL "/about/") (eq $url "/about/")) -}}
+        {{- $active := or (eq $url .URL) (and (or (eq $sec "posts") (eq $sec "languages") (eq $sec "series")) (eq .URL "/posts/")) (and (eq $sec "tools") (eq .URL "/tools/")) (and (eq $sec "pages") (eq .URL "/about/") (eq $url "/about/")) -}}
         <li class="site-nav__item">
           <a class="site-nav__link{{ if $active }} is-active{{ end }}" href="{{ .URL }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
         </li>

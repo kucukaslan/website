@@ -1,0 +1,45 @@
+{{ define "main" }}
+{{- $tools := slice -}}
+{{- range os.ReadDir "static/tools" -}}
+  {{- if and (not .IsDir) (strings.HasSuffix (strings.ToLower .Name) ".html") -}}
+    {{- $path := printf "static/tools/%s" .Name -}}
+    {{- $source := os.ReadFile $path -}}
+    {{- $titleMatches := findRESubmatch `(?is)<title[^>]*>\s*(.*?)\s*</title>` $source 1 -}}
+    {{- $descriptionMatches := findRESubmatch `(?is)<meta\s+name=["']description["']\s+content=["']([^"']+)["']\s*/?>` $source 1 -}}
+    {{- if or (eq (len $titleMatches) 0) (eq (len $descriptionMatches) 0) -}}
+      {{- errorf "Tool %q must contain a <title> and a <meta name=\"description\" content=\"...\"> tag" $path -}}
+    {{- else -}}
+      {{- $title := index (index $titleMatches 0) 1 | htmlUnescape | plainify -}}
+      {{- $description := index (index $descriptionMatches 0) 1 | htmlUnescape | plainify -}}
+      {{- $tools = $tools | append (dict "title" $title "description" $description "filename" .Name) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $tools = sort $tools "title" -}}
+
+<header class="tools-header">
+  <p class="page-header__eyebrow">Portable workbench</p>
+  <h1 class="page-header__title">{{ .Title }}</h1>
+  {{ with .Params.description }}<p class="tools-header__description">{{ . }}</p>{{ end }}
+</header>
+
+<section class="tool-grid" aria-label="Interactive tools">
+  {{- range $tools -}}
+  {{- $toolURL := printf "/tools/%s" .filename | relURL -}}
+  <article class="tool-card">
+    <div class="tool-card__body">
+      <p class="tool-card__file">{{ .filename }}</p>
+      <h2 class="tool-card__title"><a href="{{ $toolURL }}">{{ .title }}</a></h2>
+      <p class="tool-card__description">{{ .description }}</p>
+    </div>
+    <div class="tool-card__actions">
+      <a class="tool-card__open" href="{{ $toolURL }}">Open tool <span aria-hidden="true">→</span></a>
+      <a class="tool-card__download" href="{{ $toolURL }}" download>Download HTML</a>
+    </div>
+  </article>
+  {{- else -}}
+  <p class="empty-state">No tools have been published yet.</p>
+  {{- end }}
+</section>
+{{ end }}
+

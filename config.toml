@@ -46,5 +46,10 @@ title = 'Muhammed Can Küçükaslan'
 
 [[menu.main]]
   weight = 3
+  name = "Tools"
+  url = "/tools/"
+
+[[menu.main]]
+  weight = 4
   name = "About"
   url = "/about/"
