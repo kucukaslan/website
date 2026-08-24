@@ -6,6 +6,7 @@ draft: false
 # url: /go_benchmarks/
 language: en
 content_type: technical
+feature_image: img/misleading-chart.png
 ---
 
 > TLDR is TLDR: [Fiber](https://github.com/gofiber/fiber) is not going to be that much faster for you.
