@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haversine vs Equirectangular Distance</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS & JS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        #map { z-index: 1; }
+        .custom-marker {
+            background-color: #3b82f6;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(0,0,0,0.4);
+        }
+        .custom-marker-b { background-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900">Spatial Distance Algorithm Comparison</h1>
+            <p class="text-slate-600 mt-2">Compare Haversine (Spherical) vs Equirectangular (Flat-Earth Approximation) algorithms for grocery delivery routing. Drag the markers to test real-world scenarios.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Column: Map & Live Stats -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Map Container -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-semibold mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                        Interactive Map
+                    </h2>
+                    <div id="map" class="h-[400px] w-full rounded-lg border border-slate-300"></div>
+                    <p class="text-xs text-slate-500 mt-2 text-center">Default: Etiler, Istanbul. Drag the Blue (A) and Red (B) points.</p>
+                </div>
+
+                <!-- Live Results Container -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-semibold mb-4 text-slate-800">Live Calculation Results</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <p class="text-sm text-blue-600 font-medium mb-1">Haversine (Precise)</p>
+                            <p class="text-2xl font-bold text-slate-800" id="hav-dist">0.00 <span class="text-sm font-normal text-slate-500">km</span></p>
+                        </div>
+                        <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                            <p class="text-sm text-emerald-600 font-medium mb-1">Equirectangular (Fast)</p>
+                            <p class="text-2xl font-bold text-slate-800" id="eq-dist">0.00 <span class="text-sm font-normal text-slate-500">km</span></p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-100 rounded-lg">
+                        <p class="text-sm text-slate-600 font-medium">Absolute Divergence (Error)</p>
+                        <div class="flex items-end mt-1">
+                            <p class="text-3xl font-bold text-red-500" id="diff-meters">0.0</p>
+                            <p class="text-slate-500 ml-2 mb-1" id="diff-unit">meters</p>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1" id="diff-percent">0.00% variance</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Chart & Parameters -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 h-full flex flex-col">
+                    <h2 class="text-lg font-semibold mb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        Algorithm Divergence Model
+                    </h2>
+                    <p class="text-sm text-slate-600 mb-6">How much does Equirectangular drift from true spherical distance over long ranges? Adjust the parameters to see the error scale.</p>
+                    
+                    <!-- Chart Controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        
+                        <!-- Base Latitude -->
+                        <div>
+                            <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                                Base Latitude
+                                <span id="lat-val" class="text-indigo-600">41° (Istanbul)</span>
+                            </label>
+                            <input type="range" id="param-lat" min="0" max="85" value="41" class="w-full accent-indigo-600">
+                            <p class="text-xs text-slate-500 mt-1">0° = Equator, 85° = Poles</p>
+                        </div>
+
+                        <!-- Distance Range -->
+                        <div>
+                            <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                                Max Distance
+                                <span id="dist-val" class="text-indigo-600">50 km</span>
+                            </label>
+                            <input type="range" id="param-dist" min="5" max="1000" step="5" value="50" class="w-full accent-indigo-600">
+                            <p class="text-xs text-slate-500 mt-1">Range to plot</p>
+                        </div>
+
+                        <!-- Travel Direction -->
+                        <div>
+                            <label class="flex justify-between text-sm font-medium text-slate-700 mb-1">
+                                Direction
+                                <span id="angle-val" class="text-indigo-600">45° (NE)</span>
+                            </label>
+                            <input type="range" id="param-angle" min="0" max="90" value="45" class="w-full accent-indigo-600">
+                            <p class="text-xs text-slate-500 mt-1">0°=North, 90°=East</p>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div class="relative flex-grow min-h-[300px]">
+                        <canvas id="divergenceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CORE MATH FUNCTIONS ---
+        const R = 6371; // Earth's radius in km
+
+        function toRad(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        // Haversine Formula (Precise Spherical)
+        function calcHaversine(lat1, lon1, lat2, lon2) {
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const rLat1 = toRad(lat1);
+            const rLat2 = toRad(lat2);
+
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(rLat1) * Math.cos(rLat2) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Distance in km
+        }
+
+        // Equirectangular Approximation (Fast Pythagorean)
+        function calcEquirectangular(lat1, lon1, lat2, lon2) {
+            const rLat1 = toRad(lat1);
+            const rLat2 = toRad(lat2);
+            
+            const x = toRad(lon2 - lon1) * Math.cos((rLat1 + rLat2) / 2);
+            const y = toRad(lat2 - lat1);
+            
+            return R * Math.sqrt(x * x + y * y); // Distance in km
+        }
+
+
+        // --- 2. LEAFLET MAP SETUP ---
+        // Etiler, Istanbul coordinates
+        const ETILER_LAT = 41.085;
+        const ETILER_LON = 29.035;
+
+        const map = L.map('map').setView([ETILER_LAT, ETILER_LON], 14);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Custom Div Icons for markers (avoids missing image issues)
+        const iconA = L.divIcon({ className: 'custom-marker', iconSize: [16, 16], iconAnchor: [8, 8] });
+        const iconB = L.divIcon({ className: 'custom-marker custom-marker-b', iconSize: [16, 16], iconAnchor: [8, 8] });
+
+        // Initialize markers ~1.5km apart
+        let markerA = L.marker([41.085, 29.030], { draggable: true, icon: iconA }).addTo(map);
+        let markerB = L.marker([41.082, 29.045], { draggable: true, icon: iconB }).addTo(map);
+        let polyline = L.polyline([markerA.getLatLng(), markerB.getLatLng()], { color: '#6366f1', weight: 3, dashArray: '5, 5' }).addTo(map);
+
+        // Update Map Distances when dragged
+        function updateMapDistances() {
+            const posA = markerA.getLatLng();
+            const posB = markerB.getLatLng();
+            
+            polyline.setLatLngs([posA, posB]);
+
+            const distHav = calcHaversine(posA.lat, posA.lng, posB.lat, posB.lng);
+            const distEq = calcEquirectangular(posA.lat, posA.lng, posB.lat, posB.lng);
+            const diffMeters = Math.abs(distHav - distEq) * 1000;
+            const diffPercent = distHav > 0 ? (diffMeters / (distHav * 1000)) * 100 : 0;
+
+            document.getElementById('hav-dist').innerHTML = `${(1000*distHav).toFixed(9)} <span class="text-sm font-normal text-slate-500">m</span>`;
+            document.getElementById('eq-dist').innerHTML = `${(1000*distEq).toFixed(9)} <span class="text-sm font-normal text-slate-500">m</span>`;
+            
+            // Dynamically scale the units for exact absolute divergence readability
+            if (diffMeters < 0.01) {
+                document.getElementById('diff-meters').innerText = (diffMeters * 1000).toFixed(4);
+                document.getElementById('diff-unit').innerText = "millimeters";
+            } else if (diffMeters < 1) {
+                document.getElementById('diff-meters').innerText = (diffMeters * 100).toFixed(4);
+                document.getElementById('diff-unit').innerText = "centimeters";
+            } else {
+                document.getElementById('diff-meters').innerText = diffMeters.toFixed(4);
+                document.getElementById('diff-unit').innerText = "meters";
+            }
+            
+            document.getElementById('diff-percent').innerText = `${diffPercent.toFixed(6)}% error variance`;
+        }
+
+        markerA.on('drag', updateMapDistances);
+        markerB.on('drag', updateMapDistances);
+        updateMapDistances(); // Initial call
+
+
+        // --- 3. PARAMETRIC CHART SETUP ---
+        let divergenceChart = null;
+
+        function generateChartData(baseLat, maxDistKm, angleDeg) {
+            const labels = [];
+            const dataErrors = []; // Error in meters
+            const angleRad = toRad(angleDeg);
+            const baseLatRad = toRad(baseLat);
+
+            // Generate 20 data points along the requested distance
+            const steps = 20;
+            const stepDist = maxDistKm / steps;
+
+            for(let i = 1; i <= steps; i++) {
+                const d = i * stepDist;
+                labels.push(d.toFixed(d < 10 ? 1 : 0) + ' km');
+
+                // Approximate destination coordinates at distance d and angle
+                const dPhi = (d / R) * Math.cos(angleRad);
+                const dLambda = (d / R) * Math.sin(angleRad) / Math.cos(baseLatRad);
+
+                const lat2 = baseLat + dPhi * (180/Math.PI);
+                const lon2 = 0 + dLambda * (180/Math.PI); // Relative to Longitude 0
+
+                const hav = calcHaversine(baseLat, 0, lat2, lon2);
+                const eq = calcEquirectangular(baseLat, 0, lat2, lon2);
+
+                const errorMeters = Math.abs(eq - hav) * 1000;
+                dataErrors.push(errorMeters);
+            }
+            return { labels, dataErrors };
+        }
+
+        function renderChart() {
+            const baseLat = parseFloat(document.getElementById('param-lat').value);
+            const maxDistKm = parseFloat(document.getElementById('param-dist').value);
+            const angleDeg = parseFloat(document.getElementById('param-angle').value);
+
+            // Update Labels
+            document.getElementById('lat-val').innerText = `${baseLat}°`;
+            document.getElementById('dist-val').innerText = `${maxDistKm} km`;
+            
+            let angleText = `${angleDeg}° `;
+            if(angleDeg === 0) angleText += "(North)";
+            else if(angleDeg === 90) angleText += "(East)";
+            else angleText += "(Diagonal)";
+            document.getElementById('angle-val').innerText = angleText;
+
+            const { labels, dataErrors } = generateChartData(baseLat, maxDistKm, angleDeg);
+
+            if (divergenceChart) {
+                divergenceChart.data.labels = labels;
+                divergenceChart.data.datasets[0].data = dataErrors;
+                divergenceChart.update();
+                return;
+            }
+
+            const ctx = document.getElementById('divergenceChart').getContext('2d');
+            divergenceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Error / Divergence (Meters)',
+                        data: dataErrors,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ef4444',
+                        pointRadius: 3,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.toFixed(2) + ' meters error';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Absolute Error (Meters)', font: {size: 13, weight: '500'} },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Real Distance', font: {size: 13, weight: '500'} },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Add event listeners to sliders
+        ['param-lat', 'param-dist', 'param-angle'].forEach(id => {
+            document.getElementById(id).addEventListener('input', renderChart);
+        });
+
+        // Initial Chart Render
+        renderChart();
+
+    </script>
+</body>
+</html>
