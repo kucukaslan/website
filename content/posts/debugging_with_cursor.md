@@ -5,7 +5,8 @@ draft: false
 tags: ['cursor', 'osmium']
 language: en
 content_type: technical
-images: ['/img/nodes-ways.svg']
+images: ['img/nodes-ways-social.png']
+feature_image: img/nodes-ways.svg
 url: /debugging_with_cursor/
 ---
 
