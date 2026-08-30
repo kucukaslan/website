@@ -16,6 +16,7 @@ website/
 │   ├── _index.md        # Homepage
 │   ├── about.md         # Standalone About page
 │   ├── languages/       # Static language-filtered writing views
+│   ├── tools/           # Hugo-managed catalog for standalone tools
 │   └── posts/           # Published writing, drafts, and series members
 ├── layouts/             # Templates, partials, shortcodes
 ├── static/              # Static assets (CSS, images, JS)
@@ -54,6 +55,7 @@ starting a forwarded preview.
 - Add `language` (`en`, `tr`, or `ku`) and `content_type` (`technical`, `opinion`, `culture`, or `site-note`) to published writing.
 - Use optional `series` metadata for related articles; series pages appear when they contain published writing.
 - Standalone pages use `layout: page` and are excluded from writing lists and article metadata.
+- **Interactive tools** are complete HTML documents in `static/tools/`. Give each file a `<title>` and a `<meta name="description" content="...">`; the `/tools/` catalog discovers and lists it automatically. Keep CSS and JavaScript inside the file, or use public CDN dependencies, so the downloaded file remains independently usable.
 - **Drafts** are excluded from production builds unless `--buildDrafts` is passed.
 
 ## Deployment
