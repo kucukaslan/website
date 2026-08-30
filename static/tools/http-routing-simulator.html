@@ -75,7 +75,7 @@
                 top: 10px;
                 z-index: 20;
                 display: grid;
-                grid-template-columns: repeat(5, minmax(130px, 1fr)) auto;
+                grid-template-columns: repeat(6, minmax(120px, 1fr)) auto;
                 gap: 10px;
                 background: var(--panel);
                 border: 1px solid var(--border);
@@ -156,6 +156,23 @@
                 min-height: 32px;
                 padding: 5px 10px;
                 font-size: 11px;
+            }
+            .config-message {
+                grid-column: 1/-1;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+                color: var(--muted);
+                font-size: 11px;
+                font-weight: 750;
+            }
+            .config-error {
+                color: #b6463c;
+                font-weight: 800;
+            }
+            .config-error[hidden] {
+                display: none;
             }
             .statebar {
                 display: flex;
@@ -390,6 +407,9 @@
             .node.pin-node {
                 flex-direction: column;
                 border-left: 4px solid var(--pin-color);
+            }
+            .node.client-node {
+                border-left: 4px solid var(--client-color);
             }
             .node.active {
                 border-color: var(--green);
@@ -676,7 +696,7 @@
                 <div class="copy">
                     <h2>Connections first, requests second</h2>
                     <p>
-                        Start with no connections. Initialize the client pool to
+                        Start with no connections. Initialize the client pools to
                         see persistent connections appear in gray. Then process
                         requests: every connection and route carrying an active
                         request is highlighted. This model uses persistent
@@ -694,12 +714,22 @@
                         value="1000"
                 /></label>
                 <label
-                    >Pool size<input
-                        id="pool-size"
+                    >Clients<input
+                        id="client-count"
+                        type="number"
+                        min="1"
+                        max="20"
+                        value="1"
+                        aria-describedby="connection-total config-error"
+                /></label>
+                <label
+                    >Connections per client<input
+                        id="connections-per-client"
                         type="number"
                         min="1"
                         max="100"
                         value="5"
+                        aria-describedby="connection-total config-error"
                 /></label>
                 <label
                     >Backend pods<input
@@ -738,31 +768,46 @@
                         Reset requests
                     </button>
                 </div>
+                <div class="config-message">
+                    <span id="connection-total"
+                        >1 client × 5 connections = 5 total connections</span
+                    >
+                    <span
+                        id="config-error"
+                        class="config-error"
+                        role="alert"
+                        hidden
+                        >Use no more than 100 total connections.</span
+                    >
+                </div>
                 <fieldset class="presets">
-                    <legend>Try a connection-pool preset</legend>
+                    <legend>Compare independent client pools</legend>
                     <button
                         class="preset"
                         type="button"
-                        data-pool="5"
+                        data-clients="1"
+                        data-connections="5"
                         data-pods="10"
                     >
-                        Few connections (5 / 10)
+                        One client (1 × 5)
                     </button>
                     <button
                         class="preset"
                         type="button"
-                        data-pool="10"
+                        data-clients="2"
+                        data-connections="5"
                         data-pods="10"
                     >
-                        Connections = pods (10 / 10)
+                        Two clients (2 × 5)
                     </button>
                     <button
                         class="preset"
                         type="button"
-                        data-pool="50"
+                        data-clients="10"
+                        data-connections="5"
                         data-pods="10"
                     >
-                        Many connections (50 / 10)
+                        Ten clients (10 × 5)
                     </button>
                 </fieldset>
             </form>
@@ -809,12 +854,11 @@
                             <svg class="wire-layer" id="cluster-wires"></svg>
                             <div class="columns">
                                 <div class="column">
-                                    <div class="col-label">Caller</div>
-                                    <div class="single-center">
-                                        <div class="node" id="cluster-client">
-                                            Client pool
-                                        </div>
-                                    </div>
+                                    <div class="col-label">Clients</div>
+                                    <div
+                                        class="stack client-stack"
+                                        id="cluster-clients"
+                                    ></div>
                                 </div>
                                 <div class="column">
                                     <div class="col-label">Connections</div>
@@ -843,7 +887,7 @@
                         Scroll sideways to inspect the full topology →
                     </div>
                     <div class="statusline" id="cluster-status">
-                        Initialize the connection pool to begin.
+                        Initialize the client pools to begin.
                     </div>
                     <div
                         class="summary"
@@ -884,12 +928,11 @@
                             <svg class="wire-layer" id="ingress-wires"></svg>
                             <div class="columns">
                                 <div class="column">
-                                    <div class="col-label">Caller</div>
-                                    <div class="single-center">
-                                        <div class="node" id="ingress-client">
-                                            Client pool
-                                        </div>
-                                    </div>
+                                    <div class="col-label">Clients</div>
+                                    <div
+                                        class="stack client-stack"
+                                        id="ingress-clients"
+                                    ></div>
                                 </div>
                                 <div class="column">
                                     <div class="col-label">Connections</div>
@@ -918,7 +961,7 @@
                         Scroll sideways to inspect the full topology →
                     </div>
                     <div class="statusline" id="ingress-status">
-                        Initialize the connection pool to begin.
+                        Initialize the client pools to begin.
                     </div>
                     <div
                         class="summary"
@@ -951,6 +994,13 @@
                     failures, or session affinity. “Outstanding” means
                     dispatched but not yet completed.
                 </div>
+                <div class="note">
+                    <strong>What adding clients changes</strong><br />Each client
+                    owns an independent connection pool. More clients at the
+                    same per-client pool size create more pinned flows. With the
+                    same total connection count, client grouping alone does not
+                    change routing.
+                </div>
             </div>
         </div>
         <script>
@@ -965,7 +1015,9 @@
                     time: 0,
                     visualTime: 0,
                     total: 1000,
-                    pool: 5,
+                    clients: 1,
+                    connectionsPerClient: 5,
+                    totalConnections: 5,
                     pods: 10,
                     algo: "power",
                     algoLabel: "Power of Two Choices",
@@ -1004,6 +1056,27 @@
                 ];
                 function connectionColor(index) {
                     return connectionColors[index % connectionColors.length];
+                }
+                function connectionIdentity(index) {
+                    const client = Math.floor(
+                            index / state.connectionsPerClient,
+                        ),
+                        localConnection =
+                            index % state.connectionsPerClient;
+                    return {
+                        client,
+                        localConnection,
+                        label: `C${client + 1}.${localConnection + 1}`,
+                    };
+                }
+                function connectionForRequest(requestIndex) {
+                    const client = requestIndex % state.clients,
+                        localConnection =
+                            Math.floor(requestIndex / state.clients) %
+                            state.connectionsPerClient;
+                    return (
+                        client * state.connectionsPerClient + localConnection
+                    );
                 }
                 function emptyRuntime() {
                     const scenario = () => ({
@@ -1081,7 +1154,7 @@
                         token.setAttribute("r", "6");
                         token.setAttribute("fill", color);
                         const title = document.createElementNS(ns, "title");
-                        title.textContent = `Request ${request.id + 1}: C${request.conn + 1}`;
+                        title.textContent = `Request ${request.id + 1}: Client ${request.client + 1}, C${request.client + 1}.${request.localConnection + 1}`;
                         token.appendChild(title);
                         layer.appendChild(token);
                     } else {
@@ -1138,8 +1211,34 @@
                         container.appendChild(n);
                     }
                 }
+                function placeClients(container, prefix) {
+                    container.innerHTML = "";
+                    const height = container.clientHeight || 320,
+                        usable = Math.max(10, height - 30),
+                        step =
+                            state.clients <= 1
+                                ? 0
+                                : usable / (state.clients - 1),
+                        halfHeight = state.clients > 20 ? 10 : 14;
+                    for (let i = 0; i < state.clients; i++) {
+                        const node = document.createElement("div");
+                        node.className = "node client-node unestablished";
+                        node.id = `${prefix}-${i}`;
+                        node.textContent = `Client ${i + 1}`;
+                        node.style.setProperty(
+                            "--client-color",
+                            connectionColor(i * state.connectionsPerClient),
+                        );
+                        node.style.top = 15 + i * step - halfHeight + "px";
+                        container.appendChild(node);
+                    }
+                }
                 function configureStageHeights() {
-                    const count = Math.max(state.pool, state.pods),
+                    const count = Math.max(
+                            state.clients,
+                            state.totalConnections,
+                            state.pods,
+                        ),
                         h = Math.max(410, 130 + count * (count > 20 ? 22 : 27));
                     root.classList.toggle("compact", count > 20);
                     root.querySelectorAll(".stage").forEach(
@@ -1148,21 +1247,39 @@
                 }
                 function buildNodes() {
                     configureStageHeights();
-                    placeStack($("cluster-conns"), state.pool, "cluster-conn");
-                    placeStack($("ingress-conns"), state.pool, "ingress-conn");
+                    placeClients($("cluster-clients"), "cluster-client");
+                    placeClients($("ingress-clients"), "ingress-client");
+                    placeStack(
+                        $("cluster-conns"),
+                        state.totalConnections,
+                        "cluster-conn",
+                    );
+                    placeStack(
+                        $("ingress-conns"),
+                        state.totalConnections,
+                        "ingress-conn",
+                    );
                     placeStack($("cluster-pods"), state.pods, "cluster-pod");
                     placeStack($("ingress-pods"), state.pods, "ingress-pod");
-                    if (state.initialized) {
-                        for (let i = 0; i < state.pool; i++) {
-                            const connection = $(`cluster-conn-${i}`),
+                    for (let i = 0; i < state.totalConnections; i++) {
+                        const identity = connectionIdentity(i),
+                            clusterConnection = $(`cluster-conn-${i}`),
+                            ingressConnection = $(`ingress-conn-${i}`);
+                        clusterConnection.textContent = identity.label;
+                        ingressConnection.textContent = identity.label;
+                        clusterConnection.dataset.client = identity.client;
+                        ingressConnection.dataset.client = identity.client;
+                        ingressConnection.title = `${identity.label} belongs to Client ${identity.client + 1}`;
+                        if (state.initialized) {
+                            const connection = clusterConnection,
                                 pod = state.pins[i] + 1;
                             connection.classList.add("pin-node");
                             connection.style.setProperty(
                                 "--pin-color",
                                 connectionColor(i),
                             );
-                            connection.innerHTML = `<span>C${i + 1}</span><span class="pin-target">pinned → Pod ${pod}</span>`;
-                            connection.title = `Connection C${i + 1} is pinned to Pod ${pod}`;
+                            connection.innerHTML = `<span>${identity.label}</span><span class="pin-target">pinned → Pod ${pod}</span>`;
+                            connection.title = `${identity.label} from Client ${identity.client + 1} is pinned to Pod ${pod}`;
                         }
                     }
                     requestAnimationFrame(draw);
@@ -1197,13 +1314,20 @@
                         blue = getComputedStyle(root)
                             .getPropertyValue("--blue")
                             .trim();
-                    for (let i = 0; i < state.pool; i++) {
+                    for (let i = 0; i < state.totalConnections; i++) {
                         const cc = $(`cluster-conn-${i}`),
                             ic = $(`ingress-conn-${i}`),
-                            pinColor = connectionColor(i);
+                            pinColor = connectionColor(i),
+                            identity = connectionIdentity(i),
+                            clusterClient = $(
+                                `cluster-client-${identity.client}`,
+                            ),
+                            ingressClient = $(
+                                `ingress-client-${identity.client}`,
+                            );
                         svgLine(
                             clusterLayers.wires,
-                            $("cluster-client"),
+                            clusterClient,
                             cc,
                             pinColor,
                             2,
@@ -1227,7 +1351,7 @@
                         );
                         svgLine(
                             ingressLayers.wires,
-                            $("ingress-client"),
+                            ingressClient,
                             ic,
                             gray,
                             2,
@@ -1256,7 +1380,7 @@
                             paths = [
                                 svgLine(
                                     clusterLayers.active,
-                                    $("cluster-client"),
+                                    $(`cluster-client-${request.client}`),
                                     $(`cluster-conn-${request.conn}`),
                                     activePinColor,
                                     3,
@@ -1301,7 +1425,7 @@
                             paths = [
                                 svgLine(
                                     ingressLayers.active,
-                                    $("ingress-client"),
+                                    $(`ingress-client-${request.client}`),
                                     $(`ingress-conn-${request.conn}`),
                                     green,
                                     3,
@@ -1408,10 +1532,11 @@
                 function buildSimulation() {
                     const workloadRng = rndFactory(state.seed),
                         routingRng = rndFactory(state.seed ^ 0x9e3779b9),
-                        nextByConnection = Array(state.pool).fill(0),
+                        nextByConnection = Array(state.totalConnections).fill(0),
                         byTime = new Map();
-                    state.pins = Array.from({ length: state.pool }, () =>
-                        Math.floor(workloadRng() * state.pods),
+                    state.pins = Array.from(
+                        { length: state.totalConnections },
+                        () => Math.floor(workloadRng() * state.pods),
                     );
                     state.requests = [];
                     const eventAt = (time) => {
@@ -1420,13 +1545,16 @@
                         return byTime.get(time);
                     };
                     for (let id = 0; id < state.total; id++) {
-                        const conn = id % state.pool,
+                        const conn = connectionForRequest(id),
+                            identity = connectionIdentity(conn),
                             start = nextByConnection[conn],
                             duration = 1 + Math.floor(workloadRng() * 5),
                             end = start + duration,
                             request = {
                                 id,
                                 conn,
+                                client: identity.client,
+                                localConnection: identity.localConnection,
                                 start,
                                 duration,
                                 end,
@@ -1461,16 +1589,72 @@
                         }
                     }
                 }
+                function connectionSummary(
+                    clients = state.clients,
+                    connectionsPerClient = state.connectionsPerClient,
+                ) {
+                    const totalConnections =
+                        clients * connectionsPerClient;
+                    return `${clients} ${clients === 1 ? "client" : "clients"} × ${connectionsPerClient} ${connectionsPerClient === 1 ? "connection" : "connections"} = ${totalConnections} total connections`;
+                }
+                function updateConnectionConfiguration() {
+                    const clients = Math.max(
+                            0,
+                            parseInt($("client-count").value, 10) || 0,
+                        ),
+                        connectionsPerClient = Math.max(
+                            0,
+                            parseInt(
+                                $("connections-per-client").value,
+                                10,
+                            ) || 0,
+                        ),
+                        totalConnections =
+                            clients * connectionsPerClient,
+                        exceedsLimit = totalConnections > 100;
+                    $("connection-total").textContent = connectionSummary(
+                        clients,
+                        connectionsPerClient,
+                    );
+                    $("config-error").hidden = !exceedsLimit;
+                    $("client-count").setAttribute(
+                        "aria-invalid",
+                        String(exceedsLimit),
+                    );
+                    $("connections-per-client").setAttribute(
+                        "aria-invalid",
+                        String(exceedsLimit),
+                    );
+                    $("connections-per-client").setCustomValidity(
+                        exceedsLimit
+                            ? "Use no more than 100 total connections."
+                            : "",
+                    );
+                    $("init").disabled = exceedsLimit;
+                    return !exceedsLimit;
+                }
                 function initialize() {
+                    if (!updateConnectionConfiguration()) return;
                     stop();
                     state.total = clamp($("request-count").value, 1, 5000, 1000);
-                    state.pool = clamp($("pool-size").value, 1, 100, 5);
+                    state.clients = clamp($("client-count").value, 1, 20, 1);
+                    state.connectionsPerClient = clamp(
+                        $("connections-per-client").value,
+                        1,
+                        100,
+                        5,
+                    );
+                    state.totalConnections =
+                        state.clients * state.connectionsPerClient;
                     state.pods = clamp($("pod-count").value, 1, 100, 10);
                     state.algo = $("ingress-algo").value;
                     state.algoLabel = $("ingress-algo").selectedOptions[0].text;
                     $("request-count").value = state.total;
-                    $("pool-size").value = state.pool;
+                    $("client-count").value = state.clients;
+                    $("connections-per-client").value =
+                        state.connectionsPerClient;
                     $("pod-count").value = state.pods;
+                    updateConnectionConfiguration();
                     state.eventIndex = -1;
                     state.time = 0;
                     state.visualTime = 0;
@@ -1489,14 +1673,14 @@
                     });
                     $("state-dot").classList.add("ready");
                     $("state-text").textContent =
-                        `${state.pool} persistent connections established`;
+                        `${connectionSummary()} established`;
                     $("init").textContent = "Re-initialize connections";
                     $("play").disabled = false;
                     $("step").disabled = false;
                     $("results").disabled = false;
                     $("reset").disabled = false;
                     $("cluster-status").textContent =
-                        `Connections established. Each C1–C${state.pool} is now pinned to a backend pod.`;
+                        "Connections established. Every client-owned connection is now pinned to one backend pod.";
                     $("ingress-status").textContent =
                         "Connections established to the L7 proxy. No client connection is pinned to a backend pod.";
                     $("cluster-summary").hidden = true;
@@ -1618,7 +1802,7 @@
                     for (const id of state.runtime.cluster.active) {
                         const request = state.requests[id];
                         [
-                            "cluster-client",
+                            `cluster-client-${request.client}`,
                             `cluster-conn-${request.conn}`,
                             "cluster-route",
                             `cluster-pod-${request.clusterPod}`,
@@ -1629,7 +1813,7 @@
                     for (const id of state.runtime.ingress.active) {
                         const request = state.requests[id];
                         [
-                            "ingress-client",
+                            `ingress-client-${request.client}`,
                             `ingress-conn-${request.conn}`,
                             "ingress-route",
                             `ingress-pod-${request.ingressPod}`,
@@ -1796,7 +1980,8 @@
                         "Connections remain established. Ready to process requests again.";
                     $("ingress-status").textContent =
                         "Connections remain established. Ready to process requests again.";
-                    $("state-text").textContent = `${state.pool} persistent connections established`;
+                    $("state-text").textContent =
+                        `${connectionSummary()} established`;
                     $("cluster-summary").hidden = true;
                     $("ingress-summary").hidden = true;
                     $("play").disabled = false;
@@ -1814,23 +1999,38 @@
                 $("reset").addEventListener("click", resetRequests);
                 root.querySelectorAll(".preset").forEach((button) =>
                     button.addEventListener("click", () => {
-                        $("pool-size").value = button.dataset.pool;
+                        $("client-count").value = button.dataset.clients;
+                        $("connections-per-client").value =
+                            button.dataset.connections;
                         $("pod-count").value = button.dataset.pods;
+                        updateConnectionConfiguration();
                         initialize();
                     }),
                 );
-                ["request-count", "pool-size", "pod-count", "ingress-algo"].forEach(
-                    (id) =>
+                [
+                    "request-count",
+                    "client-count",
+                    "connections-per-client",
+                    "pod-count",
+                    "ingress-algo",
+                ].forEach((id) =>
                         $(id).addEventListener("change", () => {
                             if (!state.initialized) return;
                             $("state-text").textContent =
                                 "Settings changed · re-initialize to apply";
                         }),
                 );
+                ["client-count", "connections-per-client"].forEach((id) =>
+                    $(id).addEventListener(
+                        "input",
+                        updateConnectionConfiguration,
+                    ),
+                );
                 window.addEventListener("resize", () =>
                     requestAnimationFrame(draw),
                 );
                 $("play").setAttribute("aria-pressed", "false");
+                updateConnectionConfiguration();
                 buildNodes();
                 updateProgress();
             })();
