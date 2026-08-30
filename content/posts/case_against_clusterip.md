@@ -5,6 +5,7 @@ draft: false
 tags: ['kubernetes', 'ingress', 'service-mesh', 'load-balancer']
 language: en
 content_type: technical
+feature_image: img/case-against-clusterip-social.png
 # series: ['series-name']
 ---
 > This is a draft of an upcoming post. Feel free to mail me muhammed@kucukaslan.com.tr or schedule a meeting via [meet](./about)
@@ -38,17 +39,24 @@ Implications of this simple statement is why I call ClusterIP a load balancer th
 [^quic]: HTTP/1 and HTTP/2 use TCP, while HTTP/3 uses QUIC (over UDP).
 ## ClusterIP and Connections
 Let's consider client and server services in a K8s cluster. What happens when a client wants to issue a request?
-Client (pod) attempts to connect to `server.namespace.svc.cluster.local`,  
-ClusterIP returns IP address of one of the server pods.
-Client (pod) connects directly to the that pod.
-All the requests that clients sends over this connection hits that server pod.
-<!-- DIAGRAM-->
+The client pod attempts to connect to `server.namespace.svc.cluster.local`. For a normal (non-headless) Service, DNS resolves that name to the Service's virtual ClusterIP—not to one of the pod IPs. When the client opens a TCP connection to that virtual IP, the Kubernetes Service data path selects an endpoint and redirects the flow to it.[^virtual-ip]
+
+Every request the client sends over that established connection reaches the same server pod.
+
+[^virtual-ip]: The exact data path depends on the cluster's networking implementation. The common `kube-proxy` modes implement the same basic virtual-IP behavior: traffic to a Service's ClusterIP and port is redirected to an endpoint. See [Virtual IPs and Service Proxies](https://kubernetes.io/docs/reference/networking/virtual-ips/).
+
+{{< routing-visual kind="single-flow" >}}
+The Service chooses a backend when the TCP flow is established. Reusing that flow also reuses the selected backend.
+{{< /routing-visual >}}
 
 A client can open multiple connections to the same service/server. In fact most of the time http clients creates a pool of connections to reuse. Each connection is associated with a single server pod. Ok, would that solve the problem?
 
 Let's say there are 10 server pods and client uses a connection pool of size 5 (i.e. 5 connections).  
 Then, by the (dual) [pigeon hole principle](https://en.wikipedia.org/wiki/Pigeonhole_principle#Alternative_formulations:~:text=If%20n%20objects%20are%20distributed%20over%20m%20places%2C%20and%20if%20n%20%3C%20m%2C%20then%20some%20place%20receives%20no%20object.), there must be at least five server pods that receive no connection (i.e. no request).
-<!-- DIAGRAM-->
+
+{{< routing-visual kind="five-of-ten" >}}
+Even with no collisions between selections, five persistent connections can reach at most five of the ten pods.
+{{< /routing-visual >}}
 
 It's clear that when the number of connections is less than the number of server pods, some server pods won't receive any connections (i.e. no request).
 So those pods are not utilized/wasted.
@@ -60,26 +68,27 @@ No! Let's assume there are 6 connections and 4 server pods. By the pigeon hole p
 2. There exists at least one server that has at most one connection.
 Hence, there exists two server pods, one with at least double the connections of the other (consequently receiving at least double the requests).
 
-<!--DIAGRAM-->
+{{< routing-visual kind="six-over-four" >}}
+This is the most even possible six-to-four assignment. Random endpoint selection can make the difference larger, but not smaller.
+{{< /routing-visual >}}
 
-## How does Ingress 'fix' relates to the problem?
+## How an HTTP-aware proxy relates to the problem
 We want the number of requests each server pods to be equal.
 We discussed that ClusterIP does not reliably distribute the requests equally.
 
 So we need some way to distribute requests. A trivial solution is to disable connection reuse and force 1 connection 1 request. But this will add TCP connection overhead on top of every request as well as requiring changes to the client code.
 
-We need a layer between the client and the server that will accepts and hold connections but will distribute the requests to the server pods.  
-Ingress comes to the rescue almost by accident.
+We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods. An HTTP-aware proxy—such as the data plane run by an Ingress controller—can fill this role.
 
-Ingress are usually used to expose services to the outside world.
-But they also function as load balancers that routes the external traffic to the internal services. And there is, usually, nothing stopping internal services to go through the Ingress.  
-Unlike ClusterIP, Ingress work at the HTTP level. Instead of distributing connections, they distribute requests.  
-Clients still establishes reusable connections but these connections established between them and the Ingress (and not between them and the server pods).  
-So clients won't need to make any changes to their code to use Ingress.  
-They will still be able to use connection poooling and issue requests as they would with ClusterIP. 
-But the Ingress will distribute each request separately to the server pods regardless of the specific connection that request came from.
+The Ingress resource itself is configuration; the controller or proxy is what handles the traffic. Ingress controllers are usually deployed to expose services outside the cluster, but an internal client can also be routed through an appropriately configured proxy.
 
-<!--DIAGRAM-->
+The client can still establish reusable connections, except those connections terminate at the proxy rather than at the server pods. Because the proxy understands HTTP, it can select an upstream for each request, regardless of which client connection carried that request. The exact algorithm and connection-reuse behavior depend on the proxy and its configuration.
+
+> The diagrams and comparison model persistent HTTP/1.1 with one in-flight request per connection, homogeneous pods, no retries or failures, and no session affinity.
+
+{{< routing-visual kind="comparison" >}}
+The comparison uses the same seeded workload on both sides. ClusterIP keeps five connections pinned to four pods; the illustrative HTTP proxy selects a backend per request using round robin.
+{{< /routing-visual >}}
 
 As you can see, the requests are distributed more evenly by the Ingress than by ClusterIP.
 

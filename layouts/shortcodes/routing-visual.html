@@ -1,0 +1,189 @@
+{{- $kind := .Get "kind" -}}
+{{- $id := printf "routing-visual-%d" .Ordinal -}}
+{{- $valid := slice "single-flow" "five-of-ten" "six-over-four" "comparison" -}}
+{{- if not (in $valid $kind) -}}
+  {{- errorf "routing-visual shortcode: unsupported kind %q" $kind -}}
+{{- end -}}
+
+<figure class="routing-visual routing-visual--{{ $kind }}">
+  {{- if eq $kind "single-flow" }}
+  <div class="routing-visual__canvas" role="group" aria-label="One persistent connection reusing one selected backend">
+    <svg class="routing-visual__svg" viewBox="0 0 900 330" role="img" aria-labelledby="{{ $id }}-title {{ $id }}-desc">
+      <title id="{{ $id }}-title">One TCP connection remains pinned to one pod</title>
+      <desc id="{{ $id }}-desc">A client resolves a Service name to a virtual ClusterIP. The Service data path selects Pod 3 for the connection. Requests one, two, and three all travel over that same connection to Pod 3 while four other pods receive none.</desc>
+
+      <text class="rv-eyebrow" x="44" y="34">CLIENT</text>
+      <text class="rv-eyebrow" x="355" y="34">VIRTUAL SERVICE IP</text>
+      <text class="rv-eyebrow" x="728" y="34">BACKEND PODS</text>
+
+      <path class="rv-route rv-route--1" d="M174 164 C246 164 294 164 354 164" />
+      <path class="rv-route rv-route--1" d="M514 164 C604 164 644 164 716 164" />
+
+      <g class="rv-node" transform="translate(44 132)">
+        <rect width="130" height="64" rx="6" />
+        <text x="65" y="28" text-anchor="middle">Client pod</text>
+        <text class="rv-subtle" x="65" y="47" text-anchor="middle">HTTP/1.1</text>
+      </g>
+
+      <g class="rv-node rv-node--service" transform="translate(354 126)">
+        <rect width="160" height="76" rx="6" />
+        <text x="80" y="29" text-anchor="middle">ClusterIP</text>
+        <text class="rv-subtle" x="80" y="49" text-anchor="middle">endpoint selected</text>
+        <text class="rv-subtle" x="80" y="64" text-anchor="middle">for this flow</text>
+      </g>
+
+      <g class="rv-pod rv-pod--idle" transform="translate(716 52)"><rect width="140" height="40" rx="6" /><text x="70" y="25" text-anchor="middle">Pod 1 · idle</text></g>
+      <g class="rv-pod rv-pod--idle" transform="translate(716 102)"><rect width="140" height="40" rx="6" /><text x="70" y="25" text-anchor="middle">Pod 2 · idle</text></g>
+      <g class="rv-pod rv-pod--used" transform="translate(716 144)"><rect width="140" height="40" rx="6" /><text x="70" y="25" text-anchor="middle">Pod 3 · selected</text></g>
+      <g class="rv-pod rv-pod--idle" transform="translate(716 194)"><rect width="140" height="40" rx="6" /><text x="70" y="25" text-anchor="middle">Pod 4 · idle</text></g>
+      <g class="rv-pod rv-pod--idle" transform="translate(716 244)"><rect width="140" height="40" rx="6" /><text x="70" y="25" text-anchor="middle">Pod 5 · idle</text></g>
+
+      <g class="rv-request rv-request--1" transform="translate(235 164)"><circle r="13" /><text y="4" text-anchor="middle">1</text></g>
+      <g class="rv-request rv-request--1" transform="translate(574 164)"><circle r="13" /><text y="4" text-anchor="middle">2</text></g>
+      <g class="rv-request rv-request--1" transform="translate(660 164)"><circle r="13" /><text y="4" text-anchor="middle">3</text></g>
+      <text class="rv-line-label" x="207" y="139">one established TCP flow</text>
+      <text class="rv-line-label" x="548" y="139">requests reuse the flow</text>
+      <text class="rv-note" x="450" y="300" text-anchor="middle">The Service is not an HTTP proxy; it does not choose a new pod for every request.</text>
+    </svg>
+  </div>
+
+  {{- else if eq $kind "five-of-ten" }}
+  <div class="routing-visual__canvas" role="group" aria-label="Five connections cannot cover ten pods">
+    <svg class="routing-visual__svg routing-visual__svg--tall" viewBox="0 0 920 520" role="img" aria-labelledby="{{ $id }}-title {{ $id }}-desc">
+      <title id="{{ $id }}-title">Five persistent connections reach only five of ten pods</title>
+      <desc id="{{ $id }}-desc">One client owns five persistent connections. Each connection is pinned through the virtual Service to a different pod. Pods 2, 4, 6, 8, and 10 have no connection and cannot receive a request from this pool.</desc>
+
+      <text class="rv-eyebrow" x="34" y="30">CLIENT</text>
+      <text class="rv-eyebrow" x="176" y="30">CONNECTION POOL</text>
+      <text class="rv-eyebrow" x="423" y="30">CLUSTERIP</text>
+      <text class="rv-eyebrow" x="735" y="30">10 PODS</text>
+
+      <g class="rv-node" transform="translate(34 224)"><rect width="108" height="58" rx="6" /><text x="54" y="27" text-anchor="middle">Client</text><text class="rv-subtle" x="54" y="44" text-anchor="middle">pool size 5</text></g>
+      <g class="rv-node rv-node--service" transform="translate(410 224)"><rect width="132" height="58" rx="6" /><text x="66" y="27" text-anchor="middle">ClusterIP</text><text class="rv-subtle" x="66" y="44" text-anchor="middle">selects per flow</text></g>
+
+      {{- range $i := seq 0 4 }}
+      <path class="rv-route rv-route--{{ add $i 1 }}" d="M142 253 C160 {{ add 91 (mul $i 82) }} 164 {{ add 91 (mul $i 82) }} 176 {{ add 91 (mul $i 82) }}" />
+      <path class="rv-route rv-route--{{ add $i 1 }}" d="M286 {{ add 91 (mul $i 82) }} C340 {{ add 91 (mul $i 82) }} 360 253 410 253" />
+      <g class="rv-connection" transform="translate(176 {{ add 73 (mul $i 82) }})"><rect width="110" height="36" rx="6" /><text x="55" y="23" text-anchor="middle">C{{ add $i 1 }}</text></g>
+      {{- end }}
+
+      <path class="rv-route rv-route--1" d="M542 253 C620 253 648 67 722 67" />
+      <path class="rv-route rv-route--2" d="M542 253 C620 253 648 157 722 157" />
+      <path class="rv-route rv-route--3" d="M542 253 C620 253 648 247 722 247" />
+      <path class="rv-route rv-route--4" d="M542 253 C620 253 648 337 722 337" />
+      <path class="rv-route rv-route--5" d="M542 253 C620 253 648 427 722 427" />
+
+      {{- range $i := seq 0 9 }}
+      {{- $used := in (slice 0 2 4 6 8) $i -}}
+      <g class="rv-pod {{ if $used }}rv-pod--used{{ else }}rv-pod--idle{{ end }}" transform="translate(722 {{ add 48 (mul $i 45) }})">
+        <rect width="164" height="38" rx="6" />
+        <text x="18" y="24">Pod {{ add $i 1 }}</text>
+        <text class="rv-pod-state" x="148" y="24" text-anchor="end">{{ if $used }}1 connection{{ else }}unused{{ end }}</text>
+      </g>
+      {{- end }}
+      <text class="rv-note" x="454" y="500" text-anchor="middle">Five connections can use at most five pods. Here, exactly five pods receive no traffic.</text>
+    </svg>
+  </div>
+
+  {{- else if eq $kind "six-over-four" }}
+  <div class="routing-visual__canvas" role="group" aria-label="Six connections remain uneven across four pods even in the best case">
+    <svg class="routing-visual__svg" viewBox="0 0 920 390" role="img" aria-labelledby="{{ $id }}-title {{ $id }}-desc">
+      <title id="{{ $id }}-title">Six connections across four pods produce a two-to-one difference</title>
+      <desc id="{{ $id }}-desc">Six persistent connections are distributed as evenly as possible across four pods. Pod 1 and Pod 2 each receive two connections while Pod 3 and Pod 4 receive one each.</desc>
+
+      <text class="rv-eyebrow" x="34" y="30">CLIENT</text>
+      <text class="rv-eyebrow" x="178" y="30">6 CONNECTIONS</text>
+      <text class="rv-eyebrow" x="438" y="30">CLUSTERIP</text>
+      <text class="rv-eyebrow" x="724" y="30">BEST POSSIBLE SPLIT</text>
+
+      <g class="rv-node" transform="translate(34 158)"><rect width="108" height="58" rx="6" /><text x="54" y="27" text-anchor="middle">Client</text><text class="rv-subtle" x="54" y="44" text-anchor="middle">pool size 6</text></g>
+      <g class="rv-node rv-node--service" transform="translate(422 158)"><rect width="132" height="58" rx="6" /><text x="66" y="27" text-anchor="middle">ClusterIP</text><text class="rv-subtle" x="66" y="44" text-anchor="middle">selects per flow</text></g>
+
+      {{- range $i := seq 0 5 }}
+      <path class="rv-route rv-route--{{ add (mod $i 5) 1 }}" d="M142 187 C160 {{ add 67 (mul $i 48) }} 166 {{ add 67 (mul $i 48) }} 180 {{ add 67 (mul $i 48) }}" />
+      <path class="rv-route rv-route--{{ add (mod $i 5) 1 }}" d="M290 {{ add 67 (mul $i 48) }} C344 {{ add 67 (mul $i 48) }} 370 187 422 187" />
+      <g class="rv-connection" transform="translate(180 {{ add 49 (mul $i 48) }})"><rect width="110" height="36" rx="6" /><text x="55" y="23" text-anchor="middle">C{{ add $i 1 }}</text></g>
+      {{- end }}
+
+      <path class="rv-route rv-route--1" d="M554 187 C628 187 650 82 714 82" />
+      <path class="rv-route rv-route--2" d="M554 187 C628 187 650 82 714 82" transform="translate(0 3)" />
+      <path class="rv-route rv-route--3" d="M554 187 C628 187 650 152 714 152" />
+      <path class="rv-route rv-route--4" d="M554 187 C628 187 650 152 714 152" transform="translate(0 3)" />
+      <path class="rv-route rv-route--5" d="M554 187 C628 187 650 222 714 222" />
+      <path class="rv-route rv-route--1" d="M554 187 C628 187 650 292 714 292" />
+
+      {{- range $i := seq 0 3 }}
+      {{- $count := cond (lt $i 2) 2 1 -}}
+      <g class="rv-pod rv-pod--used" transform="translate(714 {{ add 58 (mul $i 70) }})">
+        <rect width="172" height="48" rx="6" />
+        <text x="18" y="29">Pod {{ add $i 1 }}</text>
+        <text class="rv-count" x="154" y="29" text-anchor="end">{{ $count }} connection{{ if gt $count 1 }}s{{ end }}</text>
+      </g>
+      {{- end }}
+      <path class="rv-ratio" d="M884 82 L904 82 L904 222 L884 222" />
+      <text class="rv-ratio-label" x="900" y="146" text-anchor="end">2×</text>
+      <text class="rv-note" x="460" y="366" text-anchor="middle">Even the most even assignment leaves some pods with twice as many persistent connections.</text>
+    </svg>
+  </div>
+
+  {{- else }}
+  {{- .Page.Store.Set "hasRoutingVisual" true -}}
+  <div class="routing-comparison" data-routing-comparison>
+    <div class="routing-comparison__toolbar" aria-label="Simulation controls">
+      <div>
+        <strong>100 requests</strong>
+        <span>1 client · 5 connections · 10 pods</span>
+      </div>
+      <div class="routing-comparison__actions">
+        <button type="button" data-action="step">Step</button>
+        <button type="button" data-action="play" aria-pressed="false">Play</button>
+        <button type="button" data-action="result">Show result</button>
+        <button type="button" data-action="reset">Reset</button>
+      </div>
+    </div>
+    <p class="routing-comparison__status" data-status aria-live="polite">Connections are established. Step or play to dispatch requests.</p>
+    <div class="routing-comparison__panels">
+      <section class="routing-comparison__panel" aria-labelledby="{{ $id }}-cluster-title">
+        <header>
+          <div>
+            <span class="routing-comparison__eyebrow">Connection-level routing</span>
+            <h4 id="{{ $id }}-cluster-title">ClusterIP</h4>
+          </div>
+          <span class="routing-comparison__metric" data-cluster-metric>0 completed</span>
+        </header>
+        <div class="routing-comparison__viewport" tabindex="0" aria-label="Scrollable ClusterIP topology">
+          <svg data-scenario="cluster" viewBox="0 0 900 430" role="img" aria-label="ClusterIP connections and requests"></svg>
+        </div>
+        <p data-cluster-summary>Five connections are pinned to four pods.</p>
+      </section>
+      <section class="routing-comparison__panel" aria-labelledby="{{ $id }}-proxy-title">
+        <header>
+          <div>
+            <span class="routing-comparison__eyebrow">Request-level routing</span>
+            <h4 id="{{ $id }}-proxy-title">HTTP-aware proxy</h4>
+          </div>
+          <span class="routing-comparison__metric" data-proxy-metric>0 completed</span>
+        </header>
+        <div class="routing-comparison__viewport" tabindex="0" aria-label="Scrollable HTTP proxy topology">
+          <svg data-scenario="proxy" viewBox="0 0 900 430" role="img" aria-label="HTTP proxy connections and requests"></svg>
+        </div>
+        <p data-proxy-summary>Round robin selects a backend for each request.</p>
+      </section>
+    </div>
+    <div class="routing-comparison__footer">
+      <span data-progress>0 / 100 requests completed</span>
+      <a href="/tools/http-routing-simulator.html">Open the configurable simulator →</a>
+    </div>
+    <noscript>
+      <div class="routing-comparison__fallback">
+        <p><strong>ClusterIP final result:</strong> four pods are used; completed requests are distributed 40, 20, 20, and 20.</p>
+        <p><strong>HTTP proxy final result:</strong> all ten pods are used; each completes 10 requests.</p>
+      </div>
+    </noscript>
+  </div>
+  {{- end }}
+
+  {{- with .Inner }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>

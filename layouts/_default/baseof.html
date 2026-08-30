@@ -20,6 +20,10 @@
   </script>
   {{ end }}
 
+  {{ if .Store.Get "hasRoutingVisual" }}
+  <script src="{{ "/js/http-routing-article.js" | relURL }}" defer></script>
+  {{ end }}
+
   <script src="{{ "/js/theme-switcher.js" | relURL }}"></script>
   <script src="{{ "/js/nav.js" | relURL }}"></script>
   {{ partial "youtube-lazy-js.html" . }}

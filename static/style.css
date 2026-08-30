@@ -18,6 +18,11 @@
   --header-bg: rgba(250, 247, 242, 0.92);
   --shadow: 0 1px 3px rgba(44, 44, 44, 0.06), 0 4px 12px rgba(44, 44, 44, 0.04);
   --shadow-lg: 0 4px 24px rgba(44, 44, 44, 0.08);
+  --routing-blue: #3D6F9F;
+  --routing-orange: #B86432;
+  --routing-green: #2A7F6F;
+  --routing-violet: #735E98;
+  --routing-cyan: #377985;
   --font-body: 'CMU Serif', 'Latin Modern Roman', 'Computer Modern', Georgia, serif;
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-ui: 'DM Sans', system-ui, sans-serif;
@@ -46,6 +51,11 @@
   --header-bg: rgba(26, 26, 26, 0.92);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --routing-blue: #7BA8D2;
+  --routing-orange: #E09A6B;
+  --routing-green: #53B8A1;
+  --routing-violet: #AA96CD;
+  --routing-cyan: #68B3BE;
 }
 
 *, *::before, *::after {
@@ -803,6 +813,430 @@ a.tag:hover {
   box-shadow: var(--shadow);
 }
 
+/* Theme-native routing figures */
+
+.routing-visual {
+  width: min(var(--max-width-wide), calc(100vw - 2rem));
+  margin: 2.25rem 50% 2.5rem;
+  transform: translateX(-50%);
+  font-family: var(--font-ui);
+  color: var(--text);
+}
+
+.routing-visual__canvas,
+.routing-comparison {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.routing-visual__canvas {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.routing-visual__svg {
+  display: block;
+  width: 100%;
+  min-width: 680px;
+  height: auto;
+  color: var(--text);
+}
+
+.routing-visual figcaption {
+  max-width: var(--max-width);
+  margin: 0.75rem auto 0;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.routing-visual figcaption p {
+  margin: 0;
+}
+
+.routing-visual svg text {
+  fill: var(--text);
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+
+.routing-visual .rv-eyebrow,
+.routing-visual .rv-line-label,
+.routing-visual .rv-subtle,
+.routing-visual .rv-note,
+.routing-visual .rv-pod-state,
+.routing-comparison__eyebrow {
+  fill: var(--text-muted);
+}
+
+.routing-visual .rv-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.routing-visual .rv-line-label,
+.routing-visual .rv-subtle,
+.routing-visual .rv-pod-state {
+  font-size: 11px;
+}
+
+.routing-visual .rv-note {
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+
+.routing-visual .rv-node rect,
+.routing-visual .rv-connection rect,
+.routing-visual .rv-pod rect {
+  fill: var(--surface-raised);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.routing-visual .rv-node--service rect {
+  fill: var(--bg);
+  stroke: var(--accent);
+}
+
+.routing-visual .rv-pod--idle {
+  opacity: 0.58;
+}
+
+.routing-visual .rv-pod--idle rect {
+  fill: var(--surface);
+  stroke-dasharray: 4 4;
+}
+
+.routing-visual .rv-pod--used rect {
+  stroke: var(--accent);
+}
+
+.routing-visual .rv-count {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.routing-visual .rv-route {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+
+.routing-visual .rv-route--1 { stroke: var(--routing-blue); }
+.routing-visual .rv-route--2 { stroke: var(--routing-orange); }
+.routing-visual .rv-route--3 { stroke: var(--routing-green); }
+.routing-visual .rv-route--4 { stroke: var(--routing-violet); }
+.routing-visual .rv-route--5 { stroke: var(--routing-cyan); }
+
+.routing-visual .rv-request circle {
+  stroke: var(--surface-raised);
+  stroke-width: 2;
+}
+
+.routing-visual .rv-request--1 circle { fill: var(--routing-blue); }
+.routing-visual .rv-request text {
+  fill: var(--surface-raised);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.routing-visual .rv-ratio {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
+.routing-visual .rv-ratio-label {
+  fill: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.routing-comparison__toolbar,
+.routing-comparison__footer,
+.routing-comparison__panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.routing-comparison__toolbar {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.routing-comparison__toolbar > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  line-height: 1.35;
+}
+
+.routing-comparison__toolbar strong {
+  font-size: 0.875rem;
+}
+
+.routing-comparison__toolbar span,
+.routing-comparison__metric,
+.routing-comparison__status,
+.routing-comparison__panel > p,
+.routing-comparison__footer {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.routing-comparison__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.routing-comparison__actions button {
+  min-height: 2.5rem;
+  padding: 0.45rem 0.75rem;
+  color: var(--text);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.routing-comparison__actions button:hover {
+  border-color: var(--accent);
+}
+
+.routing-comparison__actions button[aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.routing-comparison__actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.routing-comparison__status {
+  min-height: 2.35rem;
+  margin: 0;
+  padding: 0.55rem 1rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  line-height: 1.45;
+}
+
+.routing-comparison__panels {
+  display: grid;
+  gap: 1px;
+  background: var(--border);
+}
+
+.routing-comparison__panel {
+  min-width: 0;
+  padding: 0.9rem 1rem 0.75rem;
+  background: var(--surface);
+}
+
+.routing-comparison__panel > header {
+  margin-bottom: 0.65rem;
+}
+
+.routing-comparison__panel h4 {
+  margin: 0.1rem 0 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.routing-comparison__eyebrow {
+  display: block;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.routing-comparison__metric {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.routing-comparison__viewport {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.routing-comparison__viewport:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.routing-comparison__viewport svg {
+  display: block;
+  width: 100%;
+  min-width: 700px;
+  height: auto;
+}
+
+.routing-comparison__panel > p {
+  margin: 0.6rem 0 0;
+  line-height: 1.45;
+}
+
+.routing-comparison__footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+
+.routing-comparison__footer a {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
+.routing-comparison__fallback {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.routing-comparison__fallback p {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.routing-comparison__fallback p:last-child {
+  margin-bottom: 0;
+}
+
+.routing-comparison svg text {
+  fill: var(--text);
+  font-family: var(--font-ui);
+  font-size: 12px;
+}
+
+.routing-comparison svg .routing-svg__eyebrow,
+.routing-comparison svg .routing-svg__secondary {
+  fill: var(--text-muted);
+}
+
+.routing-comparison svg .routing-svg__eyebrow {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.routing-comparison svg .routing-svg__secondary {
+  font-size: 10px;
+}
+
+.routing-comparison svg .routing-svg__node {
+  fill: var(--surface-raised);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.routing-comparison svg .routing-svg__service {
+  fill: var(--surface);
+  stroke: var(--accent);
+}
+
+.routing-comparison svg .routing-svg__base-path,
+.routing-comparison svg .routing-svg__active-path {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.routing-comparison svg .routing-svg__base-path {
+  stroke: var(--border);
+  stroke-width: 2;
+}
+
+.routing-comparison svg .routing-svg__base-path--1 { stroke: var(--routing-blue); }
+.routing-comparison svg .routing-svg__base-path--2 { stroke: var(--routing-orange); }
+.routing-comparison svg .routing-svg__base-path--3 { stroke: var(--routing-green); }
+.routing-comparison svg .routing-svg__base-path--4 { stroke: var(--routing-violet); }
+.routing-comparison svg .routing-svg__base-path--5 { stroke: var(--routing-cyan); }
+
+.routing-comparison svg .routing-svg__active-path {
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+
+.routing-comparison svg .routing-svg__request {
+  fill: var(--accent);
+  stroke: var(--surface-raised);
+  stroke-width: 2;
+}
+
+.routing-comparison svg .routing-svg__completion {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.routing-comparison svg .routing-svg__pod-used {
+  stroke: var(--accent);
+}
+
+.routing-comparison svg .routing-svg__pod-idle {
+  fill: var(--surface);
+  stroke-dasharray: 4 4;
+  opacity: 0.72;
+}
+
+@media (max-width: 760px) {
+  .routing-visual {
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+    transform: none;
+  }
+
+  .routing-comparison__toolbar,
+  .routing-comparison__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .routing-comparison__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .routing-comparison__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .routing-comparison__actions button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .routing-comparison svg .routing-svg__request,
+  .routing-comparison svg .routing-svg__completion {
+    transition: none;
+  }
+}
+
 .prose a {
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -851,6 +1285,7 @@ a.tag:hover {
   background: var(--code-bg);
   border: 1px solid var(--code-border);
   border-radius: 4px;
+  overflow-wrap: anywhere;
 }
 
 .prose pre {
