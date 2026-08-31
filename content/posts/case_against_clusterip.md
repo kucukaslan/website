@@ -39,11 +39,10 @@ Implications of this simple statement is why I call ClusterIP a load balancer th
 [^quic]: HTTP/1 and HTTP/2 use TCP, while HTTP/3 uses QUIC (over UDP).
 ## ClusterIP and Connections
 Let's consider client and server services in a K8s cluster. What happens when a client wants to issue a request?
-The client pod attempts to connect to `server.namespace.svc.cluster.local`. For a normal (non-headless) Service, DNS resolves that name to the Service's virtual ClusterIP—not to one of the pod IPs. When the client opens a TCP connection to that virtual IP, the Kubernetes Service data path selects an endpoint and redirects the flow to it.[^virtual-ip]
+The client pod attempts to connect to `server.namespace.svc.cluster.local`. DNS resolves that name to the server service's virtual ClusterIP. When the client opens a TCP connection to that virtual IP, the Kubernetes matches it with a specific pod.
 
 Every request the client sends over that established connection reaches the same server pod.
 
-[^virtual-ip]: The exact data path depends on the cluster's networking implementation. The common `kube-proxy` modes implement the same basic virtual-IP behavior: traffic to a Service's ClusterIP and port is redirected to an endpoint. See [Virtual IPs and Service Proxies](https://kubernetes.io/docs/reference/networking/virtual-ips/).
 
 {{< routing-visual kind="single-flow" >}}
 The Service chooses a backend when the TCP flow is established. Reusing that flow also reuses the selected backend.
@@ -72,17 +71,26 @@ Hence, there exists two server pods, one with at least double the connections of
 This is the most even possible six-to-four assignment. Random endpoint selection can make the difference larger, but not smaller.
 {{< /routing-visual >}}
 
-## How an HTTP-aware proxy relates to the problem
+## How does Ingress fixes the problem?
+
+<!--## How an HTTP-aware proxy relates to the problem-->
 We want the number of requests each server pods to be equal.
 We discussed that ClusterIP does not reliably distribute the requests equally.
 
 So we need some way to distribute requests. A trivial solution is to disable connection reuse and force 1 connection 1 request. But this will add TCP connection overhead on top of every request as well as requiring changes to the client code.
 
-We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods. An HTTP-aware proxy—such as the data plane run by an Ingress controller—can fill this role.
+We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods, i.e. we need an HTTP-aware proxy.
 
-The Ingress resource itself is configuration; the controller or proxy is what handles the traffic. Ingress controllers are usually deployed to expose services outside the cluster, but an internal client can also be routed through an appropriately configured proxy.
+Ingress comes to the rescue almost by accident.
 
-The client can still establish reusable connections, except those connections terminate at the proxy rather than at the server pods. Because the proxy understands HTTP, it can select an upstream for each request, regardless of which client connection carried that request. The exact algorithm and connection-reuse behavior depend on the proxy and its configuration.
+Ingress are usually used to expose services to the outside world.
+But they also function as load balancers that routes the external traffic to the internal services. And there is, usually, nothing stopping internal services to go through the Ingress.  
+Unlike ClusterIP, Ingress work at the HTTP level, ie. they're HTTP-aware. Instead of distributing connections, they can distribute requests.  
+Clients still establishes reusable connections but these connections established between them and the Ingress (and not between them and the server pods).  
+So clients won't need to make any changes to their code to use Ingress.  
+They will still be able to use connection poooling and issue requests as they would with ClusterIP. 
+But the Ingress will distribute each request separately to the server pods regardless of the specific connection that request came from.
+
 
 > The diagrams and comparison model persistent HTTP/1.1 with one in-flight request per connection, homogeneous pods, no retries or failures, and no session affinity.
 
@@ -100,7 +108,7 @@ I guess, one may argue that the overloaded pods can have for example 200% CPU us
 This is fair, but it assumes that it is possible to hit 200% CPU usage. For this to happen:
 1. The pod CPU limits must be at least 2x the pod CPU requests (or shouldn't be set at all)
 2. The Node that that pod is running on must have enough excess CPU capacity to allow that pod to exceed its CPU requests by 2x
-3. 2x of the requested CPU capacity must be practically usable. What I mean is that: scripting languages, that happens to be used in backend serveices, like Python and Node.js usually cannot utilize more than 1 CPU. Python due to its GIL, and Node.js due to its is single-threaded event loop.
+3. 2x of the requested CPU capacity must be practically usable. What I mean is that: scripting languages, that happens to be used in backend services, like Python and Node.js usually cannot utilize more than 1 CPU. Python due to its GIL, and Node.js due to its is single-threaded event loop. So even if there is excess CPU capacity, the pod cannot utilize more than 1 CPU. So 1 CPU is a ceiling of how much CPU a pod can actually utilize for those languages.
 
 So what happens usually is that there is both low average CPU usage across pods, while a significant number of requests are either timed-out or has high latency.
 
