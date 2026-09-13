@@ -2,28 +2,200 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<!-- standalone-theme:start -->
+<style>
+/* Shared source. Run python3 scripts/sync-tool-theme.py to embed in each tool. */
+:root {
+  color-scheme: light;
+  --tool-bg: #faf7f2;
+  --tool-text: #2c2c2c;
+  --tool-muted: #6b6560;
+  --tool-accent: #2a7f6f;
+  --tool-accent-hover: #236b5e;
+  --tool-accent-soft: #e9f2ed;
+  --tool-surface: #f3efe8;
+  --tool-panel: #ffffff;
+  --tool-border: #e0dad0;
+  --tool-blue: #3d6f9f;
+  --tool-blue-soft: #eaf0f6;
+  --tool-orange: #a9582b;
+  --tool-orange-soft: #faf0e5;
+  --tool-violet: #735e98;
+  --tool-violet-soft: #f0ecf5;
+  --tool-red: #b04440;
+  --tool-red-soft: #f8eae7;
+  --tool-line: #b5b1a9;
+  --tool-grid: #e9e4db;
+  --tool-shadow: 0 2px 8px rgb(44 44 44 / 3%);
+  --tool-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --tool-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tool-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --tool-width: 1480px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --tool-bg: #1a1a1a;
+  --tool-text: #e8e4df;
+  --tool-muted: #aaa49c;
+  --tool-accent: #53b8a1;
+  --tool-accent-hover: #75ceb9;
+  --tool-accent-soft: #233b34;
+  --tool-surface: #242424;
+  --tool-panel: #2a2a2a;
+  --tool-border: #41403c;
+  --tool-blue: #7ba8d2;
+  --tool-blue-soft: #283540;
+  --tool-orange: #e09a6b;
+  --tool-orange-soft: #3d3026;
+  --tool-violet: #b19dd2;
+  --tool-violet-soft: #36303f;
+  --tool-red: #ed9990;
+  --tool-red-soft: #412d2b;
+  --tool-line: #79766f;
+  --tool-grid: #34332f;
+  --tool-shadow: none;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--tool-bg); -webkit-text-size-adjust: 100%; }
+body.tool-page {
+  margin: 0;
+  padding: 0 clamp(16px, 3vw, 48px) 40px;
+  max-width: none;
+  min-height: 100vh;
+  background: var(--tool-bg);
+  color: var(--tool-text);
+  font-family: var(--tool-ui);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.tool-main, .tool-masthead { width: 100%; max-width: var(--tool-width); margin-inline: auto; }
+.tool-main { min-width: 0; }
+.tool-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  border-bottom: 1px solid var(--tool-border);
+}
+.tool-brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tool-brand a { color: var(--tool-text); text-decoration: none; }
+.tool-brand .tool-author { font: 19px var(--tool-display); letter-spacing: -.03em; }
+.tool-brand .tool-back { color: var(--tool-muted); font-size: 12px; }
+.tool-brand .tool-back::before { content: "/"; margin-right: 14px; color: var(--tool-line); }
+.tool-brand a:hover { color: var(--tool-accent); }
+.tool-appearance { display: flex; flex-direction: row; align-items: center; gap: 8px; margin: 0; color: var(--tool-muted); font: 12px var(--tool-ui); }
+.tool-appearance select {
+  width: auto;
+  min-height: 36px;
+  padding: 6px 26px 6px 10px;
+  border: 1px solid var(--tool-border);
+  border-radius: 6px;
+  background: var(--tool-surface);
+  color: var(--tool-text);
+  font: 12px var(--tool-ui);
+}
+.tool-header { padding: 34px 0 28px; }
+.tool-kicker { margin: 0 0 10px; color: var(--tool-accent); font: 600 11px var(--tool-mono); letter-spacing: .1em; text-transform: uppercase; }
+.tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
+.tool-header .tool-description { max-width: 760px; margin: 14px 0 0; color: var(--tool-muted); font-size: 15px; line-height: 1.7; }
+.tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
+.tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
+.tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
+.tool-page :where(button) { touch-action: manipulation; }
+.tool-page :where(button:disabled) { cursor: not-allowed; }
+.tool-skip { position: fixed; top: 8px; left: 16px; z-index: 2000; padding: 10px 16px; border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); transform: translateY(-160%); }
+.tool-skip:focus { transform: translateY(0); }
+.tool-panel { min-width: 0; padding: 22px; border: 1px solid var(--tool-border); border-radius: 10px; background: var(--tool-panel); box-shadow: var(--tool-shadow); }
+.tool-panel h2 { margin: 0 0 12px; color: var(--tool-text); font-size: 16px; font-weight: 650; }
+.tool-help { color: var(--tool-muted); font-size: 12px; line-height: 1.6; }
+.tool-button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--tool-accent); border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); font-size: 13px; font-weight: 600; cursor: pointer; }
+.tool-button:hover { background: var(--tool-accent-hover); }
+.tool-button.secondary { background: var(--tool-panel); border-color: var(--tool-border); color: var(--tool-text); }
+.tool-button.secondary:hover { background: var(--tool-surface); }
+.tool-page .leaflet-container { background: var(--tool-surface); font-family: var(--tool-ui); }
+.tool-page .leaflet-bar a { background: var(--tool-panel); color: var(--tool-text); border-color: var(--tool-border); }
+.tool-page .leaflet-control-attribution { background: var(--tool-panel); color: var(--tool-muted); }
+.tool-page .leaflet-control-attribution a { color: var(--tool-blue); }
+@media (max-width: 600px) {
+  .tool-masthead { min-height: 68px; gap: 10px; }
+  .tool-brand { gap: 4px; flex-direction: column; align-items: flex-start; }
+  .tool-brand .tool-author { font-size: 17px; }
+  .tool-brand .tool-back::before { content: none; }
+  .tool-appearance { gap: 5px; }
+  .tool-header { padding: 26px 0 24px; }
+  .tool-header .tool-description { font-size: 14px; }
+  .tool-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-page *, .tool-page *::before, .tool-page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+<script>
+/* Embedded before paint; shares the parent site's theme preference. */
+(() => {
+  const root = document.documentElement;
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+  let preference = 'system';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') preference = saved;
+  } catch (_) { /* Local files and private contexts may deny storage. */ }
+
+  function apply() {
+    root.dataset.theme = preference === 'system' ? (system.matches ? 'dark' : 'light') : preference;
+    const select = document.getElementById('tool-theme');
+    if (select) select.value = preference;
+    document.dispatchEvent(new Event('tool-theme-change'));
+  }
+  apply();
+  system.addEventListener('change', () => {
+    if (preference === 'system') apply();
+  });
+  window.addEventListener('storage', (event) => {
+    if (event.key !== 'theme' && event.key !== null) return;
+    preference = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : 'system';
+    apply();
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('tool-theme');
+    if (!select) return;
+    select.value = preference;
+    select.addEventListener('change', () => {
+      preference = select.value;
+      try {
+        if (preference === 'system') localStorage.removeItem('theme');
+        else localStorage.setItem('theme', preference);
+      } catch (_) { /* Theme switching still works without persistence. */ }
+      apply();
+    });
+  });
+})();
+</script>
+<!-- standalone-theme:end -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teltonika Packet Visualizer</title>
     <meta name="description" content="Generate, decode, and inspect Teltonika Codec 8 and Codec 8 Extended AVL data packets byte by byte.">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; background: #f4f7f6; color: #333; }
-        h1 { margin-bottom: 0.5rem; color: #2c3e50; }
-        .subtitle { color: #7f8c8d; margin-bottom: 2rem; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; background: var(--tool-bg); color: var(--tool-text); }
+        h1 { margin-bottom: 0.5rem; color: var(--tool-text); }
+        .subtitle { color: var(--tool-muted); margin-bottom: 2rem; }
 
         /* Cards */
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e1e4e8; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; }
-        .card h3 { margin: 0; font-size: 1.1rem; color: #34495e; }
+        .card { background: var(--tool-panel); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--tool-border); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--tool-border); padding-bottom: 10px; }
+        .card h3 { margin: 0; font-size: 1.1rem; color: var(--tool-text); }
 
         /* Grid Layouts */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-        .io-row { display: grid; grid-template-columns: 80px 1fr 120px auto; gap: 10px; margin-bottom: 10px; align-items: end; background: #fafafa; padding: 10px; border-radius: 6px; border: 1px solid #eee; }
+        .io-row { display: grid; grid-template-columns: 80px 1fr 120px auto; gap: 10px; margin-bottom: 10px; align-items: end; background: var(--tool-surface); padding: 10px; border-radius: 6px; border: 1px solid var(--tool-border); }
 
         /* Inputs */
-        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: #555; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; box-sizing: border-box; }
-        input:focus, select:focus, textarea:focus { border-color: #3498db; outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
-        input:disabled { background: #e9ecef; color: #6c757d; cursor: not-allowed; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; color: var(--tool-muted); }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--tool-border); border-radius: 6px; font-size: 0.95rem; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: var(--tool-accent); outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1); }
+        input:disabled { background: var(--tool-surface); color: var(--tool-muted); cursor: not-allowed; }
         textarea { font-family: monospace; height: 80px; resize: vertical; }
 
         /* Checkbox wrapper */
@@ -32,35 +204,35 @@
         .checkbox-wrapper label { margin: 0; font-weight: normal; }
 
         /* Buttons */
-        button { background: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; }
-        button:hover { background: #2980b9; transform: translateY(-1px); }
-        button.secondary { background: #95a5a6; }
-        button.secondary:hover { background: #7f8c8d; }
-        button.danger { background: white; border: 1px solid #e74c3c; color: #e74c3c; padding: 8px 12px; }
-        button.danger:hover { background: #e74c3c; color: white; }
-        button.generate { width: 100%; background: #27ae60; font-size: 1.1rem; padding: 15px; }
-        button.generate:hover { background: #219150; }
-        button.decode { background: #8e44ad; width: 100%; }
-        button.decode:hover { background: #9b59b6; }
+        button { background: var(--tool-accent); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; }
+        button:hover { background: var(--tool-accent-hover); }
+        button.secondary { background: var(--tool-surface); }
+        button.secondary:hover { background: var(--tool-muted); }
+        button.danger { background: var(--tool-panel); border: 1px solid var(--tool-red); color: var(--tool-red); padding: 8px 12px; }
+        button.danger:hover { background: var(--tool-red); color: white; }
+        button.generate { width: 100%; background: var(--tool-accent); font-size: 1.1rem; padding: 15px; }
+        button.generate:hover { background: var(--tool-accent-hover); }
+        button.decode { background: var(--tool-violet); width: 100%; }
+        button.decode:hover { background: var(--tool-violet); }
 
         /* Hex Visualizer Styles */
-        .visualizer { display: flex; flex-direction: column; gap: 15px; font-family: 'Consolas', monospace; margin-top: 15px; }
+        .visualizer { display: flex; flex-direction: column; gap: 15px; font-family: var(--tool-mono); margin-top: 15px; }
 
         .viz-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 
         .record-container {
-            border: 2px dashed #e0e0e0;
+            border: 2px dashed var(--tool-border);
             padding: 15px 10px 10px 10px;
             border-radius: 8px;
             position: relative;
-            background: #fafafa;
+            background: var(--tool-surface);
         }
 
         .record-badge {
             position: absolute;
             top: -10px;
             left: 10px;
-            background: #34495e;
+            background: var(--tool-text);
             color: white;
             padding: 2px 8px;
             font-size: 0.75rem;
@@ -80,18 +252,18 @@
             cursor: help;
             border: 1px solid transparent;
         }
-        .byte-block:hover { transform: scale(1.1); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.2); background-color: #fff !important; border-color: #333; }
+        .byte-block:hover { transform: scale(1.1); z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.2); background-color: #fff !important; border-color: var(--tool-text); }
         .byte-label { font-size: 0.6rem; opacity: 0.7; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
         .byte-val { font-weight: bold; font-size: 0.95rem; }
 
         /* General Colors */
-        .c-preamble { background: #ecf0f1; color: #7f8c8d; }
-        .c-length { background: #d6eaf8; color: #2980b9; }
+        .c-preamble { background: #ecf0f1; color: var(--tool-muted); }
+        .c-length { background: #d6eaf8; color: var(--tool-accent-hover); }
         .c-codec { background: #f5cba7; color: #d35400; }
-        .c-count { background: #d5f5e3; color: #27ae60; }
+        .c-count { background: #d5f5e3; color: var(--tool-accent); }
         .c-time { background: #fadbd8; color: #c0392b; }
-        .c-gps { background: #e8daef; color: #8e44ad; }
-        .c-crc { background: #34495e; color: #fff; }
+        .c-gps { background: #e8daef; color: var(--tool-violet); }
+        .c-crc { background: var(--tool-text); color: #fff; }
 
         /* IO Element Colors */
         .c-io-head { background: #f9e79f; color: #f39c12; } /* Event ID, Tot Count, Grp Count */
@@ -139,7 +311,7 @@
         .section-label {
             font-size: 0.65rem;
             font-weight: bold;
-            color: #666;
+            color: var(--tool-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             padding: 2px 6px;
@@ -148,29 +320,89 @@
             margin-right: 8px;
         }
 
-        .raw-hex { margin-top: 20px; background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 6px; font-family: monospace; word-break: break-all; }
+        .raw-hex { margin-top: 20px; background: var(--tool-text); color: #ecf0f1; padding: 15px; border-radius: 6px; font-family: monospace; word-break: break-all; }
 
-        .badge { background: #28a745; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
-        .badge-ext { background: #6f42c1; }
+        .badge { background: var(--tool-accent); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; }
+        .badge-ext { background: var(--tool-violet); }
 
-        .error-msg { color: #fff; background: #e74c3c; padding: 10px; border-radius: 6px; margin-top: 10px; display: none; font-weight: bold; }
+        .error-msg { color: #fff; background: var(--tool-red); padding: 10px; border-radius: 6px; margin-top: 10px; display: none; font-weight: bold; }
+
+        .packet-page { --tool-width: 1120px; }
+        .card { padding: 24px; border-radius: 10px; box-shadow: var(--tool-shadow); }
+        .card-header { border-bottom-width: 1px; gap: 12px; flex-wrap: wrap; }
+        .card-header h3 { font-size: 16px; font-weight: 600; }
+        .decoder-card { border-top: 3px solid var(--tool-violet); }
+        .grid { gap: 18px; }
+        input, select, textarea { background: var(--tool-bg); color: var(--tool-text); font: 14px var(--tool-ui); min-width: 0; min-height: 44px; }
+        textarea { font: 13px/1.7 var(--tool-mono); min-height: 100px; }
+        input:focus, select:focus, textarea:focus { box-shadow: none; }
+        button { color: var(--tool-bg); font-size: 13px; min-height: 44px; }
+        button.secondary { color: var(--tool-text); border: 1px solid var(--tool-border); }
+        button.secondary:hover { background: var(--tool-accent-soft); }
+        button.danger { color: var(--tool-red); }
+        button.danger:hover { background: var(--tool-red-soft); color: var(--tool-red); }
+        button.generate { font-size: 15px; }
+        .record-badge { background: var(--tool-text); color: var(--tool-bg); }
+        .raw-hex { background: #232725; color: #e8e4df; font: 13px/1.8 var(--tool-mono); }
+        .section-label { color: var(--tool-muted); background: var(--tool-surface); }
+        .badge { background: var(--tool-accent-soft); color: var(--tool-accent); font-weight: 600; }
+        .error-msg { color: var(--tool-red); background: var(--tool-red-soft); }
+        .badge-ext { background: var(--tool-violet-soft); color: var(--tool-violet); }
+        .byte-block:hover { background: var(--tool-panel) !important; border-color: currentColor; transform: none; }
+        .c-preamble { background: var(--tool-surface); color: var(--tool-muted); }
+        .c-length { background: var(--tool-blue-soft); color: var(--tool-blue); }
+        .c-codec, .c-io-2, .c-io-head { background: var(--tool-orange-soft); color: var(--tool-orange); }
+        .c-count, .c-io-1 { background: var(--tool-accent-soft); color: var(--tool-accent); }
+        .c-time, .c-io-4, .c-io-8 { background: var(--tool-red-soft); color: var(--tool-red); }
+        .c-gps, .c-io-x { background: var(--tool-violet-soft); color: var(--tool-violet); }
+        .c-crc { background: var(--tool-text); color: var(--tool-bg); }
+        .io-group { flex-wrap: wrap; max-width: 100%; min-width: 0; }
+        .io-group, .byte-block { border-color: currentColor; }
+        .byte-block { max-width: 100%; min-width: 0; }
+        .byte-val { overflow-wrap: anywhere; max-width: 100%; }
+        .byte-label { opacity: 1; }
+        @media (max-width: 600px) {
+            .card { padding: 16px; }
+            .io-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+            .io-row button { justify-self: end; }
+            .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .grid select { font-size: 12px; }
+        }
     </style>
 </head>
-<body>
+<body class="tool-page packet-page">
+<a class="tool-skip" href="#tool-content">Skip to tool</a>
+<nav class="tool-masthead" aria-label="Site and appearance">
+  <div class="tool-brand">
+    <a class="tool-author" href="https://kucukaslan.com.tr/">m. c. küçükaslan</a>
+    <a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a>
+  </div>
+  <label class="tool-appearance" for="tool-theme">Theme
+    <select id="tool-theme">
+      <option value="system">System</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </label>
+</nav>
+<main id="tool-content" class="tool-main">
 
-<h1>Teltonika Packet Generator & Decoder</h1>
-<p class="subtitle">Bi-directional Codec 8 / 8 Extended Tool</p>
+<header class="tool-header">
+<p class="tool-kicker">Telemetry / Codec 8 &amp; 8 Extended</p>
+<h1>Inside a Teltonika packet.</h1>
+<p class="tool-description">Decode a hex string or build a packet from scratch. Inspect the timestamp, GPS data, and IO elements byte by byte.</p>
+</header>
 
 <!-- 0. DECODER -->
-<div class="card" style="border-left: 5px solid #8e44ad;">
+<div class="card decoder-card">
     <div class="card-header">
         <h3>Packet Decoder</h3>
     </div>
     <p style="font-size:0.9rem; margin-bottom:10px;">Paste a hex string here to populate the fields below.</p>
-    <textarea id="decode-input" placeholder="00000000...">000000000000003E8E010000019CAE96109C000C8635101F219EA8007800B40C002D000000010001004228000000000000000104D9000E00112233445566778899AABBCCDD010000C0C3</textarea>
-    <div id="decode-error" class="error-msg"></div>
+    <textarea aria-label="Packet hex to decode" id="decode-input" placeholder="00000000...">000000000000003E8E010000019CAE96109C000C8635101F219EA8007800B40C002D000000010001004228000000000000000104D9000E00112233445566778899AABBCCDD010000C0C3</textarea>
+    <div id="decode-error" class="error-msg" role="alert"></div>
     <br>
-    <button class="decode" onclick="decodePacket()">DECODE HEX</button>
+    <button class="decode" onclick="decodePacket()">Decode hex</button>
 </div>
 
 <!-- 1. CONFIGURATION -->
@@ -180,15 +412,14 @@
     </div>
     <div class="grid">
         <div>
-            <label>Codec Version</label>
-            <select id="codec-version" onchange="updateUI()">
+            <label for="codec-version">Codec Version</label><select id="codec-version" onchange="updateUI()">
                 <option value="8">Codec 8 (Standard)</option>
                 <option value="8E" selected>Codec 8 Extended (IDs > 255)</option>
             </select>
         </div>
         <div>
             <label>IMEI (Handshake Only)</label>
-            <input type="text" value="123456789012345" disabled style="background:#f8f9fa; cursor:not-allowed; color:#aaa">
+            <input type="text" value="123456789012345" disabled >
         </div>
     </div>
 </div>
@@ -197,22 +428,21 @@
 <div class="card">
     <div class="card-header"><h3>2. Timestamp & GPS Data</h3></div>
 
-    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--tool-border);">
         <div class="checkbox-wrapper">
             <input type="checkbox" id="use-current-time" checked onchange="toggleTimestamp()">
             <label for="use-current-time"><strong>Use Current Time (Auto)</strong></label>
         </div>
-        <label>Timestamp (ms epoch)</label>
-        <input type="number" id="timestamp" placeholder="e.g. 1700000000000" disabled>
+        <label for="timestamp">Timestamp (ms epoch)</label><input type="number" id="timestamp" placeholder="e.g. 1700000000000" disabled>
     </div>
 
     <div class="grid">
-        <div><label>Latitude</label><input type="number" id="lat" value="52.2297"></div>
-        <div><label>Longitude</label><input type="number" id="lon" value="21.0122"></div>
-        <div><label>Altitude (m)</label><input type="number" id="alt" value="120"></div>
-        <div><label>Speed (km/h)</label><input type="number" id="speed" value="45"></div>
-        <div><label>Angle</label><input type="number" id="angle" value="180"></div>
-        <div><label>Satellites</label><input type="number" id="sat" value="12"></div>
+        <div><label for="lat">Latitude</label><input type="number" id="lat" value="52.2297"></div>
+        <div><label for="lon">Longitude</label><input type="number" id="lon" value="21.0122"></div>
+        <div><label for="alt">Altitude (m)</label><input type="number" id="alt" value="120"></div>
+        <div><label for="speed">Speed (km/h)</label><input type="number" id="speed" value="45"></div>
+        <div><label for="angle">Angle</label><input type="number" id="angle" value="180"></div>
+        <div><label for="sat">Satellites</label><input type="number" id="sat" value="12"></div>
     </div>
 </div>
 
@@ -228,17 +458,18 @@
 
 <!-- 4. GENERATE & VISUALIZE -->
 <div class="card">
-    <button class="generate" onclick="generatePacket()">GENERATE PACKET MAP</button>
+    <button class="generate" onclick="generatePacket()">Generate packet map</button>
 
     <h3 style="margin-top:20px;">Packet Breakdown</h3>
     <div id="visualizer" class="visualizer">
-        <div style="color:#777; width:100%; text-align:center; padding:20px;">Click generate or decode to see the byte map.</div>
+        <div style="color:var(--tool-muted); width:100%; text-align:center; padding:20px;">Click generate or decode to see the byte map.</div>
     </div>
 
     <h3 style="margin-top:20px;">Raw Hex (Copy-Paste)</h3>
     <div id="raw-hex" class="raw-hex"></div>
 </div>
 
+</main>
 <script>
   // --- UI HELPERS ---
   function updateUI() {
@@ -270,10 +501,10 @@
     const div = document.createElement('div');
     div.className = 'io-row';
     div.innerHTML = `
-                <div><label>ID</label><input type="number" class="io-id" placeholder="ID" value="${id}"></div>
-                <div><label>Value</label><input type="text" class="io-val" placeholder="Num or Hex" value="${val}"></div>
+                <div><label>ID</label><input type="number" aria-label="IO element ID" class="io-id" placeholder="ID" value="${id}"></div>
+                <div><label>Value</label><input type="text" aria-label="IO element value" class="io-val" placeholder="Num or Hex" value="${val}"></div>
                 <div><label>Size</label>
-                    <select class="io-size">
+                    <select aria-label="IO element size" class="io-size">
                         <option value="1" ${size==1?'selected':''}>1 Byte</option>
                         <option value="2" ${size==2?'selected':''}>2 Bytes</option>
                         <option value="4" ${size==4?'selected':''}>4 Bytes</option>
@@ -281,7 +512,7 @@
                         <option value="X" ${size=='X'?'selected':''}>Variable (X-Byte)</option>
                     </select>
                 </div>
-                <button class="danger" onclick="this.parentElement.remove()">X</button>
+                <button class="danger" aria-label="Remove IO element" onclick="this.parentElement.remove()">X</button>
             `;
     container.appendChild(div);
   }

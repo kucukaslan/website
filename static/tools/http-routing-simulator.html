@@ -2,6 +2,178 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
+<!-- standalone-theme:start -->
+<style>
+/* Shared source. Run python3 scripts/sync-tool-theme.py to embed in each tool. */
+:root {
+  color-scheme: light;
+  --tool-bg: #faf7f2;
+  --tool-text: #2c2c2c;
+  --tool-muted: #6b6560;
+  --tool-accent: #2a7f6f;
+  --tool-accent-hover: #236b5e;
+  --tool-accent-soft: #e9f2ed;
+  --tool-surface: #f3efe8;
+  --tool-panel: #ffffff;
+  --tool-border: #e0dad0;
+  --tool-blue: #3d6f9f;
+  --tool-blue-soft: #eaf0f6;
+  --tool-orange: #a9582b;
+  --tool-orange-soft: #faf0e5;
+  --tool-violet: #735e98;
+  --tool-violet-soft: #f0ecf5;
+  --tool-red: #b04440;
+  --tool-red-soft: #f8eae7;
+  --tool-line: #b5b1a9;
+  --tool-grid: #e9e4db;
+  --tool-shadow: 0 2px 8px rgb(44 44 44 / 3%);
+  --tool-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --tool-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tool-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --tool-width: 1480px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --tool-bg: #1a1a1a;
+  --tool-text: #e8e4df;
+  --tool-muted: #aaa49c;
+  --tool-accent: #53b8a1;
+  --tool-accent-hover: #75ceb9;
+  --tool-accent-soft: #233b34;
+  --tool-surface: #242424;
+  --tool-panel: #2a2a2a;
+  --tool-border: #41403c;
+  --tool-blue: #7ba8d2;
+  --tool-blue-soft: #283540;
+  --tool-orange: #e09a6b;
+  --tool-orange-soft: #3d3026;
+  --tool-violet: #b19dd2;
+  --tool-violet-soft: #36303f;
+  --tool-red: #ed9990;
+  --tool-red-soft: #412d2b;
+  --tool-line: #79766f;
+  --tool-grid: #34332f;
+  --tool-shadow: none;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--tool-bg); -webkit-text-size-adjust: 100%; }
+body.tool-page {
+  margin: 0;
+  padding: 0 clamp(16px, 3vw, 48px) 40px;
+  max-width: none;
+  min-height: 100vh;
+  background: var(--tool-bg);
+  color: var(--tool-text);
+  font-family: var(--tool-ui);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.tool-main, .tool-masthead { width: 100%; max-width: var(--tool-width); margin-inline: auto; }
+.tool-main { min-width: 0; }
+.tool-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  border-bottom: 1px solid var(--tool-border);
+}
+.tool-brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tool-brand a { color: var(--tool-text); text-decoration: none; }
+.tool-brand .tool-author { font: 19px var(--tool-display); letter-spacing: -.03em; }
+.tool-brand .tool-back { color: var(--tool-muted); font-size: 12px; }
+.tool-brand .tool-back::before { content: "/"; margin-right: 14px; color: var(--tool-line); }
+.tool-brand a:hover { color: var(--tool-accent); }
+.tool-appearance { display: flex; flex-direction: row; align-items: center; gap: 8px; margin: 0; color: var(--tool-muted); font: 12px var(--tool-ui); }
+.tool-appearance select {
+  width: auto;
+  min-height: 36px;
+  padding: 6px 26px 6px 10px;
+  border: 1px solid var(--tool-border);
+  border-radius: 6px;
+  background: var(--tool-surface);
+  color: var(--tool-text);
+  font: 12px var(--tool-ui);
+}
+.tool-header { padding: 34px 0 28px; }
+.tool-kicker { margin: 0 0 10px; color: var(--tool-accent); font: 600 11px var(--tool-mono); letter-spacing: .1em; text-transform: uppercase; }
+.tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
+.tool-header .tool-description { max-width: 760px; margin: 14px 0 0; color: var(--tool-muted); font-size: 15px; line-height: 1.7; }
+.tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
+.tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
+.tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
+.tool-page :where(button) { touch-action: manipulation; }
+.tool-page :where(button:disabled) { cursor: not-allowed; }
+.tool-skip { position: fixed; top: 8px; left: 16px; z-index: 2000; padding: 10px 16px; border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); transform: translateY(-160%); }
+.tool-skip:focus { transform: translateY(0); }
+.tool-panel { min-width: 0; padding: 22px; border: 1px solid var(--tool-border); border-radius: 10px; background: var(--tool-panel); box-shadow: var(--tool-shadow); }
+.tool-panel h2 { margin: 0 0 12px; color: var(--tool-text); font-size: 16px; font-weight: 650; }
+.tool-help { color: var(--tool-muted); font-size: 12px; line-height: 1.6; }
+.tool-button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--tool-accent); border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); font-size: 13px; font-weight: 600; cursor: pointer; }
+.tool-button:hover { background: var(--tool-accent-hover); }
+.tool-button.secondary { background: var(--tool-panel); border-color: var(--tool-border); color: var(--tool-text); }
+.tool-button.secondary:hover { background: var(--tool-surface); }
+.tool-page .leaflet-container { background: var(--tool-surface); font-family: var(--tool-ui); }
+.tool-page .leaflet-bar a { background: var(--tool-panel); color: var(--tool-text); border-color: var(--tool-border); }
+.tool-page .leaflet-control-attribution { background: var(--tool-panel); color: var(--tool-muted); }
+.tool-page .leaflet-control-attribution a { color: var(--tool-blue); }
+@media (max-width: 600px) {
+  .tool-masthead { min-height: 68px; gap: 10px; }
+  .tool-brand { gap: 4px; flex-direction: column; align-items: flex-start; }
+  .tool-brand .tool-author { font-size: 17px; }
+  .tool-brand .tool-back::before { content: none; }
+  .tool-appearance { gap: 5px; }
+  .tool-header { padding: 26px 0 24px; }
+  .tool-header .tool-description { font-size: 14px; }
+  .tool-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-page *, .tool-page *::before, .tool-page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+<script>
+/* Embedded before paint; shares the parent site's theme preference. */
+(() => {
+  const root = document.documentElement;
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+  let preference = 'system';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') preference = saved;
+  } catch (_) { /* Local files and private contexts may deny storage. */ }
+
+  function apply() {
+    root.dataset.theme = preference === 'system' ? (system.matches ? 'dark' : 'light') : preference;
+    const select = document.getElementById('tool-theme');
+    if (select) select.value = preference;
+    document.dispatchEvent(new Event('tool-theme-change'));
+  }
+  apply();
+  system.addEventListener('change', () => {
+    if (preference === 'system') apply();
+  });
+  window.addEventListener('storage', (event) => {
+    if (event.key !== 'theme' && event.key !== null) return;
+    preference = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : 'system';
+    apply();
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('tool-theme');
+    if (!select) return;
+    select.value = preference;
+    select.addEventListener('change', () => {
+      preference = select.value;
+      try {
+        if (preference === 'system') localStorage.removeItem('theme');
+        else localStorage.setItem('theme', preference);
+      } catch (_) { /* Theme switching still works without persistence. */ }
+      apply();
+    });
+  });
+})();
+</script>
+<!-- standalone-theme:end -->
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>HTTP Connection & Request Routing Simulator</title>
         <meta
@@ -9,38 +181,18 @@
             content="Compare how persistent HTTP connections distribute requests through Kubernetes ClusterIP services and L7 ingress proxies."
         />
         <style>
-            html,
-            body {
-                margin: 0;
-                padding: 0;
-                background: #f5f7fb;
-                color: #172033;
-                font-family:
-                    Inter,
-                    ui-sans-serif,
-                    system-ui,
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "Segoe UI",
-                    sans-serif;
-            }
-            body {
-                padding: 24px;
-            }
             .sim-root {
-                max-width: 1500px;
+                --panel: var(--tool-panel);
+                --panel2: var(--tool-surface);
+                --border: var(--tool-border);
+                --muted: var(--tool-muted);
+                --text: var(--tool-text);
+                --blue: var(--tool-blue);
+                --orange: var(--tool-orange);
+                --green: var(--tool-accent);
+                --line: var(--tool-line);
+                --ghost: var(--tool-surface);
                 margin: 0 auto;
-                background: #f5f7fb;
-                --panel: #fff;
-                --panel2: #f0f3f8;
-                --border: #dce2eb;
-                --muted: #657389;
-                --text: #172033;
-                --blue: #4678df;
-                --orange: #dd7a3c;
-                --green: #31956b;
-                --line: #c4cbd6;
-                --ghost: #e5e9f0;
             }
             * {
                 box-sizing: border-box;
@@ -71,47 +223,49 @@
                 max-width: 900px;
             }
             .controls {
-                position: sticky;
-                top: 10px;
+                position: relative;
                 z-index: 20;
                 display: grid;
-                grid-template-columns: repeat(6, minmax(120px, 1fr)) auto;
+                grid-template-columns: repeat(4, minmax(90px, 1fr)) minmax(200px, 1.5fr) minmax(120px, 1fr);
                 gap: 10px;
                 background: var(--panel);
                 border: 1px solid var(--border);
-                border-radius: 15px;
-                padding: 14px;
+                border-radius: 10px;
+                padding: 20px;
                 margin-bottom: 12px;
-                box-shadow: 0 8px 24px rgba(23, 32, 51, 0.08);
+                box-shadow: var(--tool-shadow);
             }
             label {
                 display: flex;
                 flex-direction: column;
                 gap: 5px;
-                font-size: 11px;
-                font-weight: 700;
+                font-size: 12px;
+                font-weight: 600;
                 color: var(--muted);
             }
             input,
             select {
-                min-height: 40px;
+                min-height: 44px;
                 border: 1px solid var(--border);
                 background: var(--panel2);
                 color: var(--text);
-                border-radius: 9px;
+                border-radius: 6px;
                 padding: 7px 9px;
                 font: inherit;
                 font-size: 14px;
             }
             .actions {
+                grid-column: 1/-1;
+                border-top: 1px solid var(--border);
+                padding-top: 14px;
                 display: flex;
                 align-items: end;
                 gap: 7px;
                 flex-wrap: wrap;
             }
             button {
-                min-height: 40px;
-                border-radius: 9px;
+                min-height: 44px;
+                border-radius: 6px;
                 border: 1px solid var(--border);
                 padding: 8px 13px;
                 font-weight: 750;
@@ -121,9 +275,9 @@
                 white-space: nowrap;
             }
             button.primary {
-                background: var(--blue);
-                border-color: var(--blue);
-                color: #fff;
+                background: var(--tool-accent);
+                border-color: var(--tool-accent);
+                color: var(--tool-bg);
             }
             button:disabled {
                 opacity: 0.45;
@@ -168,7 +322,7 @@
                 font-weight: 750;
             }
             .config-error {
-                color: #b6463c;
+                color: var(--tool-red);
                 font-weight: 800;
             }
             .config-error[hidden] {
@@ -210,7 +364,7 @@
             .scenario {
                 background: var(--panel);
                 border: 1px solid var(--border);
-                border-radius: 17px;
+                border-radius: 10px;
                 overflow: hidden;
             }
             .scenario-head {
@@ -223,10 +377,10 @@
                 flex-wrap: wrap;
             }
             .scenario.cluster .scenario-head {
-                border-left: 5px solid var(--orange);
+                border-top: 3px solid var(--orange);
             }
             .scenario.ingress .scenario-head {
-                border-left: 5px solid var(--blue);
+                border-top: 3px solid var(--blue);
             }
             .eyebrow {
                 text-transform: uppercase;
@@ -319,8 +473,10 @@
                 width: 100%;
                 min-height: 410px;
                 border: 1px solid var(--border);
-                border-radius: 13px;
-                background: #fafbfe;
+                border-radius: 6px;
+                background-color: var(--tool-bg);
+                background-image: radial-gradient(var(--tool-grid) 0.8px, transparent 0.8px);
+                background-size: 16px 16px;
                 overflow: hidden;
             }
             .wire-layer {
@@ -370,7 +526,7 @@
                 z-index: 3;
                 background: var(--panel);
                 border: 1px solid var(--border);
-                border-radius: 9px;
+                border-radius: 6px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -413,7 +569,7 @@
             }
             .node.active {
                 border-color: var(--green);
-                background: #eaf6f0;
+                background: var(--tool-accent-soft);
                 color: var(--green);
                 transform: scale(1.025);
             }
@@ -421,7 +577,7 @@
                 border-left-color: var(--pin-color);
             }
             .node.unestablished {
-                opacity: 0.4;
+                opacity: 0.65;
                 border-style: dashed;
             }
             .stack {
@@ -485,7 +641,7 @@
             .node.active .pod-served {
                 border-color: var(--green);
                 background: var(--green);
-                color: #fff;
+                color: var(--tool-bg);
             }
             .request-token {
                 stroke: var(--panel);
@@ -585,9 +741,10 @@
                 margin-top: 18px;
             }
             .note {
-                background: var(--panel);
-                border: 1px solid var(--border);
-                border-radius: 14px;
+                background: transparent;
+                border: 0;
+                border-top: 1px solid var(--border);
+                border-radius: 0;
                 padding: 14px 16px;
                 font-size: 12px;
                 color: var(--muted);
@@ -658,28 +815,6 @@
                     grid-template-columns: 1fr 1fr;
                 }
             }
-            @media (prefers-color-scheme: dark) {
-                html,
-                body,
-                .sim-root {
-                    background: #0d1117;
-                    color: #eef3fb;
-                }
-                .sim-root {
-                    --panel: #151b23;
-                    --panel2: #10161e;
-                    --border: #2a3443;
-                    --muted: #9eabbc;
-                    --text: #eef3fb;
-                    --line: #465263;
-                }
-                .stage {
-                    background: #10151c;
-                }
-                .node.active {
-                    background: #173127;
-                }
-            }
             @media (prefers-reduced-motion: reduce) {
                 .node,
                 .request-token,
@@ -688,22 +823,69 @@
                     animation: none;
                 }
             }
+
+            .controls input, .controls select { width: 100%; min-width: 0; font-weight: 500; }
+            button { font-size: 12px; font-weight: 600; transition: background .15s, border-color .15s; }
+            button:hover:not(:disabled) { border-color: var(--tool-accent); background: var(--tool-accent-soft); }
+            button.primary:hover { background: var(--tool-accent-hover); color: var(--tool-bg); }
+            .config-message { font-family: var(--tool-mono); font-size: 11px; font-weight: 400; }
+            .presets { padding-top: 4px; }
+            .presets legend { font-weight: 500; }
+            .preset { background: transparent; border-color: var(--border); min-height: 36px; }
+            .scenario-head { align-items: flex-start; gap: 12px; padding: 18px 20px; }
+            .scenario-head h2 { font-size: 15px; line-height: 1.45; font-weight: 600; max-width: 560px; margin: 0; letter-spacing: 0; }
+            .eyebrow { font-family: var(--tool-mono); font-size: 10px; font-weight: 500; margin-bottom: 7px; }
+            .cluster .eyebrow { color: var(--orange); }
+            .ingress .eyebrow { color: var(--blue); }
+            .legend { gap: 8px 15px; font-size: 10px; }
+            .col-label { font-family: var(--tool-mono); font-weight: 500; font-size: 10px; }
+            .node { font-family: var(--tool-mono); font-weight: 500; }
+            .pod-node > span:first-child { white-space: nowrap; }
+            .pod-served { font-family: var(--tool-ui); }
+            .summary-value { font-family: var(--tool-mono); font-weight: 500; }
+            .note { font-size: 13px; padding: 18px 0; }
+            .note strong { display: inline-block; margin-bottom: 5px; font-weight: 600; }
+            @media (min-width: 1440px) {
+                .scenarios { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+                .scenario-head { min-height: 150px; }
+                .columns { gap: 12px; padding-inline: 14px; }
+                .summary { grid-template-columns: 1fr 1fr; }
+            }
+            @media (max-width: 1100px) {
+                .controls { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            }
+            @media (max-width: 600px) {
+                .controls { padding: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+                .controls label { font-size: 11px; }
+                .scenario-head { padding: 16px; }
+                .legend { font-size: 10px; }
+                .statebar { font-size: 11px; }
+                .config-message { line-height: 1.7; }
+            }
         </style>
     </head>
-    <body>
+    <body class="tool-page routing-page">
+<a class="tool-skip" href="#tool-content">Skip to tool</a>
+<nav class="tool-masthead" aria-label="Site and appearance">
+  <div class="tool-brand">
+    <a class="tool-author" href="https://kucukaslan.com.tr/">m. c. küçükaslan</a>
+    <a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a>
+  </div>
+  <label class="tool-appearance" for="tool-theme">Theme
+    <select id="tool-theme">
+      <option value="system">System</option>
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </label>
+</nav>
+<main id="tool-content" class="tool-main">
         <div id="routing-sim" class="sim-root">
-            <div class="top">
-                <div class="copy">
-                    <h2>Connections first, requests second</h2>
-                    <p>
-                        Start with no connections. Initialize the client pools to
-                        see persistent connections appear in gray. Then process
-                        requests: every connection and route carrying an active
-                        request is highlighted. This model uses persistent
-                        HTTP/1.1 with one in-flight request per connection.
-                    </p>
-                </div>
-            </div>
+<header class="tool-header">
+<p class="tool-kicker">HTTP / Kubernetes</p>
+<h1>Connections first, requests second.</h1>
+<p class="tool-description">Watch persistent connections shape traffic across ClusterIP and an L7 proxy. Initialize a pool, then step through the requests.</p>
+</header>
             <form class="controls" id="config-form">
                 <label
                     >Total requests<input
@@ -828,10 +1010,10 @@
                             <div class="eyebrow">
                                 Direct ClusterIP / cluster URL
                             </div>
-                            <h3>
+                            <h2>
                                 Each persistent TCP connection is pinned to one
                                 pod
-                            </h3>
+                            </h2>
                         </div>
                         <div class="legend">
                             <span class="legend-item"
@@ -849,7 +1031,7 @@
                             >
                         </div>
                     </div>
-                    <div class="stage-wrap">
+                    <div class="stage-wrap" tabindex="0" role="region" aria-label="Routing topology">
                         <div class="stage" id="cluster-stage">
                             <svg class="wire-layer" id="cluster-wires"></svg>
                             <div class="columns">
@@ -902,10 +1084,10 @@
                             <div class="eyebrow">
                                 L7 Ingress / HTTP-aware proxy
                             </div>
-                            <h3>
+                            <h2>
                                 Connections terminate at the proxy; requests can
                                 then be redistributed
-                            </h3>
+                            </h2>
                         </div>
                         <div class="legend">
                             <span class="legend-item"
@@ -923,7 +1105,7 @@
                             >
                         </div>
                     </div>
-                    <div class="stage-wrap">
+                    <div class="stage-wrap" tabindex="0" role="region" aria-label="Routing topology">
                         <div class="stage" id="ingress-stage">
                             <svg class="wire-layer" id="ingress-wires"></svg>
                             <div class="columns">
@@ -990,7 +1172,7 @@
                 </div>
                 <div class="note">
                     <strong>Model boundaries</strong><br />Requests have seeded,
-                    bounded durations. Pods are homogeneous, with no retries,
+                    bounded durations, using persistent HTTP/1.1 with one in-flight request per connection. Pods are homogeneous, with no retries,
                     failures, or session affinity. “Outstanding” means
                     dispatched but not yet completed.
                 </div>
@@ -1003,6 +1185,7 @@
                 </div>
             </div>
         </div>
+        </main>
         <script>
             (() => {
                 const root = document.getElementById("routing-sim");
@@ -2026,6 +2209,7 @@
                         updateConnectionConfiguration,
                     ),
                 );
+                document.addEventListener("tool-theme-change", () => requestAnimationFrame(draw));
                 window.addEventListener("resize", () =>
                     requestAnimationFrame(draw),
                 );

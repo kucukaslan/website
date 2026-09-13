@@ -21,6 +21,7 @@ website/
 ├── layouts/             # Templates, partials, shortcodes
 ├── static/              # Static assets (CSS, images, JS)
 ├── public/              # Build output (gitignored)
+├── benchmarks/          # Go framework benchmark suite (gitignored, published separately)
 └── config.toml          # Hugo configuration
 ```
 

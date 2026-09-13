@@ -27,6 +27,9 @@ jobs:
           hugo-version: latest
           extended: true
 
+      - name: Check standalone tool themes
+        run: python3 scripts/sync-tool-theme.py --check
+
       - name: Build
         run: hugo --minify
 
