@@ -1,0 +1,13 @@
+{{ define "main" }}
+<article class="cv-shell" aria-labelledby="cv-name">
+  <header class="cv-header">
+    <div>
+      <p class="cv-header__eyebrow">Curriculum vitae</p>
+      <h1 id="cv-name">{{ .Title }}</h1>
+      <p class="cv-header__role">{{ .Params.subtitle }}</p>
+    </div>
+    <a class="cv-header__download" href="{{ "/cv.pdf" | relURL }}">Download PDF</a>
+  </header>
+  <div class="cv-content">{{ .Content }}</div>
+</article>
+{{ end }}

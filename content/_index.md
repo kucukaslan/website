@@ -5,7 +5,6 @@ draft: false
 ---
 This is somewhat personal website of Muhammed Can Küçükaslan, see the [about](./about) section and the [CV](/cv.pdf).
 
-
 This website is WIP, like many other thing I do. 
 In fact, I doubt that it is possible to ***complete*** anything.
 We, (I), just call it complete when we decide not to continue working on it anymore.
