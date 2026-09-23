@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>__TOOL_TITLE__</title>
+  <meta name="description" content="__TOOL_DESCRIPTION__">
+<!-- standalone-theme:start -->
+<style>
+/* Shared source. Run python3 scripts/sync-tool-theme.py to embed in each tool. */
+:root {
+  color-scheme: light;
+  --tool-bg: #faf7f2;
+  --tool-text: #2c2c2c;
+  --tool-muted: #6b6560;
+  --tool-accent: #2a7f6f;
+  --tool-accent-hover: #236b5e;
+  --tool-accent-soft: #e9f2ed;
+  --tool-surface: #f3efe8;
+  --tool-panel: #ffffff;
+  --tool-border: #e0dad0;
+  --tool-blue: #3d6f9f;
+  --tool-blue-soft: #eaf0f6;
+  --tool-orange: #a9582b;
+  --tool-orange-soft: #faf0e5;
+  --tool-violet: #735e98;
+  --tool-violet-soft: #f0ecf5;
+  --tool-red: #b04440;
+  --tool-red-soft: #f8eae7;
+  --tool-line: #b5b1a9;
+  --tool-grid: #e9e4db;
+  --tool-shadow: 0 2px 8px rgb(44 44 44 / 3%);
+  --tool-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --tool-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tool-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --tool-width: 1480px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --tool-bg: #1a1a1a;
+  --tool-text: #e8e4df;
+  --tool-muted: #aaa49c;
+  --tool-accent: #53b8a1;
+  --tool-accent-hover: #75ceb9;
+  --tool-accent-soft: #233b34;
+  --tool-surface: #242424;
+  --tool-panel: #2a2a2a;
+  --tool-border: #41403c;
+  --tool-blue: #7ba8d2;
+  --tool-blue-soft: #283540;
+  --tool-orange: #e09a6b;
+  --tool-orange-soft: #3d3026;
+  --tool-violet: #b19dd2;
+  --tool-violet-soft: #36303f;
+  --tool-red: #ed9990;
+  --tool-red-soft: #412d2b;
+  --tool-line: #79766f;
+  --tool-grid: #34332f;
+  --tool-shadow: none;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--tool-bg); -webkit-text-size-adjust: 100%; }
+body.tool-page {
+  margin: 0;
+  padding: 0 clamp(16px, 3vw, 48px) 40px;
+  max-width: none;
+  min-height: 100vh;
+  background: var(--tool-bg);
+  color: var(--tool-text);
+  font-family: var(--tool-ui);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.tool-main, .tool-masthead { width: 100%; max-width: var(--tool-width); margin-inline: auto; }
+.tool-main { min-width: 0; }
+.tool-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  border-bottom: 1px solid var(--tool-border);
+}
+.tool-brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tool-brand a { color: var(--tool-text); text-decoration: none; }
+.tool-brand .tool-author { font: 19px var(--tool-display); letter-spacing: -.03em; }
+.tool-brand .tool-back { color: var(--tool-muted); font-size: 12px; }
+.tool-brand .tool-back::before { content: "/"; margin-right: 14px; color: var(--tool-line); }
+.tool-brand a:hover { color: var(--tool-accent); }
+.tool-appearance { display: flex; flex-direction: row; align-items: center; gap: 8px; margin: 0; color: var(--tool-muted); font: 12px var(--tool-ui); }
+.tool-appearance select {
+  width: auto;
+  min-height: 36px;
+  padding: 6px 26px 6px 10px;
+  border: 1px solid var(--tool-border);
+  border-radius: 6px;
+  background: var(--tool-surface);
+  color: var(--tool-text);
+  font: 12px var(--tool-ui);
+}
+.tool-header { padding: 34px 0 28px; }
+.tool-kicker { margin: 0 0 10px; color: var(--tool-accent); font: 600 11px var(--tool-mono); letter-spacing: .1em; text-transform: uppercase; }
+.tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
+.tool-header .tool-description { max-width: 760px; margin: 14px 0 0; color: var(--tool-muted); font-size: 15px; line-height: 1.7; }
+.tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
+.tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
+.tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
+.tool-page :where(button) { touch-action: manipulation; }
+.tool-page :where(button:disabled) { cursor: not-allowed; }
+.tool-skip { position: fixed; top: 8px; left: 16px; z-index: 2000; padding: 10px 16px; border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); transform: translateY(-160%); }
+.tool-skip:focus { transform: translateY(0); }
+.tool-panel { min-width: 0; padding: 22px; border: 1px solid var(--tool-border); border-radius: 10px; background: var(--tool-panel); box-shadow: var(--tool-shadow); }
+.tool-panel h2 { margin: 0 0 12px; color: var(--tool-text); font-size: 16px; font-weight: 650; }
+.tool-help { color: var(--tool-muted); font-size: 12px; line-height: 1.6; }
+.tool-button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--tool-accent); border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); font-size: 13px; font-weight: 600; cursor: pointer; }
+.tool-button:hover { background: var(--tool-accent-hover); }
+.tool-button.secondary { background: var(--tool-panel); border-color: var(--tool-border); color: var(--tool-text); }
+.tool-button.secondary:hover { background: var(--tool-surface); }
+.tool-page .leaflet-container { background: var(--tool-surface); font-family: var(--tool-ui); }
+.tool-page .leaflet-bar a { background: var(--tool-panel); color: var(--tool-text); border-color: var(--tool-border); }
+.tool-page .leaflet-control-attribution { background: var(--tool-panel); color: var(--tool-muted); }
+.tool-page .leaflet-control-attribution a { color: var(--tool-blue); }
+@media (max-width: 600px) {
+  .tool-masthead { min-height: 68px; gap: 10px; }
+  .tool-brand { gap: 4px; flex-direction: column; align-items: flex-start; }
+  .tool-brand .tool-author { font-size: 17px; }
+  .tool-brand .tool-back::before { content: none; }
+  .tool-appearance { gap: 5px; }
+  .tool-header { padding: 26px 0 24px; }
+  .tool-header .tool-description { font-size: 14px; }
+  .tool-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-page *, .tool-page *::before, .tool-page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+<script>
+/* Embedded before paint; shares the parent site's theme preference. */
+(() => {
+  const root = document.documentElement;
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+  let preference = 'system';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') preference = saved;
+  } catch (_) { /* Local files and private contexts may deny storage. */ }
+
+  function apply() {
+    root.dataset.theme = preference === 'system' ? (system.matches ? 'dark' : 'light') : preference;
+    const select = document.getElementById('tool-theme');
+    if (select) select.value = preference;
+    document.dispatchEvent(new Event('tool-theme-change'));
+  }
+  apply();
+  system.addEventListener('change', () => {
+    if (preference === 'system') apply();
+  });
+  window.addEventListener('storage', (event) => {
+    if (event.key !== 'theme' && event.key !== null) return;
+    preference = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : 'system';
+    apply();
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('tool-theme');
+    if (!select) return;
+    select.value = preference;
+    select.addEventListener('change', () => {
+      preference = select.value;
+      try {
+        if (preference === 'system') localStorage.removeItem('theme');
+        else localStorage.setItem('theme', preference);
+      } catch (_) { /* Theme switching still works without persistence. */ }
+      apply();
+    });
+  });
+})();
+</script>
+<!-- standalone-theme:end -->
+  <style>
+    /* Adapt this layout to the requested tool. Keep custom rules here. */
+    .work-area { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    .field label { color: var(--tool-text); font-weight: 600; }
+    .field :is(input, select, textarea) { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--tool-border); border-radius: 6px; background: var(--tool-bg); color: var(--tool-text); font-size: 14px; }
+    .field textarea { min-height: 180px; font: 13px/1.7 var(--tool-mono); }
+    .field-error { color: var(--tool-red); }
+    .data-scroll { overflow: auto; max-width: 100%; }
+    .result { overflow-wrap: anywhere; color: var(--tool-text); }
+    @media (max-width: 700px) { .work-area { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="tool-page">
+  <a class="tool-skip" href="#tool-content">Skip to tool</a>
+  <nav class="tool-masthead" aria-label="Site and appearance">
+    <div class="tool-brand">
+      <a class="tool-author" href="https://kucukaslan.com.tr/">m. c. küçükaslan</a>
+      <a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a>
+    </div>
+    <label class="tool-appearance" for="tool-theme">Theme
+      <select id="tool-theme">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+  </nav>
+  <main class="tool-main" id="tool-content">
+    <header class="tool-header">
+      <p class="tool-kicker">__TOOL_TOPIC__</p>
+      <h1>__TOOL_TITLE__</h1>
+      <p class="tool-description">__TOOL_INTRO__</p>
+    </header>
+    <!-- tool-body:start -->
+    __TOOL_BODY__
+    <!-- tool-body:end -->
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      // Implement the requested behavior here, after its DOM elements exist.
+      __TOOL_SCRIPT__
+    })();
+  </script>
+</body>
+</html>

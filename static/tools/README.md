@@ -18,3 +18,24 @@ it also works when browser storage is unavailable.
 
 The map tools still need their public Leaflet/Chart.js dependencies and map tiles.
 The routing simulator, packet visualizer, and TOGG comparison work offline.
+
+## Create tools in ChatGPT
+
+The reusable instructions live in `skills/standalone-tool-html/SKILL.md` at the
+repository root. Its starter carries the complete theme, so generating a tool
+does not require repository access. `skill-artifacts/standalone-tool-html.md`
+is a single attachment for a normal ChatGPT conversation; the ZIP beside it
+contains the conventional skill folder, starter, and optional HTML checker.
+Attaching the guide gives that conversation the instructions; it does not
+install an account-wide skill.
+
+After changing the shared theme or skill sources, refresh the exports:
+
+```sh
+python3 scripts/package-tool-skill.py
+python3 scripts/package-tool-skill.py --check
+```
+
+Generated pages retain the shared theme markers and catalog metadata. Copy a
+finished `.html` into this directory when it is useful enough to keep. If it
+carries an older theme snapshot, run the theme sync command above before building.

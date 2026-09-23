@@ -1,0 +1,4 @@
+interface:
+  display_name: "Standalone Tool HTML"
+  short_description: "Create portable HTML tools in my website's theme"
+  default_prompt: "Use $standalone-tool-html to create a complete downloadable HTML tool for my request."

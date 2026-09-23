@@ -6,7 +6,7 @@ url: /cv/
 description: "Senior backend engineer working on high-traffic Python services, routing systems, and reliable infrastructure."
 ---
 
-[muhammed@kucukaslan.com.tr](mailto:muhammed@kucukaslan.com.tr) · [github.com/kucukaslan](https://github.com/kucukaslan) · [linkedin.com/in/kucukaslan](https://www.linkedin.com/in/kucukaslan/) · [kucukaslan.com.tr](https://kucukaslan.com.tr/)
+[muhammedcankucukaslan@gmail.com ](mailto:muhammedcankucukaslan@gmail.com ) · [muhammed@kucukaslan.com.tr](mailto:muhammed@kucukaslan.com.tr) · [github.com/kucukaslan](https://github.com/kucukaslan) · [linkedin.com/in/kucukaslan](https://www.linkedin.com/in/kucukaslan/) · [kucukaslan.com.tr](https://kucukaslan.com.tr/)
 
 <!--## Profile
 
