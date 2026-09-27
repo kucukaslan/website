@@ -30,15 +30,15 @@ Then, _optionally_, the connection is closed.
 Crucial detail is that, client doesn't need to close the connection after the receiving the response.
 It can use, already established, connection to send new requests.
 
-So most important *fact* I want to acknowledge is that: *clients can issue multiple requests[^not-necessarily] over the same connection*.  
+So most important *fact* I want to emphasize is that: *clients can issue multiple requests[^not-necessarily] over the same connection*.  
 Reemphasizing, one connection can be reused to send multiple requests.
 
 Implications of this simple statement is why I call ClusterIP a load balancer that never was!
 
-[^not-necessarily]: that are not necessarily conccurent or parallel
+[^not-necessarily]: that are not necessarily concurrent or parallel
 [^quic]: HTTP/1 and HTTP/2 use TCP, while HTTP/3 uses QUIC (over UDP).
 ## ClusterIP and Connections
-Let's consider client and server services in a K8s cluster. What happens when a client wants to issue a request?
+Let's consider client and server services in a K8s cluster. What happens when a client wants to issue a request?  
 The client pod attempts to connect to `server.namespace.svc.cluster.local`. DNS resolves that name to the server service's virtual ClusterIP. When the client opens a TCP connection to that virtual IP, the Kubernetes matches it with a specific pod.
 
 Every request the client sends over that established connection reaches the same server pod.
@@ -48,9 +48,9 @@ Every request the client sends over that established connection reaches the same
 The Service chooses a backend when the TCP flow is established. Reusing that flow also reuses the selected backend.
 {{< /routing-visual >}}
 
-A client can open multiple connections to the same service/server. In fact most of the time http clients creates a pool of connections to reuse. Each connection is associated with a single server pod. Ok, would that solve the problem?
+A client can open multiple connections to the same service/server. In fact most of the time HTTP clients creates a pool of connections to reuse. Each connection is associated with a single server pod. Ok, would that solve the problem?
 
-Let's say there are 10 server pods and client uses a connection pool of size 5 (i.e. 5 connections).  
+Let's say there are 10 server pods and client uses a connection pool of size five (i.e.&nbsp;five&nbsp;connections).  
 Then, by the (dual) [pigeon hole principle](https://en.wikipedia.org/wiki/Pigeonhole_principle#Alternative_formulations:~:text=If%20n%20objects%20are%20distributed%20over%20m%20places%2C%20and%20if%20n%20%3C%20m%2C%20then%20some%20place%20receives%20no%20object.), there must be at least five server pods that receive no connection (i.e. no request).
 
 {{< routing-visual kind="five-of-ten" >}}
@@ -62,31 +62,38 @@ So those pods are not utilized/wasted.
 
 What if the number of connections were to exceed the number of server pods?  
 Would it suffice?  
-No! Let's assume there are 6 connections and 4 server pods. By the pigeon hole principle: 
+***No!*** Let's assume there are 6 connections and 4 server pods. By the pigeon hole principle: 
 1. There exists at least one server that has at least two connections.
-2. There exists at least one server that has at most one connection.
-Hence, there exists two server pods, one with at least double the connections of the other (consequently receiving at least double the requests).
+2. There exists at least one server that has at most one connection.  
+∴ Hence, there exists two server pods, one with at least double the connections of the other (consequently receiving at least double the requests).
 
 {{< routing-visual kind="six-over-four" >}}
-This is the most even possible six-to-four assignment. Random endpoint selection can make the difference larger, but not smaller.
+This is the most even possible six-to-four assignment. Random server pod selection can make the difference larger, but not smaller.
 {{< /routing-visual >}}
 
 ## How does Ingress fixes the problem?
 
 <!--## How an HTTP-aware proxy relates to the problem-->
-We want the number of requests each server pods to be equal.
-We discussed that ClusterIP does not reliably distribute the requests equally.
+By accident?
 
-So we need some way to distribute requests. A trivial solution is to disable connection reuse and force 1 connection 1 request. But this will add TCP connection overhead on top of every request as well as requiring changes to the client code.
+We want the CPU/RAM usage of each server pods to be as close as possible.
+If we know neither current CPU/RAM usage nor the how much an incoming request will effect,
+then best heuristic (strongest correlation) we can use is that number of requests each server pods.
+So we want to distribute the requests evenly among the pods.  
+We discussed that ClusterIP does not reliably distribute the requests equally as it fixes the server pod at connection initialization.
 
-We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods, i.e. we need an HTTP-aware proxy.
+So we need some way to distribute requests. A trivial solution is to disable connection reuse and force 1 connection to å1 request. But this will add TCP connection overhead on top of every request as well as requiring changes to the client code.
+
+We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods, i.e. we need an HTTP-aware proxy[L7-aware-proxy].
+
+[L7-aware-proxy]: It is also called something like *Layer 7 load balancing*. Saying *Layer 7* is way cooler, BTW.
 
 Ingress comes to the rescue almost by accident.
 
 Ingress are usually used to expose services to the outside world.
-But they also function as load balancers that routes the external traffic to the internal services. And there is, usually, nothing stopping internal services to go through the Ingress.  
-Unlike ClusterIP, Ingress work at the HTTP level, ie. they're HTTP-aware. Instead of distributing connections, they can distribute requests.  
-Clients still establishes reusable connections but these connections established between them and the Ingress (and not between them and the server pods).  
+But they can also function as load balancers that routes the external traffic to the internal services. And there is, usually, nothing stopping internal services to go through the Ingress.  
+Unlike ClusterIP, Ingress can work at the HTTP level, ie. it's HTTP-aware. Instead of distributing connections, it can distribute requests.  
+Clients still establishes reusable connections but these connections are established between them and the Ingress (and not between them and the server pods).  
 So clients won't need to make any changes to their code to use Ingress.  
 They will still be able to use connection poooling and issue requests as they would with ClusterIP. 
 But the Ingress will distribute each request separately to the server pods regardless of the specific connection that request came from.
@@ -107,7 +114,7 @@ An indirect consequence is that even if the service gets a significant amount of
 I guess, one may argue that the overloaded pods can have for example 200% CPU usage and still be able to trigger scaling rules based on CPU usage.  
 This is fair, but it assumes that it is possible to hit 200% CPU usage. For this to happen:
 1. The pod CPU limits must be at least 2x the pod CPU requests (or shouldn't be set at all)
-2. The Node that that pod is running on must have enough excess CPU capacity to allow that pod to exceed its CPU requests by 2x
+2. The Node that _that pod_ is running on must have enough excess CPU capacity to allow that pod to exceed its CPU requests by 2x
 3. 2x of the requested CPU capacity must be practically usable. What I mean is that: scripting languages, that happens to be used in backend services, like Python and Node.js usually cannot utilize more than 1 CPU. Python due to its GIL, and Node.js due to its is single-threaded event loop. So even if there is excess CPU capacity, the pod cannot utilize more than 1 CPU. So 1 CPU is a ceiling of how much CPU a pod can actually utilize for those languages.
 
 So what happens usually is that there is both low average CPU usage across pods, while a significant number of requests are either timed-out or has high latency.
