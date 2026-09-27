@@ -110,14 +110,41 @@ As you can see, the requests are distributed more evenly by the Ingress than by 
 ## Effects of Imbalance in Request Distribution
 An obvious consequence is that some server pods will receive more requests than they can handle. Response times will increase (possibly causing timeouts), depending on the K8s resource configuration the corresponding server pod CPU can get throttled or the pod even get killed due to OOM.
 
-An indirect consequence is that even if the service gets a significant amount of requests, the average resource (CPU/RAM) usage may remain relatively low. This may avoid scaling rules that would be triggered to handle the increased load.  
+An indirect consequence is that even if the service gets a significant amount of requests, the average resource (CPU/RAM) usage may remain relatively low. This may avoid scaling rules that would have been triggered to handle the increased load.  
+
 I guess, one may argue that the overloaded pods can have for example 200% CPU usage and still be able to trigger scaling rules based on CPU usage.  
 This is fair, but it assumes that it is possible to hit 200% CPU usage. For this to happen:
 1. The pod CPU limits must be at least 2x the pod CPU requests (or shouldn't be set at all)
 2. The Node that _that pod_ is running on must have enough excess CPU capacity to allow that pod to exceed its CPU requests by 2x
-3. 2x of the requested CPU capacity must be practically usable. What I mean is that: scripting languages, that happens to be used in backend services, like Python and Node.js usually cannot utilize more than 1 CPU. Python due to its GIL, and Node.js due to its is single-threaded event loop. So even if there is excess CPU capacity, the pod cannot utilize more than 1 CPU. So 1 CPU is a ceiling of how much CPU a pod can actually utilize for those languages.
+3. 2x of the requested CPU capacity must be practically usable. What I mean is that: scripting languages, that happens to be used in backend services, like Python and Node.js usually cannot utilize more than 1 CPU. Python due to its GIL, and Node.js due to its is single-threaded event loop. So even if there is excess CPU capacity, the pod cannot utilize more than 1 CPU. So 1 CPU is a ceiling of how much CPU a pod can actually utilize for those languages.  
+...  
+I admit that it is possible for this problem to be suppressed or be insignificant under favorable conditions
+i.e. when the conditions like above didn't happen.
 
-So what happens usually is that there is both low average CPU usage across pods, while a significant number of requests are either timed-out or has high latency.
+## Reflections and Excuses
+To be honest, this was one of the most convoluted problems I've dealt with.  
+It took over three months from identifying first significant symptoms until finding _the_ root cause and fixing it for good.  
+I had my excuses:
+- We didn't have old enough historic metrics to pinpoint an exact date the issues started (using ClusterIP URL is the sane and default way)
+- The avg. CPU/RAM usages and scaling seemed fine, I ascribed the MAX CPU usage to the excessive CPU usage during initialization: up to 100+s of concurrent pods, scaling up and down throughout the day, it was reasonable
+- The request traces weren't useful [e.g. by default they cannot properly attribute "short"[^short] (<50/100 ms) or discontinuous python event loop waits]
+- We immediately applied a few workarounds that mitigated/supressed the issue sufficiently to make time for higher priority tasks on the hand 
+- Neither the use of ClusterIP (internal service URLs) or connection pooling were explicit decisions. They were both *obvious* defaults.  
+
+and the strongest excuse is that as it turned out the root cause was not directly related to affected application itself.
+There was many real hot paths we were continously improving so it was more plausible for one of the hot paths to cause such a trouble.
+Moreover, there was (practically) no one who decided on using connection pools and/or clusterIPs, they're (practically) default options
+of HTTP clients and the Kubernetes. Since no one made a decision on them, no one thought about them and their risks either —until it bit us from the behind.
+
+## Last Words
+> No **service** is an Iland, intire of itselfe; every **service**  
+is a peece of the **system**, a part of the maine;
+
+We cannot fully delegate understanding of how our services interact with other services in the systen.
+We still need to study and understand the system that our application is part of[^grammar-nazi].
 
 
+
+[^grammar-nazi]: yes, I ended the sentence with a preposition, deal with it.
+[^short]: Not that I think 50 ms is short in any sense
 [^not-literal]: you can take more time if you want, I don't think a second would be enough
