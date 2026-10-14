@@ -1,6 +1,6 @@
 ---
 title: 'Case Against ClusterIP: Load Balancer That Never Was'
-date: 2026-08-31T00:00:00+03:00
+date: 2026-10-15T00:00:00+03:00
 draft: false
 tags: ['kubernetes', 'ingress', 'service-mesh', 'load-balancer']
 language: en
@@ -84,9 +84,9 @@ We discussed that ClusterIP does not reliably distribute the requests equally as
 
 So we need some way to distribute requests. A trivial solution is to disable connection reuse and force 1 connection to å1 request. But this will add TCP connection overhead on top of every request as well as requiring changes to the client code.
 
-We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods, i.e. we need an HTTP-aware proxy[L7-aware-proxy].
+We need a layer between the client and the server that accepts and holds client connections but can distribute HTTP requests to the server pods, i.e. we need an HTTP-aware proxy[^L7-aware-proxy].
 
-[L7-aware-proxy]: It is also called something like *Layer 7 load balancing*. Saying *Layer 7* is way cooler, BTW.
+[^L7-aware-proxy]: It is also called something like *Layer 7 load balancing*. Saying *Layer 7* is way cooler, BTW.
 
 Ingress comes to the rescue almost by accident.
 
@@ -140,11 +140,33 @@ of HTTP clients and the Kubernetes. Since no one made a decision on them, no one
 > No **service** is an Iland, intire of itselfe; every **service**  
 is a peece of the **system**, a part of the maine;
 
-We cannot fully delegate understanding of how our services interact with other services in the systen.
+It's an admirable, albeit vain, endeavour to separate services (parts) from the system (whole).
+Services functions as a part of the whole system, affecting and being affected by how each part interact with others in the system.
+
+Technically speaking there were no problem with the
+- applications themselves[^beside]: they responsibly reused the established TCP connections for multiple requests
+- kubernetes's clusterIP: it gave pod IPs evenly across connections
+Similarly, there were no team who made any mistakes: both application and infrastrucute developers used the sane defaults.
+
+Then what failed? It was the _way_ parts interact with and impact each other.
+Each part performed as expected, but the whole system did not.
+
+Since the ownerships were related to the individual parts;
+the ownership and responsibility of relations between the parts were unclaimed, uncontested and unquestioned.
+It was both everyone's and noone's responsibility to understand how does connection pooling work with kubernetes clusterIPs.
+
+We can draw boundaries, beautiful and elegant boundaries, around parts and their ownerships as much as we want.  
+However, the system won't care about our boundaries, it will work as a whole both with parts and their relations.
+
+For better, or worse.
+
+[^beside]: beside from being written in python, having the risk of doing significant CPU work (>1ms depending on the request) in the main event loop, and dozens of other problems  
+<!--
+We cannot fully delegate understanding of how our services interact with other services in the system.
 We still need to study and understand the system that our application is part of[^grammar-nazi].
+[^grammar-nazi]: yes, I ended the sentence with a preposition, deal with it.-->
 
 
 
-[^grammar-nazi]: yes, I ended the sentence with a preposition, deal with it.
 [^short]: Not that I think 50 ms is short in any sense
 [^not-literal]: you can take more time if you want, I don't think a second would be enough
