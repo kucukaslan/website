@@ -30,6 +30,15 @@ python3 scripts/render-routing-social.py --fonts /path/to/font-directory --previ
 python3 scripts/render-routing-social.py --fonts /path/to/font-directory
 ```
 
+To regenerate the article's 1200×630 link-preview image (SVG and PNG), run:
+
+```sh
+python3 scripts/render-routing-social.py --fonts /path/to/font-directory --card-only --output static/img
+```
+
+This export uses the same site fonts, outlined for consistent rendering, and
+does not require FFmpeg. The editable layout and labels are in `social_card()`.
+
 The renderer validates request counts, connection pinning, maximum concurrency,
 and curve endpoints before exporting. Temporary frames are removed automatically.
 No runtime dependency is added to the site. The matching poster SVG remains

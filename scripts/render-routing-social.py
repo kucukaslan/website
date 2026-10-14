@@ -252,6 +252,79 @@ def frame(seconds):
     ])
 
 
+def social_card():
+    """Editorial 1200×630 link preview; five connections reach four of ten pods."""
+    ink = "#203C36"
+    out = [
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" '
+        'viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">',
+        '<title id="title">The case against ClusterIP: the load balancer that never was</title>',
+        '<desc id="desc">Five persistent connections pass through a ClusterIP Service '
+        'and reach four of ten pods. Two connections share a pod; six pods remain idle. '
+        'Connections are not requests.</desc>',
+        rect(0, 0, 1200, 630, BG, BG, 0),
+        '<path d="M64 67 H96" stroke="'+ACCENT+'" stroke-width="2"/>',
+        text(112, 73, "SYSTEMS / KUBERNETES", 16, fill=MUTED, weight=600),
+        text(64, 183, "The case against", 64, fill=ink, weight=600, display=True),
+        text(60, 278, "ClusterIP", 108, fill=ink, weight=600, display=True),
+        text(64, 344, "The load balancer", 36, fill=MUTED, display=True),
+        text(64, 383, "that never was.", 36, fill=MUTED, display=True),
+        text(64, 468, "Connections ≠ requests", 26, fill=ink, weight=600),
+        text(64, 502, "Reusable connections. Uneven workloads.", 19, fill=MUTED),
+        rect(656, 120, 480, 394, "#F5F1EA", BORDER, 12),
+        text(682, 158, "5 connections", 18, fill=ink, weight=600),
+        text(1110, 158, "10 pods", 18, fill=MUTED, anchor="end"),
+    ]
+
+    # Keep each connection's path and destination continuous through the Service.
+    # A restrained palette separates flows without turning the diagram into a rainbow.
+    colors = ["#2A7F6F", "#B67F4F", "#65897D", "#486B65", "#87998D"]
+    destinations = [(1036, 211), (1036, 211), (1100, 265), (1036, 373), (1036, 427)]
+    for i, ((px, py), color) in enumerate(zip(destinations, colors)):
+        cy, sy = 254 + 20*i, 279 + 10*i
+        backend_path = (f'M908 {sy} C960 {sy} 966 {py} {px-24} {py}'
+                        if i != 2 else
+                        f'M908 {sy} C958 {sy} 969 240 1000 240 H1064 '
+                        'Q1070 240 1070 253 Q1070 265 1076 265')
+        out.extend([
+            f'<path d="M757 {cy} C785 {cy} 794 {sy} 821 {sy} '
+            f'{backend_path}" '
+            f'fill="none" stroke="{color}" stroke-width="2.5" stroke-linecap="round"/>',
+            circle(757, cy, 3, color),
+        ])
+    out.extend([
+        rect(683, 233, 74, 122, BG, "#C7CEC5", 8),
+        text(720, 295, "Client", 18, fill=ink, anchor="middle"),
+        text(720, 321, "HTTP", 12, fill=MUTED, anchor="middle"),
+        rect(821, 266, 87, 67, BG, "#7D9D8C", 8),
+        text(864.5, 294, "Service", 17, fill=ink, weight=600, anchor="middle"),
+        text(864.5, 316, "ClusterIP", 12, fill=MUTED, anchor="middle"),
+    ])
+    used = {0, 3, 6, 8}
+    for pod in range(10):
+        x, y = 1012 + (pod % 2)*64, 190 + (pod // 2)*54
+        active = pod in used
+        out.extend([
+            rect(x, y, 48, 42, "#E3ECE4" if active else "#F5F1EA",
+                 "#7D9D8C" if active else "#DCD8D0", 6,
+                 extra='' if active else 'stroke-dasharray="3 4"'),
+            text(x+24, y+27, f"{pod+1:02}", 15, fill=ink if active else "#B2ADA4",
+                 weight=600 if active else 400, anchor="middle"),
+        ])
+    out.extend([
+        circle(791, 265, 4, colors[0], BG, 1.5),
+        circle(966, 235, 4, colors[1], BG, 1.5),
+        circle(976, 359, 4, colors[3], BG, 1.5),
+        text(682, 488, "4 reached", 18, fill=ACCENT, weight=600),
+        text(1110, 488, "6 idle", 18, fill=MUTED, anchor="end"),
+        '<path d="M64 548 H1136" stroke="'+BORDER+'" stroke-width="1"/>',
+        text(64, 586, "Muhammed Can Küçükaslan", 18, fill=ink),
+        text(1136, 586, "kucukaslan.com.tr", 18, fill=MUTED, anchor="end"),
+        '</svg>',
+    ])
+    return "".join(out)
+
+
 def validate():
     assert len(REQUESTS) == 100
     assert len({r["id"] for r in REQUESTS}) == 100
@@ -270,7 +343,7 @@ def validate():
 
 def run(args):
     validate()
-    for binary in ("rsvg-convert", "ffmpeg"):
+    for binary in (("rsvg-convert",) if args.card_only else ("rsvg-convert", "ffmpeg")):
         if not shutil.which(binary):
             raise SystemExit(f"Required program missing: {binary}")
     for family, filename in (("DM Sans", "DM-Sans.ttf"), ("Cormorant Garamond", "Cormorant-Garamond.ttf")):
@@ -285,6 +358,14 @@ def run(args):
 
         def raster(svg, target):
             subprocess.run(["rsvg-convert", "-o", str(target)], input=svg.encode(), check=True)
+
+        if args.card_only:
+            stem = "case-against-clusterip-social"
+            svg = social_card()
+            (args.output / f"{stem}.svg").write_text(svg)
+            raster(svg, args.output / f"{stem}.png")
+            print("Social card ready: 1200×630, SVG and PNG.", flush=True)
+            return
 
         if args.preview_only:
             for second in (0, 4, 12, 19):
@@ -331,4 +412,5 @@ if __name__ == "__main__":
     parser.add_argument("--fonts", type=Path, required=True, help="Directory containing the two site fonts as TTF files")
     parser.add_argument("--output", type=Path, default=ROOT / "static/media/routing")
     parser.add_argument("--preview-only", action="store_true")
+    parser.add_argument("--card-only", action="store_true", help="Render only the article's 1200×630 social card")
     run(parser.parse_args())
