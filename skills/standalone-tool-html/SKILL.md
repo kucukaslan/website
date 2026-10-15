@@ -18,7 +18,7 @@ Keep the complete `standalone-theme:start` through `standalone-theme:end` block
 unchanged. It contains the shared CSS and the theme controller. Add all
 tool-specific CSS and JavaScript outside that block.
 
-Replace the starter's title, description, topic, main content, and behavior with
+Replace the starter's title, metadata description, main content, and behavior with
 the requested tool. Use the user's language for visible copy and the HTML `lang`
 attribute; translate the navigation and theme option labels while preserving
 their IDs and option values. The layout is a starting point, not a requirement
@@ -26,11 +26,18 @@ to present every tool as a form or dashboard.
 
 The visual identity is warm paper, charcoal text, and teal controls with restrained
 serif headings. Use the supplied `--tool-*` tokens and local font stacks. Useful
-classes include `tool-header`, `tool-kicker`, `tool-description`, `tool-panel`,
+classes include `tool-header`, `tool-panel`,
 `tool-button`, and `tool-help`. Keep the main interaction easy to reach. Let maps,
 diagrams, tables, and results carry the page; do not add decorative metrics or
 sales copy. Use `--tool-blue`, `--tool-orange`, `--tool-violet`, and `--tool-red`
 with their `-soft` surfaces when different data states need distinct colors.
+
+Use “Muhammed” for the visible home link and keep kucukaslan.com.tr as its URL.
+Aim for elegance and conciseness. Start with a descriptive tool title and the
+interaction. Skip category eyebrows, slogans, introductory subtitles, and text
+that repeats a title or an obvious control. Add section headings only when they
+help navigation. Keep essential format hints, assumptions, units, and errors
+beside the relevant interaction; the metadata description need not appear on the page.
 
 ## Portability and catalog contract
 

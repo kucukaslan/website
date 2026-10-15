@@ -1,9 +1,7 @@
 {{ define "main" }}
 {{ if .IsHome }}
 <section class="hero">
-  <p class="hero__eyebrow">Personal folio</p>
   <h1 class="hero__title">{{ .Site.Title }}</h1>
-  <p class="hero__tagline">Computer Science and Engineering</p>
   {{ partial "language-tabs.html" (dict "active" "") }}
 </section>
 
@@ -20,30 +18,17 @@
   </ul>
 </section>
 
-<section class="section-block home-about">
-  <h2 class="section-block__title">About this site</h2>
+<section class="section-block home-about" aria-label="About this site">
   <div class="home-content prose">
     {{ .Content }}
   </div>
 </section>
 
-<section class="section-block section-block--links">
-  <h2 class="section-block__title">Explore</h2>
-  <div class="explore-grid">
-    <a class="explore-card" href="{{ "/about/" | relURL }}">
-      <span class="explore-card__label">About</span>
-      <span class="explore-card__desc">Who writes here</span>
-    </a>
-    <a class="explore-card" href="{{ "/cv/" | relURL }}">
-      <span class="explore-card__label">CV</span>
-      <span class="explore-card__desc">Experience and education</span>
-    </a>
-    <a class="explore-card" href="{{ "/index.xml" | relURL }}">
-      <span class="explore-card__label">RSS</span>
-      <span class="explore-card__desc">Subscribe to new writing</span>
-    </a>
-  </div>
-</section>
+<nav class="section-block home-links" aria-label="More">
+  <a href="{{ "/about/" | relURL }}">About</a>
+  <a href="{{ "/cv/" | relURL }}">CV</a>
+  <a href="{{ "/index.xml" | relURL }}">RSS</a>
+</nav>
 
 {{ else if eq .Section "posts" }}
 <header class="page-header">
@@ -64,7 +49,6 @@
 {{ else if eq .Section "languages" }}
 {{- $active := .Params.language_code | default "all" -}}
 <header class="page-header">
-  <p class="page-header__eyebrow">Writing</p>
   <h1 class="page-header__title">{{ .Title }}</h1>
   {{ with .Content }}<div class="page-header__desc prose">{{ . }}</div>{{ end }}
 </header>
@@ -117,7 +101,6 @@
 
 {{ else if eq .Kind "term" }}
 <header class="page-header">
-  <p class="page-header__eyebrow">Tag</p>
   <h1 class="page-header__title">{{ .Title }}</h1>
 </header>
 <ul class="post-list">

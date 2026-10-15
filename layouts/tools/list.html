@@ -18,9 +18,7 @@
 {{- $tools = sort $tools "title" -}}
 
 <header class="tools-header">
-  <p class="page-header__eyebrow">Portable workbench</p>
   <h1 class="page-header__title">{{ .Title }}</h1>
-  {{ with .Params.description }}<p class="tools-header__description">{{ . }}</p>{{ end }}
 </header>
 
 <section class="tool-grid" aria-label="Interactive tools">
@@ -34,7 +32,7 @@
     </div>
     <div class="tool-card__actions">
       <a class="tool-card__open" href="{{ $toolURL }}">Open tool <span aria-hidden="true">→</span></a>
-      <a class="tool-card__download" href="{{ $toolURL }}" download>Download HTML</a>
+      <a class="tool-card__download" href="{{ $toolURL }}" download><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></svg>Download HTML</a>
     </div>
   </article>
   {{- else -}}

@@ -97,9 +97,7 @@ body.tool-page {
   font: 12px var(--tool-ui);
 }
 .tool-header { padding: 34px 0 28px; }
-.tool-kicker { margin: 0 0 10px; color: var(--tool-accent); font: 600 11px var(--tool-mono); letter-spacing: .1em; text-transform: uppercase; }
 .tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
-.tool-header .tool-description { max-width: 760px; margin: 14px 0 0; color: var(--tool-muted); font-size: 15px; line-height: 1.7; }
 .tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
 .tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
 .tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
@@ -125,7 +123,6 @@ body.tool-page {
   .tool-brand .tool-back::before { content: none; }
   .tool-appearance { gap: 5px; }
   .tool-header { padding: 26px 0 24px; }
-  .tool-header .tool-description { font-size: 14px; }
   .tool-panel { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -175,8 +172,8 @@ body.tool-page {
 </script>
 <!-- standalone-theme:end -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haversine vs Equirectangular Distance</title>
-    <meta name="description" content="Explore how Haversine and equirectangular distance estimates diverge across locations, ranges, and travel directions.">
+    <title>Haversine vs equirectangular</title>
+    <meta name="description" content="Compare Haversine and equirectangular distance estimates.">
     
     
     <!-- Leaflet CSS & JS for Maps -->
@@ -230,7 +227,7 @@ body.tool-page {
 <a class="tool-skip" href="#tool-content">Skip to tool</a>
 <nav class="tool-masthead" aria-label="Site and appearance">
   <div class="tool-brand">
-    <a class="tool-author" href="https://kucukaslan.com.tr/">m. c. küçükaslan</a>
+    <a class="tool-author" href="https://kucukaslan.com.tr/">Muhammed</a>
     <a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a>
   </div>
   <label class="tool-appearance" for="tool-theme">Theme
@@ -243,19 +240,16 @@ body.tool-page {
 </nav>
 <main id="tool-content" class="tool-main">
   <header class="tool-header">
-    <p class="tool-kicker">Geospatial / Distance algorithms</p>
-    <h1>How far off is the shortcut?</h1>
-    <p class="tool-description">Compare Haversine and equirectangular distance estimates. Move two points on the map, then explore how the approximation changes with latitude, range, and direction.</p>
+    <h1>Haversine vs equirectangular</h1>
   </header>
   <div class="distance-layout">
     <div class="map-column">
       <section class="tool-panel">
-        <h2>Two points, two estimates</h2>
         <div id="map" aria-label="Distance comparison map"></div>
-        <p class="map-caption">Etiler, Istanbul · Drag the blue (A) and red (B) markers.</p>
+        <p class="map-caption">Drag A and B to move the points.</p>
       </section>
       <section class="tool-panel" aria-label="Live distance results">
-        <h2>Live distance</h2>
+        <h2>Distances</h2>
         <div class="metric-pair">
           <div class="metric">
             <p class="metric-label">Haversine · spherical</p>
@@ -274,18 +268,16 @@ body.tool-page {
       </section>
     </div>
     <section class="tool-panel chart-panel">
-      <h2>Where the estimates diverge</h2>
-      <p class="chart-description">Adjust the parameters to see how the error grows over longer distances. The chart models a separate route from the points on the map.</p>
+      <h2>Approximation error</h2>
+      <p class="chart-description">This chart uses a separate route from the map.</p>
       <div class="parameters">
         <div>
           <label for="param-lat">Base latitude <span id="lat-val" class="parameter-value">41°</span></label>
           <input type="range" id="param-lat" min="0" max="85" value="41">
-          <p>0° = Equator · 85° = Near the pole</p>
         </div>
         <div>
           <label for="param-dist">Max distance <span id="dist-val" class="parameter-value">50 km</span></label>
           <input type="range" id="param-dist" min="5" max="1000" step="5" value="50">
-          <p>Distance range to plot</p>
         </div>
         <div>
           <label for="param-angle">Direction <span id="angle-val" class="parameter-value">45°</span></label>

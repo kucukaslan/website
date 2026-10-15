@@ -97,9 +97,7 @@ body.tool-page {
   font: 12px var(--tool-ui);
 }
 .tool-header { padding: 34px 0 28px; }
-.tool-kicker { margin: 0 0 10px; color: var(--tool-accent); font: 600 11px var(--tool-mono); letter-spacing: .1em; text-transform: uppercase; }
 .tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
-.tool-header .tool-description { max-width: 760px; margin: 14px 0 0; color: var(--tool-muted); font-size: 15px; line-height: 1.7; }
 .tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
 .tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
 .tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
@@ -125,7 +123,6 @@ body.tool-page {
   .tool-brand .tool-back::before { content: none; }
   .tool-appearance { gap: 5px; }
   .tool-header { padding: 26px 0 24px; }
-  .tool-header .tool-description { font-size: 14px; }
   .tool-panel { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -175,8 +172,8 @@ body.tool-page {
 </script>
 <!-- standalone-theme:end -->
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TOGG Versiyon Karşılaştırma</title>
-<meta name="description" content="TOGG modellerinin özelliklerinin karşılaştırılması">
+<title>Togg versiyon karşılaştırma</title>
+<meta name="description" content="T10F ve T10X donanımlarını karşılaştır.">
 <style>
 :root{
   --bg:var(--tool-bg);
@@ -349,7 +346,7 @@ tr.has-diff:hover td,tr.has-diff:hover td.feature{background:var(--tool-surface)
 <a class="tool-skip" href="#tool-content">İçeriğe geç</a>
 <nav class="tool-masthead" aria-label="Site ve görünüm">
   <div class="tool-brand">
-    <a class="tool-author" href="https://kucukaslan.com.tr/">m. c. küçükaslan</a>
+    <a class="tool-author" href="https://kucukaslan.com.tr/">Muhammed</a>
     <a class="tool-back" href="https://kucukaslan.com.tr/tools/">Tüm araçlar ↗</a>
   </div>
   <label class="tool-appearance" for="tool-theme">Tema
@@ -363,9 +360,7 @@ tr.has-diff:hover td,tr.has-diff:hover td.feature{background:var(--tool-surface)
 
 <main class="app tool-main" id="tool-content">
 <header class="tool-header">
-<p class="tool-kicker">Otomobil / Donanım karşılaştırması</p>
 <h1 id="title">Togg versiyonlarını karşılaştır</h1>
-<p class="tool-description">T10F ve T10X versiyonlarını yan yana incele. Modelleri seç, özellikleri ara ve yalnızca farklara odaklan.</p>
 </header>
 
   <div class="toolbar">

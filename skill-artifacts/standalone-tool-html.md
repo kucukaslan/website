@@ -23,7 +23,7 @@ Keep the complete `standalone-theme:start` through `standalone-theme:end` block
 unchanged. It contains the shared CSS and the theme controller. Add all
 tool-specific CSS and JavaScript outside that block.
 
-Replace the starter's title, description, topic, main content, and behavior with
+Replace the starter's title, metadata description, main content, and behavior with
 the requested tool. Use the user's language for visible copy and the HTML `lang`
 attribute; translate the navigation and theme option labels while preserving
 their IDs and option values. The layout is a starting point, not a requirement
@@ -31,11 +31,18 @@ to present every tool as a form or dashboard.
 
 The visual identity is warm paper, charcoal text, and teal controls with restrained
 serif headings. Use the supplied `--tool-*` tokens and local font stacks. Useful
-classes include `tool-header`, `tool-kicker`, `tool-description`, `tool-panel`,
+classes include `tool-header`, `tool-panel`,
 `tool-button`, and `tool-help`. Keep the main interaction easy to reach. Let maps,
 diagrams, tables, and results carry the page; do not add decorative metrics or
 sales copy. Use `--tool-blue`, `--tool-orange`, `--tool-violet`, and `--tool-red`
 with their `-soft` surfaces when different data states need distinct colors.
+
+Use “Muhammed” for the visible home link and keep kucukaslan.com.tr as its URL.
+Aim for elegance and conciseness. Start with a descriptive tool title and the
+interaction. Skip category eyebrows, slogans, introductory subtitles, and text
+that repeats a title or an obvious control. Add section headings only when they
+help navigation. Keep essential format hints, assumptions, units, and errors
+beside the relevant interaction; the metadata description need not appear on the page.
 
 ## Portability and catalog contract
 
@@ -210,9 +217,7 @@ body.tool-page {
   font: 12px var(--tool-ui);
 }
 .tool-header { padding: 34px 0 28px; }
-.tool-kicker { margin: 0 0 10px; color: var(--tool-accent); font: 600 11px var(--tool-mono); letter-spacing: .1em; text-transform: uppercase; }
 .tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
-.tool-header .tool-description { max-width: 760px; margin: 14px 0 0; color: var(--tool-muted); font-size: 15px; line-height: 1.7; }
 .tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
 .tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
 .tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
@@ -238,7 +243,6 @@ body.tool-page {
   .tool-brand .tool-back::before { content: none; }
   .tool-appearance { gap: 5px; }
   .tool-header { padding: 26px 0 24px; }
-  .tool-header .tool-description { font-size: 14px; }
   .tool-panel { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -304,7 +308,7 @@ body.tool-page {
   <a class="tool-skip" href="#tool-content">Skip to tool</a>
   <nav class="tool-masthead" aria-label="Site and appearance">
     <div class="tool-brand">
-      <a class="tool-author" href="https://kucukaslan.com.tr/">m. c. küçükaslan</a>
+      <a class="tool-author" href="https://kucukaslan.com.tr/">Muhammed</a>
       <a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a>
     </div>
     <label class="tool-appearance" for="tool-theme">Theme
@@ -317,9 +321,7 @@ body.tool-page {
   </nav>
   <main class="tool-main" id="tool-content">
     <header class="tool-header">
-      <p class="tool-kicker">__TOOL_TOPIC__</p>
       <h1>__TOOL_TITLE__</h1>
-      <p class="tool-description">__TOOL_INTRO__</p>
     </header>
     <!-- tool-body:start -->
     __TOOL_BODY__
