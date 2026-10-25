@@ -18,13 +18,14 @@ Senior backend engineer building and operating Python services for map-based del
 
 *August 2026–present · Map Engine*
 - Investigated service memory usages and found Kubernetes requests and limits had been sized around reclaimable filesystem cache. Right-sized relevant deployments; relevant EC2 spend fell by $30 per day, roughly $11k annualized.
-- Improved request distribution across Kubernetes pods by tracing how connection pooling fails when used with ClusterIP. After adding a proper L7 routing proxy, most of client timeouts were eliminated and tail latency was shortened: e.g. the share of requests completed under 20 ms rose from 70% to 84%.
+- Diagnosed uneven pod traffic caused by persistent HTTP connections and Kubernetes ClusterIP's connection-level load balancing. Introduced L7 request routing; client timeouts fell by **more than 50%**, and the share of requests completed under **20 ms rose from 70% to 84%**.
+- Standardized production logging and investigated distributed trace propagation across New Relic and OpenTelemetry services.
 
 ### Getir — Backend Engineer II
 
 *February 2025–July 2026 · Map Engine and Field Experience*
 - Led IoT integration for vehicle tracking system, building device-specific protocols on scalable Java & Go microservices.
-- Owned production Python services for routing and duration estimation, including services handling **350,000+ requests per minute during peak hours**.
+- Owned production **Python/FastAPI** services for routing and duration estimation, including services handling **350,000+ requests per minute during peak hours**.
 - Customized internal OSRM deployments to incorporate historical delivery data and GPS traces using AirFlow, PostgreSQL, and Redis.
 - Proactively audited Kubernetes resource limits and HPA policies, achieving a $20,000 reduction in annual infrastructure costs.
 - Collaborated on migrating an internal vehicle routing service from Python to C++, doubling performance and saving $10,000+ in monthly recurring costs.
@@ -49,10 +50,11 @@ Senior backend engineer building and operating Python services for map-based del
 
 *June–September 2022* · Big Data Platform
 
-- Contributed to [s5cmd](https://github.com/peak/s5cmd), a Go tool for S3 operations. Added [shell completion](https://github.com/peak/s5cmd/pull/500) and [S3 versioning support](https://github.com/peak/s5cmd/pull/475), and [reworked sync](https://github.com/peak/s5cmd/pull/483) to handle directories with millions of files under limited memory.
+- Contributed to [s5cmd](https://github.com/peak/s5cmd), a Go tool for S3 operations. Added [shell completion](https://github.com/peak/s5cmd/pull/500) and [S3 versioning support](https://github.com/peak/s5cmd/pull/475), and [reworked sync](https://github.com/peak/s5cmd/pull/483) using external sorting. The [published benchmark](https://github.com/peak/s5cmd/releases/tag/v2.1.0) reports memory falling from **about 10 GB to 1.5 GB for one million files**, with about 20% slower runtime at that scale.
 
 ## Selected public work
 
+- **Argo Rollouts (Go, Kubernetes):** Investigated production retry failures and submitted a controller-level fix for stale analysis state across Blue/Green and Canary rollouts, preserving readiness and promotion gates with regression coverage for retries and transient API failures. [PR #5081 — open](https://github.com/argoproj/argo-rollouts/pull/5081).
 - Diagnosed and [fixed a long-standing osmium-tool extraction bug](https://github.com/osmcode/osmium-tool/pull/305); [documented the investigation](https://kucukaslan.com.tr/debugging_with_cursor/).
 - Wrote about [Kubernetes connection-level load balancing](https://kucukaslan.com.tr/posts/case_against_clusterip/) and built an [interactive HTTP routing simulator](https://kucukaslan.com.tr/tools/http-routing-simulator.html) to demonstrate the behavior.
 
@@ -60,7 +62,8 @@ Senior backend engineer building and operating Python services for map-based del
 
 - **Languages:** Python, Go, Java, C++, SQL. 
 - **Backend and data:** FastAPI, Spring, REST APIs, Kafka, Redis, MongoDB, PostgreSQL, OSRM. 
-- **Infrastructure:** Kubernetes, Docker, AWS, Google Cloud, Terraform, GitHub Actions, observability and performance analysis.
+- **Infrastructure:** Kubernetes, Docker, AWS, Google Cloud, Terraform, GitHub Actions.
+- **Observability:** New Relic, OpenTelemetry, distributed tracing, structured logging, performance analysis.
 
 ## Education
 
