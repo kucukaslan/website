@@ -174,253 +174,191 @@ body.tool-page {
 })();
 </script>
 <!-- standalone-theme:end -->
-<style>
-
-:root { --tool-width:none; }
-.tool-masthead { min-height:65px; }
-.tool-header { padding:24px 0 20px; }
-.tool-header h1 { font-size:clamp(29px,3vw,44px); }
-.cases { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-bottom:1px solid var(--tool-border); margin-bottom:18px; }
-.case { border:0; border-bottom:3px solid transparent; background:transparent; color:var(--tool-muted); padding:12px 14px; text-align:left; font-size:14px; cursor:pointer; }
-.case[aria-pressed=true] { border-bottom-color:var(--tool-accent); color:var(--tool-text); font-weight:650; }
-.controls { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
-.controls .tool-button { min-height:38px; padding:8px 13px; }
-.controls .pace { font-size:11px; color:var(--tool-muted); margin-left:4px; }
+<style id="simulation-style">
+:root { --tool-width:1600px; --proxy:var(--tool-accent); --cpu:var(--tool-orange); --io:var(--tool-violet); --timeout:var(--tool-red); }
+body.tool-page { padding:0 clamp(12px,2vw,32px) 28px; }
+.tool-masthead { min-height:40px; border:0; }
+.tool-brand .tool-author { font:600 13px var(--tool-ui); letter-spacing:0; }
+.tool-brand .tool-back,.tool-appearance { font-size:11px; }
+.tool-header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px 0 16px; }
+.tool-header h1 { font:650 clamp(23px,2.4vw,34px)/1.15 var(--tool-ui); letter-spacing:-.04em; margin:0; }
+.tool-header p { margin:0; font-size:12px; color:var(--tool-muted); }
+.cases { display:flex; gap:5px; padding:4px; background:var(--tool-surface); border:1px solid var(--tool-border); border-radius:9px; }
+.case { flex:1; border:1px solid transparent; background:none; color:var(--tool-muted); padding:9px 10px; border-radius:6px; text-align:left; cursor:pointer; font-size:12px; }
+.case[aria-pressed=true] { background:var(--tool-panel); color:var(--tool-text); border-color:var(--tool-border); font-weight:650; }
+.controls { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin:12px 0; }
+.controls .tool-button { min-height:34px; padding:6px 12px; font-size:12px; border-radius:6px; }
+.pace { color:var(--tool-muted); font-size:11px; margin-left:7px; }
 #focus { margin-left:auto; }
-.clock { display:grid; grid-template-columns:auto minmax(80px,1fr) auto; gap:16px; align-items:center; padding:16px 0 20px; }
-.clock label { font-size:12px; color:var(--tool-muted); }
-#scrub { width:100%; min-width:0; }
-.clock-value { white-space:nowrap; display:flex; align-items:center; gap:6px; font:13px var(--tool-mono); }
-#time { width:80px; border:1px solid var(--tool-border); border-radius:5px; padding:7px; background:var(--tool-panel); color:var(--tool-text); text-align:right; font:13px var(--tool-mono); }
-#duration { color:var(--tool-muted); }
-.error { color:var(--tool-red); font-size:12px; margin:0 0 10px; }
+kbd { font:11px var(--tool-mono); border:1px solid var(--tool-border); border-radius:3px; padding:1px 4px; }
+.chapter { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; min-height:56px; padding:6px 2px 12px; }
+.chapter h2 { margin:0; font:600 clamp(18px,1.7vw,25px)/1.25 var(--tool-ui); letter-spacing:-.02em; }
+.chapter .outcome { font:12px var(--tool-mono); border:1px solid var(--tool-border); border-radius:5px; padding:5px 8px; white-space:nowrap; }
+.outcome.success { color:var(--tool-accent); }
+.outcome.failure { color:var(--tool-red); }
+.scene-scroll { overflow:auto; border-radius:12px; }
+.scene { display:block; width:100%; min-width:960px; height:auto; font-family:var(--tool-ui); }
+.scene text { fill:var(--tool-text); }
+.scene .zone { fill:var(--tool-panel); stroke:var(--tool-border); stroke-width:1.5; }
+.scene .zone-title { font:650 23px var(--tool-ui); }
+.scene .muted { fill:var(--tool-muted); font-size:12px; }
+.scene .section-label { fill:var(--tool-muted); font-size:11px; font-weight:650; letter-spacing:1px; }
+.scene .identity { font-size:16px; font-weight:650; }
+.scene .endpoint { font:11px var(--tool-mono); fill:var(--tool-muted); }
+.scene .row-bg { fill:var(--tool-surface); }
+.scene .identity-line { stroke-width:4; stroke-linecap:round; }
+.scene .proxy .identity-line { stroke:var(--proxy); }
+.scene .cpu .identity-line { stroke:var(--cpu); }
+.scene .proxy .identity { fill:var(--proxy); }
+.scene .cpu .identity { fill:var(--cpu); }
+.scene .state-link { stroke:var(--tool-border); stroke-width:2; }
+.scene .state-node rect { fill:var(--tool-panel); stroke:var(--tool-border); stroke-width:1; }
+.scene .state-node text { fill:var(--tool-muted); font-size:12px; }
+.scene .state-node[data-active=true] rect { stroke:var(--tool-text); stroke-width:2; }
+.scene .state-node[data-active=true] text { fill:var(--tool-text); font-weight:700; }
+.scene .proxy .state-node[data-active=true][data-state=Running] rect { fill:var(--proxy); stroke:var(--proxy); }
+.scene .cpu .state-node[data-active=true][data-state=Running] rect { fill:var(--cpu); stroke:var(--cpu); }
+.scene .state-node[data-active=true][data-state=Running] text { fill:var(--tool-panel); }
+.scene .proxy .state-node[data-active=true][data-state=Ready] rect { fill:var(--tool-accent-soft); stroke:var(--proxy); stroke-dasharray:4 3; }
+.scene .cpu .state-node[data-active=true][data-state=Ready] rect { fill:var(--tool-orange-soft); stroke:var(--cpu); stroke-dasharray:4 3; }
+.scene .proxy .state-node[data-active=true][data-state=Done] rect { fill:var(--tool-accent-soft); stroke:var(--proxy); }
+.scene .cpu .state-node[data-active=true][data-state=Done] rect { fill:var(--tool-orange-soft); stroke:var(--cpu); }
+.scene .request-row[data-present=false] { opacity:.3; }
+.scene .execution-box { fill:var(--tool-surface); stroke:var(--tool-border); stroke-width:2; }
+.scene .execution-slot[data-kind=proxy] .execution-box { stroke:var(--proxy); fill:var(--tool-accent-soft); }
+.scene .execution-slot[data-kind=cpu] .execution-box { stroke:var(--cpu); fill:var(--tool-orange-soft); }
+.scene .execution-slot[data-kind=io] .execution-box { stroke:var(--io); fill:var(--tool-violet-soft); }
+.scene .execution-slot[data-kind=timeout] .execution-box { stroke:var(--timeout); fill:var(--tool-red-soft); }
+.scene #executing { font-size:21px; font-weight:650; }
+.scene #execution-detail { font-size:12px; fill:var(--tool-muted); }
+.scene .queue-token rect { fill:var(--tool-surface); stroke:var(--tool-border); }
+.scene .queue-token text { font-size:12px; font-weight:550; }
+.scene [data-kind=proxy].queue-token rect { stroke:var(--proxy); }
+.scene [data-kind=cpu].queue-token rect { stroke:var(--cpu); }
+.scene [data-kind=io].queue-token rect { stroke:var(--io); }
+.scene [data-kind=timeout].queue-token rect { stroke:var(--timeout); }
+.scene .runtime-box { fill:var(--tool-surface); stroke:var(--tool-border); }
+.scene .runtime-label { fill:var(--tool-muted); font-size:11px; font-weight:600; }
+.scene .runtime-state { font-size:16px; font-weight:650; }
+.scene #server-state { font-size:21px; font-weight:650; }
+.scene [data-state=overdue] .runtime-box { fill:var(--tool-red-soft); stroke:var(--timeout); }
+.scene [data-state=overdue] .runtime-state { fill:var(--timeout); }
+.scene .buffer-byte { fill:none; stroke:var(--tool-muted); stroke-dasharray:3 3; }
+.scene [data-state=ready] .buffer-byte { fill:var(--io); stroke:var(--io); stroke-dasharray:none; }
+.scene [data-state=ready] .runtime-box { stroke:var(--io); }
+.scene .wire { fill:none; stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.scene .request-wire { stroke:var(--proxy); opacity:.4; }
+.scene [data-transfer=request] .request-wire { opacity:1; }
+.scene [data-response=late] .response-wire { stroke:var(--timeout); stroke-dasharray:4 5; opacity:.4; }
+.scene .response-wire { stroke:var(--io); }
+.scene .read-wire { stroke:var(--io); }
+.scene .request-fill { fill:var(--proxy); }
+.scene .response-fill,.scene .read-fill { fill:var(--io); }
+.scene .wire-label { font-size:11px; paint-order:stroke; stroke:var(--tool-bg); stroke-width:5; stroke-linejoin:round; }
+.scene .read-label { stroke:var(--tool-panel); }
+.scene .wire-packet text { font:700 10px var(--tool-mono); fill:var(--tool-panel); }
+.scene .packet-lines { stroke:var(--tool-panel); stroke-width:1.5; }
+.scene .read-gate { fill:none; stroke:var(--cpu); stroke-width:4; stroke-linecap:round; }
+.scene [data-read=blocked] .read-wire { stroke:var(--cpu); stroke-dasharray:5 5; }
+.scene [data-read=blocked] .read-label { fill:var(--cpu); }
+.scene [data-read=cancelled] .read-wire { stroke:var(--timeout); stroke-dasharray:5 5; opacity:.4; }
+.scene [data-read=cancelled] .read-gate { stroke:var(--timeout); }
+.scene [data-ready=true] .wire { opacity:.2; stroke-dasharray:3 5; }
+.scene [data-ready=true] .wire-label { opacity:.5; }
+.scene .dispatch-path { stroke:var(--tool-muted); stroke-width:2; fill:none; }
+.scene #dispatch-packet rect { fill:var(--tool-panel); stroke:var(--tool-text); stroke-width:2; }
+.scene #dispatch-packet text { fill:var(--tool-text); font-size:12px; font-weight:650; }
+.scene #dispatch-packet[data-kind=proxy] rect { stroke:var(--proxy); }
+.scene #dispatch-packet[data-kind=cpu] rect { stroke:var(--cpu); }
+.scene #dispatch-packet[data-kind=io] rect { stroke:var(--io); }
+.scene #dispatch-packet[data-kind=timeout] rect { stroke:var(--timeout); }
+.scene .boundary-rule { stroke:var(--tool-border); stroke-dasharray:4 7; }
+.scene .thread-rail { stroke:var(--tool-border); stroke-width:1; }
+.scene #cpu-progress { fill:var(--cpu); }
+.scene #server-note { font-size:13px; fill:var(--tool-muted); }
+.scene .server-caption { font-size:14px; fill:var(--tool-muted); }
+.timeline { margin:10px 0 0; background:var(--tool-panel); border:1px solid var(--tool-border); border-radius:8px; padding:10px 14px; }
+.timeline-top { display:flex; align-items:center; gap:12px; font-size:11px; color:var(--tool-muted); }
+.timeline-top strong { color:var(--tool-text); font-weight:600; }
+.timeline-top label { margin-left:auto; }
+#time { width:62px; padding:3px 5px; border:1px solid var(--tool-border); border-radius:4px; background:var(--tool-bg); color:var(--tool-text); font:12px var(--tool-mono); text-align:right; }
+#duration { font:11px var(--tool-mono); }
+.wall-clock { display:block; width:100%; height:72px; font:11px var(--tool-ui); }
+.wall-clock text { fill:var(--tool-muted); }
+.wall-clock .clock-line { stroke:var(--tool-border); stroke-width:1; }
+.wall-clock .cpu-time { fill:none; stroke:var(--cpu); stroke-dasharray:4 4; opacity:.35; }
+.wall-clock .cpu-history { fill:var(--tool-orange-soft); stroke:var(--cpu); }
+.wall-clock .deadline-mark { stroke:var(--timeout); stroke-dasharray:3 3; }
+.wall-clock .response-mark { stroke:var(--io); }
+.wall-clock .cursor { stroke:var(--tool-text); stroke-width:2; }
+.wall-clock .cpu-label { fill:var(--cpu); font-weight:600; }
+#scrub { display:block; width:100%; margin:0; }
+.error { color:var(--tool-red); font-size:12px; margin:4px 0; }
 .error:empty { display:none; }
-.chapter { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-bottom:18px; }
-.chapter h2 { margin:0; font:400 clamp(24px,2.45vw,36px)/1.2 var(--tool-display); letter-spacing:-.025em; }
-.chapter .outcome { white-space:nowrap; font:13px var(--tool-mono); padding:6px 9px; border:1px solid var(--tool-border); border-radius:5px; color:var(--tool-muted); }
-.outcome.success { color:var(--tool-accent); border-color:var(--tool-accent); }
-.outcome.failure { color:var(--tool-red); border-color:var(--tool-red); }
-.stage { display:grid; grid-template-columns:minmax(0,2.2fr) minmax(240px,1fr); gap:24px; align-items:stretch; }
-.client { border:1px solid var(--tool-border); border-radius:10px; padding:22px 26px; background:var(--tool-panel); min-width:0; }
-.worker-head { display:flex; gap:15px; flex-wrap:wrap; justify-content:space-between; align-items:baseline; margin-bottom:5px; }
-.worker-head h3 { font:400 25px var(--tool-display); margin:0; }
-.worker-head span { color:var(--tool-muted); font-size:12px; }
-#concurrency { color:var(--tool-muted); font-size:12px; margin:0 0 17px; }
-.request-list { display:grid; gap:10px; }
-.request-row { min-width:0; display:grid; grid-template-columns:135px minmax(0,1fr) auto; align-items:center; gap:14px; border:1px solid var(--tool-border); border-radius:7px; padding:13px 16px; background:var(--tool-panel); transition:background 200ms ease,border-color 200ms ease; }
-.request-name { font-weight:650; font-size:15px; }
-.request-name small { display:block; margin-top:3px; font:11px var(--tool-mono); color:var(--tool-muted); }
-.request-action { min-width:0; }
-.request-action strong { font-size:14px; line-height:1.3; font-weight:500; display:block; }
-.request-action code { display:block; font:11px/1.5 var(--tool-mono); color:var(--tool-muted); margin-top:5px; overflow-wrap:anywhere; }
-.request-status { font-size:11px; border-radius:4px; padding:4px 7px; color:var(--tool-muted); background:var(--tool-surface); white-space:nowrap; }
-.request-row[data-running=true] { border-color:var(--tool-accent); background:var(--tool-accent-soft); }
-.request-row[data-running=true] .request-status { color:var(--tool-bg); background:var(--tool-accent); font-weight:650; }
-.request-row.cpu[data-running=true] { border-color:var(--tool-orange); background:var(--tool-orange-soft); }
-.request-row.cpu[data-running=true] .request-status { background:var(--tool-orange); }
-.request-row[data-present=false] { opacity:.5; }
-.handoff { display:flex; gap:10px; align-items:baseline; margin:14px 0 0; padding-top:13px; border-top:1px solid var(--tool-border); font-size:13px; min-height:47px; }
-.handoff>span { color:var(--tool-muted); font-size:11px; white-space:nowrap; }
-#handoff { line-height:1.5; }
-.handoff .proxy { color:var(--tool-accent); font-weight:600; }
-.handoff .cpu { color:var(--tool-orange); font-weight:600; }
-.handoff .arrow { color:var(--tool-muted); margin:0 6px; }
-.environment { display:grid; grid-template-rows:1fr 1fr 1fr; gap:12px; }
-.environment-card { border:1px solid var(--tool-border); background:var(--tool-surface); padding:14px 18px; border-radius:8px; min-width:0; display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:12px; align-content:center; }
-.environment-card h3 { font-size:12px; font-weight:500; color:var(--tool-muted); margin:0 0 7px; }
-.environment-card strong { font-size:19px; font-weight:550; line-height:1.2; }
-.environment-card p { font-size:11px; color:var(--tool-muted); margin:7px 0 0; }
-.environment-card .card-copy { min-width:0; }
-.environment-card[data-state=ready] { border-color:var(--tool-violet); background:var(--tool-violet-soft); }
-.environment-card[data-state=ready] strong { color:var(--tool-violet); }
-.environment-card[data-state=done] { border-color:var(--tool-accent); background:var(--tool-accent-soft); }
-.environment-card[data-state=done] strong { color:var(--tool-accent); }
-.environment-card[data-state=overdue] { border-color:var(--tool-red); background:var(--tool-red-soft); }
-.environment-card[data-state=overdue] strong { color:var(--tool-red); }
-.packets { display:flex; gap:4px; align-items:center; }
-.packets i { display:block; width:13px; height:25px; border:1px dashed var(--tool-line); border-radius:2px; }
-[data-state=ready] .packets i { background:var(--tool-violet); border-color:var(--tool-violet); }
-.clock-icon { width:35px; height:35px; border:2px solid var(--tool-line); border-radius:50%; align-self:center; position:relative; }
-.clock-icon::before { content:""; position:absolute; width:2px; height:11px; background:var(--tool-line); left:15px; top:5px; }
-.clock-icon::after { content:""; position:absolute; width:9px; height:2px; background:var(--tool-line); left:15px; top:15px; }
-[data-state=overdue] .clock-icon { border-color:var(--tool-red); }
-.caveat { margin:11px 0 0; color:var(--tool-muted); font-size:12px; min-height:19px; }
-.walkthrough { margin:15px 0 22px; }
-.walkthrough>p { color:var(--tool-muted); font-size:11px; margin:0 0 8px; }
-.steps { display:flex; gap:7px; flex-wrap:wrap; }
-.step { border:1px solid var(--tool-border); border-radius:5px; background:var(--tool-panel); color:var(--tool-muted); padding:7px 10px; font-size:12px; text-align:left; cursor:pointer; }
-.step time { display:block; font:10px var(--tool-mono); margin-bottom:3px; }
-.step[aria-current=step] { border-color:var(--tool-accent); color:var(--tool-accent); background:var(--tool-accent-soft); }
-.reference { border-top:1px solid var(--tool-border); margin:0; }
-.reference summary { cursor:pointer; padding:13px 0; font-size:12px; color:var(--tool-muted); }
-.detail-body { padding:0 0 17px; font-size:12px; color:var(--tool-muted); max-width:1100px; }
-.detail-body p { margin:0 0 12px; }
-.table-scroll { overflow:auto; max-width:100%; }
-table { width:100%; border-collapse:collapse; font-size:12px; white-space:nowrap; }
-th,td { text-align:left; border-bottom:1px solid var(--tool-border); padding:9px 16px 9px 0; }
-th { font-weight:500; color:var(--tool-muted); }
-code { font-family:var(--tool-mono); }
-pre { background:var(--tool-surface); padding:15px; border-radius:6px; white-space:pre-wrap; overflow-wrap:anywhere; max-height:350px; overflow:auto; font:11px/1.6 var(--tool-mono); }
-footer { border-top:1px solid var(--tool-border); padding-top:15px; margin-top:10px; color:var(--tool-muted); font-size:11px; }
+.event-nav { display:flex; align-items:center; gap:10px; margin:12px 0; }
+.event-nav label { font-size:12px; color:var(--tool-muted); }
+#steps { flex:1; min-width:0; padding:7px 9px; border:1px solid var(--tool-border); border-radius:5px; background:var(--tool-panel); color:var(--tool-text); font:12px var(--tool-ui); }
+#event-count { font:11px var(--tool-mono); color:var(--tool-muted); white-space:nowrap; }
+.step-explanation { font-size:12px; margin:10px 0; }
+.step-explanation summary { cursor:pointer; color:var(--tool-muted); }
+#handoff { margin:10px 0; font-size:14px; }
+#current-code { font:12px var(--tool-mono); white-space:pre-wrap; }
+.caveat { margin:8px 0; font-size:11px; color:var(--tool-muted); }
+.caveat:empty { display:none; }
+.reference { border-top:1px solid var(--tool-border); }
+.reference summary { padding:12px 0; cursor:pointer; color:var(--tool-muted); font-size:12px; }
+.detail-body { font-size:12px; max-width:1050px; color:var(--tool-muted); }
+.table-scroll { overflow:auto; }
+table { border-collapse:collapse; width:100%; font-size:12px; white-space:nowrap; }
+th,td { text-align:left; padding:8px 16px 8px 0; border-bottom:1px solid var(--tool-border); }
+pre { white-space:pre-wrap; overflow-wrap:anywhere; padding:14px; border-radius:7px; background:var(--tool-surface); max-height:350px; overflow:auto; font:11px/1.6 var(--tool-mono); }
+footer { color:var(--tool-muted); font-size:11px; padding-top:14px; }
 a { color:var(--tool-accent); }
-.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
 body.focus-view .tool-masthead,body.focus-view .tool-header,body.focus-view .reference,body.focus-view footer { display:none; }
 body.focus-view .cases { margin-top:12px; }
-@media(min-width:1700px) { .client { padding:28px 32px; }  .request-action strong { font-size:17px; } .request-name { font-size:18px; } .request-row { grid-template-columns:160px minmax(0,1fr) auto; } .request-status { font-size:12px; } .environment-card strong { font-size:23px; } }
-@media(max-width:1100px) { .stage { grid-template-columns:minmax(0,1fr); gap:16px; } .environment { grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:auto; } .environment-card { padding:13px; } .environment-card strong { font-size:16px; } .environment-card .packets,.environment-card .clock-icon { display:none; } }
-@media(max-width:650px) { .cases { grid-template-columns:1fr 1fr; } .case { font-size:12px; padding:10px 7px; } .tool-header { padding:20px 0; } .controls { gap:6px; } .controls .pace { flex-basis:100%; margin-left:0; } #focus { margin-left:0; } .clock { grid-template-columns:1fr auto; gap:8px; } .clock>label { grid-column:1/-1; } .chapter { align-items:start; gap:9px; } .chapter h2 { font-size:26px; } .chapter .outcome { font-size:11px; } .client { padding:17px 13px; } .worker-head h3 { font-size:23px; }  .request-row { grid-template-columns:minmax(0,1fr) auto; gap:4px 8px; padding:10px 11px; } .request-name { font-size:14px; } .request-name small { display:inline; margin-left:6px; font-size:10px; } .request-action { grid-column:1/-1; grid-row:2; } .request-action strong { font-size:13px; } .request-action code { font-size:10px; margin-top:3px; } .request-status { grid-row:1; grid-column:2; padding:3px 5px; font-size:10px; }  .handoff { margin-left:0; flex-direction:column; gap:3px; } .environment { grid-template-columns:1fr; gap:8px; } .environment-card { grid-template-columns:1fr auto; } .environment-card strong { font-size:17px; } .environment-card h3 { margin-bottom:4px; } .environment-card .packets,.environment-card .clock-icon { display:flex; } .step { font-size:11px; padding:7px 8px; } }
-
-
-/* Request state is distinct from the single execution slot. */
-.request-row[data-state=Ready] { border-color:var(--tool-violet); }
-.request-row[data-state=Ready] .request-status { color:var(--tool-violet); background:var(--tool-violet-soft); }
-.request-row[data-state=Done] .request-status { color:var(--tool-accent); }
-.scheduler { display:grid; grid-template-columns:minmax(0,1fr) 26px minmax(0,1.2fr); gap:10px; margin-top:18px; padding-top:15px; border-top:2px solid var(--tool-border); }
-.scheduler-heading { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:baseline; gap:7px 14px; font-size:13px; }
-.scheduler-heading span { font-size:11px; color:var(--tool-muted); }
-.scheduler h4 { margin:0 0 9px; font-size:12px; font-weight:600; }
-.ready-work { padding:12px 0; min-width:0; }
-#ready-queue { display:flex; flex-wrap:wrap; gap:6px; list-style:none; padding:0; margin:0; min-height:31px; }
-#ready-queue li { align-self:start; border:1px solid var(--tool-border); border-radius:4px; padding:6px 8px; font-size:11px; background:var(--tool-surface); }
-#ready-queue li[data-kind=proxy] { border-color:var(--tool-accent); }
-#ready-queue li[data-kind=cpu] { border-color:var(--tool-orange); }
-#ready-queue li[data-kind=io] { border-color:var(--tool-violet); }
-#ready-queue li[data-kind=timeout] { border-color:var(--tool-red); }
-#queue-note { margin:8px 0 0; font-size:11px; line-height:1.4; color:var(--tool-muted); }
-.dispatch-arrow { align-self:center; color:var(--tool-muted); font-size:24px; }
-.execution-slot { min-width:0; min-height:125px; border:2px solid var(--tool-border); border-radius:8px; padding:12px 14px; background:var(--tool-surface); transition:border-color 180ms ease,background 180ms ease; }
-.execution-slot h4 { display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px; }
-.execution-slot h4 span { color:var(--tool-muted); font-size:10px; font-weight:400; }
-#executing { display:block; font-size:17px; line-height:1.3; }
-#execution-detail { margin:8px 0 0; font-size:11px; line-height:1.5; color:var(--tool-muted); }
-.execution-slot[data-kind=proxy] { border-color:var(--tool-accent); background:var(--tool-accent-soft); }
-.execution-slot[data-kind=cpu] { border-color:var(--tool-orange); background:var(--tool-orange-soft); }
-.execution-slot[data-kind=io] { border-color:var(--tool-violet); background:var(--tool-violet-soft); }
-.execution-slot[data-kind=timeout] { border-color:var(--tool-red); background:var(--tool-red-soft); }
-@media(max-width:650px) { .scheduler { grid-template-columns:minmax(0,1fr) 20px minmax(0,1.15fr); gap:6px; } .execution-slot { padding:10px; } #executing { font-size:14px; } #ready-queue li { padding:5px; font-size:10px; } }
-
-/* Service boundaries own their worker, timer, and receive buffer. */
-.key-hint { display:inline-flex; align-items:center; gap:3px; margin-left:10px; }
-kbd { font:11px var(--tool-mono); padding:1px 4px; border:1px solid var(--tool-border); border-radius:3px; background:var(--tool-panel); }
-.stage { position:relative; grid-template-columns:minmax(0,3fr) minmax(240px,1fr); gap:120px; align-items:stretch; }
-.service { min-width:0; border:2px solid var(--tool-border); border-radius:12px; padding:20px; background:var(--tool-surface); }
-.client-service { border-top:4px solid var(--tool-accent); }
-.server-service { border-top:4px solid var(--tool-blue); }
-.service-head { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 18px; margin:0 0 18px; }
-.service-head h3 { margin:0; font:30px/1.1 var(--tool-display); }
-.service-head span { font-size:11px; color:var(--tool-muted); }
-.client { padding:18px 20px; }
-.worker-head h3 { font-size:23px; }
-.client-runtime { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; margin-top:62px; }
-.client-runtime .environment-card { min-height:95px; padding:12px 15px; }
-.client-runtime .environment-card strong { font-size:17px; }
-.server-service #server-card { margin-top:88px; padding:20px; min-height:155px; }
-.server-independence { margin:20px 0 0; color:var(--tool-muted); font-size:12px; line-height:1.7; }
-.transfer-wires { position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none; overflow:visible; }
-.wire { fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-.request-wire { stroke:var(--tool-blue); opacity:.55; }
-.response-wire { stroke:var(--tool-violet); opacity:.55; }
-.read-wire { stroke:var(--tool-accent); opacity:.4; }
-.request-fill { fill:var(--tool-blue); }
-.response-fill { fill:var(--tool-violet); }
-.read-fill { fill:var(--tool-accent); }
-.wire-label { font:11px var(--tool-ui); paint-order:stroke; stroke:var(--tool-bg); stroke-width:5px; stroke-linejoin:round; }
-.request-label { fill:var(--tool-blue); }
-.response-label { fill:var(--tool-violet); }
-.read-label { fill:var(--tool-accent); stroke:var(--tool-surface); }
-.network-label { fill:var(--tool-muted); font-size:12px; }
-.wire-packet text { fill:var(--tool-bg); font:600 9px var(--tool-mono); }
-.packet-lines { stroke:var(--tool-bg); stroke-width:1.2; fill:none; }
-.read-gate { stroke:var(--tool-orange); stroke-width:3; fill:none; stroke-linecap:round; }
-#wires[data-read=blocked] .read-wire { stroke:var(--tool-orange); stroke-dasharray:4 5; opacity:.8; }
-#wires[data-read=blocked] .read-label { fill:var(--tool-orange); }
-#wires[data-read=cancelled] .read-wire { stroke:var(--tool-red); stroke-dasharray:4 5; opacity:.55; }
-#wires[data-read=cancelled] .read-label { fill:var(--tool-red); }
-#wires[data-read=cancelled] .read-gate { stroke:var(--tool-red); }
-#wires[data-read=reading] .read-wire { opacity:1; }
-#wires[data-response=late] .response-wire { stroke:var(--tool-red); stroke-dasharray:4 5; }
-#wires[data-transfer=request] .request-wire,#wires[data-transfer=response] .response-wire { opacity:1; stroke-width:2.5; }
-#wires[data-ready=true] .wire { opacity:.2; stroke-dasharray:3 6; }
-#wires[data-ready=true] .request-label,#wires[data-ready=true] .response-label,#wires[data-ready=true] .read-label { opacity:.5; }
-@media(max-width:1100px) {
- .stage { grid-template-columns:minmax(0,1fr); gap:110px; }
- .server-service #server-card { margin-top:0; min-height:95px; }
- .server-independence { margin-top:12px; }
-}
-@media(max-width:650px) {
- .service { padding:12px; }
- .service-head h3 { font-size:26px; }
- .client { padding:14px 10px; }
- .worker-head { flex-wrap:wrap; }
- .worker-head h3 { font-size:21px; }
- .client-runtime { gap:12px; }
- .client-runtime .environment-card { padding:10px; }
- .client-runtime .environment-card strong { font-size:14px; }
- .environment-card .packets,.environment-card .clock-icon { display:none; }
- .wire-label { font-size:10px; }
- .key-hint { margin-left:8px; }
-}
+.phone-hint { display:none; font-size:11px; color:var(--tool-muted); }
+@media(max-width:720px) { .tool-header p,.pace { display:none; } .cases { display:grid; grid-template-columns:1fr 1fr; } .chapter { align-items:start; } .chapter h2 { font-size:19px; } .phone-hint { display:block; } .timeline-top { flex-wrap:wrap; gap:5px; } .timeline-top label { margin-left:0; } .event-nav { flex-wrap:wrap; } }
 </style>
 </head>
 <body class="tool-page"><a class="tool-skip" href="#tool-content">Skip to tool</a>
 
 <nav class="tool-masthead" aria-label="Site and appearance"><div class="tool-brand"><a class="tool-author" href="https://kucukaslan.com.tr/">Muhammed</a><a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a></div><label class="tool-appearance" for="tool-theme">Theme<select id="tool-theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label></nav>
 <main class="tool-main" id="tool-content">
-<header class="tool-header"><h1>Asyncio: concurrent requests, one thread</h1></header>
+<header class="tool-header"><h1>Two requests. One thread.</h1><p>Asyncio · HTTP I/O · timeout cancellation</p></header>
 <div class="cases" role="group" aria-label="Choose a scenario">
 <button class="case" data-case="normal" aria-pressed="false">Normal response</button><button class="case" data-case="blocked" aria-pressed="true">Blocked before headers</button><button class="case" data-case="slow" aria-pressed="false">Slow server</button><button class="case" data-case="body" aria-pressed="false">Blocked while reading body</button>
 </div>
-<div class="controls"><button class="tool-button secondary" id="back" aria-keyshortcuts="ArrowLeft" title="Previous event (Left arrow)">← Previous</button><button class="tool-button" id="play">Play walkthrough</button><button class="tool-button secondary" id="next" aria-keyshortcuts="ArrowRight" title="Next event (Right arrow)">Next →</button><button class="tool-button secondary" id="restart">Restart</button><span class="pace">Pauses at handoffs · compresses waits <span class="key-hint"><kbd>←</kbd> <kbd>→</kbd> step through events</span></span><button class="tool-button secondary" id="focus" aria-pressed="false">Focus view</button></div>
-<div class="clock"><label for="scrub">Elapsed time</label><input type="range" id="scrub" min="0" max="1001" value="0" step="1" aria-label="Elapsed simulation time in milliseconds"><div class="clock-value"><label class="sr-only" for="time">Jump to elapsed milliseconds</label><input id="time" type="number" value="0" min="0" max="1001" step="1" aria-describedby="time-error"><span id="duration">/ 1,001 ms</span></div></div>
-<p class="error" id="time-error" role="alert"></p>
+<div class="controls"><button class="tool-button secondary" id="back" aria-keyshortcuts="ArrowLeft" title="Previous event (Left arrow)">← Previous</button><button class="tool-button" id="play">Play walkthrough</button><button class="tool-button secondary" id="next" aria-keyshortcuts="ArrowRight" title="Next event (Right arrow)">Next →</button><button class="tool-button secondary" id="restart">Restart</button><span class="pace">Holds each event · compresses waits · <kbd>←</kbd> <kbd>→</kbd> to step</span><button class="tool-button secondary" id="focus" aria-pressed="false">Focus view</button></div>
 <div class="chapter"><h2 id="headline"></h2><span id="outcome" class="outcome"></span></div>
-<div class="stage" id="stage">
-<svg class="transfer-wires" id="wires" role="img" aria-label="HTTP request and response paths" aria-describedby="wire-description">
-<desc id="wire-description"></desc>
+<p class="phone-hint">Scroll the diagram horizontally to follow both services →</p>
+<div class="scene-scroll" tabindex="0" role="region" aria-label="Interactive service diagram; horizontally scrollable on small screens"><svg xmlns="http://www.w3.org/2000/svg" class="scene" id="stage" viewBox="0 0 1280 510" role="group" aria-label="Two independent services. Request states, ready work, and one shared client thread.">
 <defs><marker id="request-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" class="request-fill"/></marker><marker id="response-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" class="response-fill"/></marker><marker id="read-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" class="read-fill"/></marker></defs>
-<text id="network-label" class="wire-label network-label" text-anchor="middle">Network</text>
-<path id="request-wire" class="wire request-wire" marker-end="url(#request-tip)"/>
-<path id="response-wire" class="wire response-wire" marker-end="url(#response-tip)"/>
-<path id="read-wire" class="wire read-wire" marker-end="url(#read-tip)"/>
-<text id="request-wire-label" class="wire-label request-label" text-anchor="middle">HTTP request</text>
-<text id="response-wire-label" class="wire-label response-label">Response bytes</text>
-<text id="read-wire-label" class="wire-label read-label" text-anchor="middle"></text>
-<path id="read-gate" class="read-gate"/>
-<g id="request-packet" class="wire-packet" visibility="hidden"><rect x="-15" y="-10" width="30" height="20" rx="4" class="request-fill"/><text x="0" y="3" text-anchor="middle">GET</text></g>
-<g id="response-packet" class="wire-packet" visibility="hidden"><rect x="-10" y="-7" width="20" height="14" rx="3" class="response-fill"/><path d="M-5 -2H5M-5 2H5" class="packet-lines"/></g>
-<g id="read-packet" class="wire-packet" visibility="hidden"><rect x="-10" y="-7" width="20" height="14" rx="3" class="read-fill"/><path d="M-5 -2H5M-5 2H5" class="packet-lines"/></g>
-</svg>
-<section class="service client-service" id="client-service" aria-labelledby="client-service-title">
-<header class="service-head"><h3 id="client-service-title">Client service</h3><span>Calls the server over HTTP</span></header>
-<section class="client" id="client" data-owner="proxy" aria-labelledby="client-title">
-<div class="worker-head"><h3 id="client-title">Python worker</h3><span>One event loop · one thread</span></div>
-<p id="concurrency"></p>
-<div class="request-list" aria-label="Persistent request states">
-<div class="request-row proxy" id="proxy-row"><div class="request-name">Proxy request<small>GET /proxy</small></div><div class="request-action"><strong id="proxy-action"></strong><code id="proxy-code"></code></div><span class="request-status" id="proxy-status"></span></div>
-<div class="request-row cpu" id="cpu-row"><div class="request-name">CPU request<small>GET /block</small></div><div class="request-action"><strong id="cpu-action"></strong><code id="cpu-code"></code></div><span class="request-status" id="cpu-status"></span></div>
-</div>
-<div class="handoff"><span>Transition</span><div id="handoff"></div></div>
-<section class="scheduler" aria-label="One shared event-loop thread">
-<div class="scheduler-heading"><strong>One shared thread</strong><span>Requests and I/O / timeout callbacks take turns here.</span></div>
-<div class="ready-work"><h4>Ready queue</h4><ol id="ready-queue" aria-label="Work ready to be selected"></ol><p id="queue-note"></p></div>
-<span class="dispatch-arrow" aria-hidden="true">→</span>
-<div class="execution-slot" id="execution-slot"><h4>Executing now <span>at most one</span></h4><strong id="executing"></strong><p id="execution-detail"></p></div>
-</section>
-</section>
-<div class="client-runtime" aria-label="Client timeout and operating-system receive buffer">
-<section class="environment-card" id="timer-card"><div class="card-copy"><h3>Client timeout · 500 ms</h3><strong id="timer-state"></strong><p id="timer-note"></p></div><span class="clock-icon" aria-hidden="true"></span></section>
-<section class="environment-card" id="buffer-card"><div class="card-copy"><h3>Client OS · receive buffer</h3><strong id="buffer-state"></strong><p id="buffer-note"></p></div><div class="packets" aria-hidden="true"><i></i><i></i><i></i></div></section>
-</div>
-</section>
-<section class="service server-service" id="server-service" aria-labelledby="server-service-title">
-<header class="service-head"><h3 id="server-service-title">Server service</h3><span>Handles the downstream HTTP call</span></header>
-<section class="environment-card" id="server-card"><div class="card-copy"><h3>Request handler</h3><strong id="server-state"></strong><p id="server-note"></p></div></section>
-<p class="server-independence">Independent execution<br>Can respond while the client loop is blocked.</p>
-</section>
-</div>
-<p class="caveat" id="caveat"></p>
-<div class="walkthrough"><p>Walkthrough steps · event spacing is not a time scale</p><div class="steps" id="steps" role="group" aria-label="Jump to a walkthrough step"></div></div>
-<div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+<g id="client-service" role="group" aria-label="Client service and its host"><rect class="zone" x="12" y="12" width="818" height="486" rx="12"/><text class="zone-title" x="32" y="43">Client service</text><text class="muted" id="concurrency" x="32" y="65"/>
+<g id="client" role="group" aria-label="One Python worker">
+<g class="request-row proxy" id="proxy-row" role="group" aria-labelledby="proxy-name proxy-status proxy-action"><desc id="proxy-status"/><desc id="proxy-action"/><desc id="proxy-code"/><rect class="row-bg" x="32" y="84" width="778" height="62" rx="8"/><path class="identity-line" d="M43 98v34"/><text id="proxy-name" class="identity" x="56" y="111">Proxy request</text><text class="endpoint" x="56" y="130">GET /proxy</text><path class="state-link" d="M272 115H766"/><g class="state-node" data-state="Waiting"><rect x="262" y="99" width="102" height="32" rx="16"/><text x="313" y="120" text-anchor="middle">Waiting</text></g><g class="state-node" data-state="Ready"><rect x="399" y="99" width="102" height="32" rx="16"/><text x="450" y="120" text-anchor="middle">Ready</text></g><g class="state-node" data-state="Running"><rect x="536" y="99" width="102" height="32" rx="16"/><text x="587" y="120" text-anchor="middle">Running</text></g><g class="state-node" data-state="Done"><rect x="673" y="99" width="102" height="32" rx="16"/><text x="724" y="120" text-anchor="middle">Done</text></g></g><g class="request-row cpu" id="cpu-row" role="group" aria-labelledby="cpu-name cpu-status cpu-action"><desc id="cpu-status"/><desc id="cpu-action"/><desc id="cpu-code"/><rect class="row-bg" x="32" y="158" width="778" height="62" rx="8"/><path class="identity-line" d="M43 172v34"/><text id="cpu-name" class="identity" x="56" y="185">CPU request</text><text class="endpoint" x="56" y="204">GET /block</text><path class="state-link" d="M272 189H766"/><g class="state-node" data-state="Waiting"><rect x="262" y="173" width="102" height="32" rx="16"/><text x="313" y="194" text-anchor="middle">Waiting</text></g><g class="state-node" data-state="Ready"><rect x="399" y="173" width="102" height="32" rx="16"/><text x="450" y="194" text-anchor="middle">Ready</text></g><g class="state-node" data-state="Running"><rect x="536" y="173" width="102" height="32" rx="16"/><text x="587" y="194" text-anchor="middle">Running</text></g><g class="state-node" data-state="Done"><rect x="673" y="173" width="102" height="32" rx="16"/><text x="724" y="194" text-anchor="middle">Done</text></g></g>
+<text class="section-label" x="32" y="260">EVENT LOOP</text><path class="thread-rail" d="M130 256H810"/>
+<text class="section-label" x="48" y="286">READY QUEUE</text><g id="ready-queue" role="list" aria-label="Work ready for selection"/><text id="queue-note" class="muted" x="48" y="388"/>
+<path id="dispatch-wire" class="dispatch-path" d="M185 334H625" opacity="0"/><path class="dispatch-path" d="M338 337H430m-7-6 7 6-7 6"/><text class="muted" x="383" y="321" text-anchor="middle">select</text>
+<g class="execution-slot" id="execution-slot" role="group" aria-label="Executing now on the one shared thread"><text class="section-label" x="452" y="286">EXECUTING NOW</text><text class="section-label" x="794" y="286" text-anchor="end">ONE THREAD</text><rect class="execution-box" x="448" y="298" width="362" height="80" rx="10"/><text id="executing" x="464" y="331"/><text id="execution-detail" x="464" y="353"/><rect id="cpu-progress" x="450" y="372" width="0" height="4" rx="2"/></g>
+</g>
+<g id="timer-card"><rect class="runtime-box" x="32" y="426" width="350" height="58" rx="8"/><text class="runtime-label" x="48" y="446">CLIENT TIMEOUT · 500 ms</text><text id="timer-state" class="runtime-state" x="48" y="469"/><desc id="timer-note"/></g>
+<g id="buffer-card"><rect class="runtime-box" x="448" y="426" width="362" height="58" rx="8"/><text class="runtime-label" x="464" y="446">CLIENT OS · RECEIVE BUFFER</text><text id="buffer-state" class="runtime-state" x="464" y="469"/><desc id="buffer-note"/><rect class="buffer-byte" x="750" y="447" width="12" height="22" rx="2"/><rect class="buffer-byte" x="767" y="447" width="12" height="22" rx="2"/><rect class="buffer-byte" x="784" y="447" width="12" height="22" rx="2"/></g>
+</g>
+<path class="boundary-rule" d="M915 40V480"/><text class="section-label" x="915" y="26" text-anchor="middle">NETWORK</text>
+<g id="server-service" role="group" aria-label="Independent downstream server service"><rect class="zone" x="1000" y="12" width="268" height="486" rx="12"/><text class="zone-title" x="1020" y="43">Server service</text><text class="muted" x="1020" y="65">Independent execution</text><g id="server-card"><rect class="runtime-box" x="1020" y="106" width="228" height="126" rx="10"/><text class="runtime-label" x="1036" y="131">HTTP REQUEST HANDLER</text><text id="server-state" x="1036" y="164"/><text id="server-note" x="1036" y="209"/></g><text class="server-caption" x="1020" y="305"><tspan x="1020">The client’s CPU work</tspan><tspan x="1020" dy="22">does not block this service.</tspan></text><text class="muted" x="1020" y="454"><tspan x="1020">Separate service, deployment,</tspan><tspan x="1020" dy="18">or infrastructure.</tspan></text></g>
+<g id="wires" role="group" aria-label="HTTP and data paths" aria-describedby="wire-description"><desc id="wire-description"/>
+<path id="request-wire" class="wire request-wire" d="M810 326H868V150H1020" marker-end="url(#request-tip)"/><text class="wire-label" x="915" y="136" text-anchor="middle">HTTP request</text>
+<path id="response-wire" class="wire response-wire" d="M1020 208H956V455H810" marker-end="url(#response-tip)"/><text id="response-wire-label" class="wire-label" x="915" y="441" text-anchor="middle">Response bytes</text>
+<path id="read-wire" class="wire read-wire" d="M660 426V378" marker-end="url(#read-tip)"/><text id="read-wire-label" class="wire-label read-label" x="649" y="406" text-anchor="end"/><path id="read-gate" class="read-gate" d="M650 386H670M650 393H670" visibility="hidden"/>
+<g id="request-packet" class="wire-packet" visibility="hidden"><rect x="-18" y="-11" width="36" height="22" rx="4" class="request-fill"/><text y="4" text-anchor="middle">GET</text></g><g id="response-packet" class="wire-packet" visibility="hidden"><rect x="-12" y="-8" width="24" height="16" rx="3" class="response-fill"/><path d="M-6-3H6M-6 2H6" class="packet-lines"/></g><g id="read-packet" class="wire-packet" visibility="hidden"><rect x="-12" y="-8" width="24" height="16" rx="3" class="read-fill"/><path d="M-6-3H6M-6 2H6" class="packet-lines"/></g>
+</g>
+<g id="dispatch-packet" visibility="hidden" aria-hidden="true"><rect x="-110" y="-16" width="220" height="32" rx="6"/><text id="dispatch-label" y="4" text-anchor="middle"/></g>
+</svg></div>
+<div class="timeline"><div class="timeline-top"><strong>Wall-clock time</strong><span>Linear scale · cursor marks now.</span><label for="time">Elapsed</label><input id="time" type="number" value="0" min="0" max="1001" step="1" aria-describedby="time-error"><span id="duration">/ 1,001 ms</span></div><svg xmlns="http://www.w3.org/2000/svg" class="wall-clock" id="wall-clock" viewBox="0 0 1200 72" role="img" aria-label="Linear wall-clock trace"><g id="time-marks"/><line class="cursor" id="time-cursor" x1="20" x2="20" y1="6" y2="66"/></svg><input type="range" id="scrub" min="0" max="1001" value="0" step="1" aria-label="Elapsed simulation time in milliseconds"><p class="error" id="time-error" role="alert"></p></div>
+<div class="event-nav"><label for="steps">Jump to event</label><select id="steps"></select><span id="event-count"></span></div>
+<details class="step-explanation"><summary>Explain this step &amp; show code</summary><p id="handoff"></p><code id="current-code"></code></details>
+<p class="caveat" id="caveat"></p><div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
 <details class="reference"><summary>Compare outcomes</summary><div class="detail-body"><div class="table-scroll" tabindex="0" role="region" aria-label="Scenario outcomes"><table><thead><tr><th>Scenario</th><th>Server sends</th><th>Client finishes</th><th>HTTP</th></tr></thead><tbody><tr><td>Normal response</td><td>≈20 ms</td><td>≈23 ms</td><td>200</td></tr><tr><td>Blocked before headers</td><td>≈20 ms</td><td>≈1,001 ms</td><td>504</td></tr><tr><td>Slow server</td><td>≈700 ms</td><td>≈501 ms</td><td>504</td></tr><tr><td>Blocked while reading body</td><td>≈20 ms (body)</td><td>≈1,010 ms</td><td>200 possible</td></tr></tbody></table></div><p style="margin-top:12px">These are illustrative timings. Server response time and client-observed latency differ when the client loop cannot run. In the PoC, the client application catches <code>TimeoutError</code> and returns HTTP 504.</p></div></details>
 <details class="reference"><summary>Timing &amp; scheduling assumptions</summary><div class="detail-body">
 <p>The proxy request and CPU request are two distinct incoming requests handled by the same client worker. The proxy calls the downstream server; the CPU request runs synchronous work. Both are in progress concurrently in the blocked cases, but at most one request coroutine executes on the thread at a time. The normal and slow-server controls omit the CPU request.</p>
@@ -428,7 +366,7 @@ kbd { font:11px var(--tool-mono); padding:1px 4px; border:1px solid var(--tool-b
 <p>This is an explanatory simulation, not an instrumented dump of Python’s ready queue. The two request rows show coroutine state. The Ready queue contains work eligible for selection, and Executing now is the one shared thread. A request becomes Ready when its awaited operation completes (or cancellation wakes it), then Running when its resume callback is selected. The queue is a schematic selection trace, not a recording of CPython’s internal FIFO queue or every transport callback. Socket readiness and an overdue deadline are shown outside the queue while CPU work prevents the loop from collecting them. The late-success scenario illustrates an outcome; its I/O and timeout micro-ordering is not established by the PoC logs.</p>
 <p>Times are approximate and small gaps make the handoffs inspectable. Ready is an inert state before either request arrives. Admission, callback selection, and the first send are separate events at approximately 0 ms. Seeking to 0 or restarting returns to Ready. Some consecutive steps share the same rounded timestamp: handling a timeout and returning HTTP 504 occur around the same millisecond. Guided playback holds every step, including these, while compressing long waits. The elapsed-time slider remains linear and ends at the last event in each case.</p>
 <p>In the body-reading case, the displayed late success is only one possible ordering. Receiving headers does not disable <code>aiohttp.ClientTimeout(total=0.5)</code>. Body processing, buffering, timer cleanup and cancellation can produce a different outcome. The 500 ms timeout is below aiohttp’s default rounding threshold.</p>
-<p>Moving packets illustrate the direction of a transfer, not measured transit time or TCP segment boundaries. A packet reaching the OS buffer is distinct from Python reading it; no read animation crosses the occupied loop while CPU work runs.</p>
+<p>The labelled work token moves from the ready queue to the single execution slot when selected. Request identity colours stay consistent across the request rows and queue. The lower wall-clock trace is linear; the walkthrough holds important events and compresses waits. Moving network packets illustrate the direction of a transfer, not measured transit time or TCP segment boundaries. A packet reaching the OS buffer is distinct from Python reading it; no read animation crosses the occupied loop while CPU work runs.</p>
 <p>The client and server are independent services, potentially different Kubernetes services or deployments in entirely different infrastructure. The client-side boundary includes its Python worker, its timeout, and its host operating system’s receive buffer; the buffer is outside Python, not part of the downstream server. The OS can receive TCP data while the client’s Python thread is occupied; buffer states here are illustrative, since the PoC logs sends rather than kernel occupancy. Connection pooling reuses transports and does not create independent execution threads.</p>
 </div></details>
 <details class="reference"><summary>Local PoC verification · 25 October 2026</summary><div class="detail-body">
@@ -586,33 +524,50 @@ function announce(){$('announcement').textContent=`${fmt(time)} milliseconds. ${
 function chooseStep(i,notify=true){index=Math.max(0,Math.min(steps().length-1,i));time=current().time;render();if(notify)announce();}
 function seek(t){time=Math.max(0,Math.min(end(),t));index=0;steps().forEach((s,i)=>{if(time>0&&s.time<=time)index=i;});render();announce();}
 function selectCase(id){stop();transferKey='';selected=id;index=0;time=0;document.querySelectorAll('[data-case]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===id)));$('scrub').max=end();$('time').max=end();$('duration').textContent='/ '+fmt(end())+' ms';buildSteps();render();announce();}
+const svgNS='http://www.w3.org/2000/svg';
+function svgNode(tag,attrs={},value){const node=document.createElementNS(svgNS,tag);for(const [key,v] of Object.entries(attrs))node.setAttribute(key,v);if(value!==undefined)node.textContent=value;return node;}
 function buildSteps(){
- $('steps').replaceChildren();
- steps().forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='step';b.dataset.step=i;const clock=document.createElement('time');clock.textContent='≈'+fmt(s.time)+' ms';b.append(clock,document.createTextNode(s.label));b.addEventListener('click',()=>{stop();chooseStep(i);});$('steps').append(b);});
+ $('steps').replaceChildren(...steps().map((s,i)=>{const option=document.createElement('option');option.value=i;option.dataset.step=i;option.textContent=`${s.label} · ≈${fmt(s.time)} ms`;return option;}));
+ buildTimeline();
 }
 function text(id,value){$(id).textContent=value;}
-function row(prefix,state,execution){text(prefix+'-action',state[0]);text(prefix+'-code',state[1]);text(prefix+'-status',state[2]);$(prefix+'-row').dataset.running=String(execution===prefix);$(prefix+'-row').dataset.state=state[2];}
-function card(prefix,state,title,note){$(prefix+'-card').dataset.state=state;text(prefix+'-state',title);text(prefix+'-note',note);}
+function wrapped(id,value,maxChars=23,lineHeight=24){const node=$(id),x=node.getAttribute('x');const lines=[];let line='';for(const word of value.split(' ')){if(line&&line.length+word.length+1>maxChars){lines.push(line);line=word;}else line+=(line?' ':'')+word;}if(line)lines.push(line);node.replaceChildren(...lines.map((value,i)=>svgNode('tspan',{x,dy:i?lineHeight:0},value)));}
+function row(prefix,state,execution){text(prefix+'-action',state[0]);text(prefix+'-code',state[1]);text(prefix+'-status',state[2]);$(prefix+'-row').dataset.running=String(execution===prefix);$(prefix+'-row').dataset.state=state[2];$(prefix+'-row').querySelectorAll('[data-state]').forEach(node=>node.dataset.active=String(node.dataset.state===state[2]));}
+function card(prefix,state,title,note){$(prefix+'-card').dataset.state=state;if(prefix==='server')wrapped(prefix+'-state',title,19);else text(prefix+'-state',title);text(prefix+'-note',note);}
+function buildTimeline(){
+ const nodes=[],x=t=>20+1160*t/end();
+ nodes.push(svgNode('line',{class:'clock-line',x1:20,x2:1180,y1:38,y2:38}));
+ const start=steps().find(s=>s.cpu==='running'),finish=steps().find(s=>s.cpu==='done');
+ if(start&&finish){nodes.push(svgNode('rect',{class:'cpu-time',x:x(start.time),y:25,width:x(finish.time)-x(start.time),height:26,rx:4}));nodes.push(svgNode('rect',{id:'cpu-history',class:'cpu-history',x:x(start.time),y:25,width:0,height:26,rx:4}));nodes.push(svgNode('text',{class:'cpu-label',x:(x(start.time)+x(finish.time))/2,y:42,'text-anchor':'middle'},'CPU request owns the only thread'));}
+ const serverTime=selected==='slow'?700:20;
+ nodes.push(svgNode('line',{class:'response-mark',x1:x(serverTime),x2:x(serverTime),y1:8,y2:55}));
+ nodes.push(svgNode('text',{x:x(serverTime)+(serverTime/end()>.8?-6:6),y:17,'text-anchor':serverTime/end()>.8?'end':'start'},`Server ${serverTime} ms`));
+ if(end()>=500){nodes.push(svgNode('line',{class:'deadline-mark',x1:x(500),x2:x(500),y1:8,y2:55}));nodes.push(svgNode('text',{x:x(500)+6,y:17},'Deadline 500 ms'));}
+ nodes.push(svgNode('text',{x:20,y:68},'0'));nodes.push(svgNode('text',{x:1180,y:68,'text-anchor':'end'},`${fmt(end())} ms`));
+ $('time-marks').replaceChildren(...nodes);
+}
 function render(){
  const s=current(),two=cases[selected].two;
  text('headline',s.title);
  $('client').dataset.owner=s.exec||'idle';
  const inFlight=Number(!['pending','success','failed'].includes(s.proxy))+Number(!['pending','absent','done'].includes(s.cpu));
- text('concurrency',!s.started?(two?'Two distinct incoming requests will share this worker':'One incoming request in this control'):two?`Two distinct incoming requests · ${inFlight} still in progress`:'Control case · only the proxy request');
+ text('concurrency',!s.started?(two?'One Python worker · two incoming requests':'One incoming request in this control'):two?`One Python worker · ${inFlight} requests in progress`:'Control case · only the proxy request');
  row('proxy',proxyStates[s.proxy],s.exec);row('cpu',cpuStates[s.cpu],s.exec);
  $('cpu-row').dataset.present=String(two);
  $('execution-slot').dataset.kind=s.exec||'idle';
  text('executing',s.exec?workNames[s.exec]:'Thread free');
- text('execution-detail',s.exec==='cpu'?(s.cpu==='arming'?'Runs until its trigger await suspends.':'Synchronous CPU work. Nothing else can execute here.'):s.exec==='proxy'?'The selected callback advances the proxy coroutine until it yields or returns.':s.exec==='io'?'Socket I/O runs here; the waiting request is not executing.':s.exec==='timeout'?'Timeout cancellation runs here; the waiting request is not executing.':s.queue.length?'The next queued callback can take this slot.':'No callback is executing.');
+ text('execution-detail',s.exec==='cpu'?(s.cpu==='arming'?'Setting up its await.':'Synchronous work · cannot yield'):s.exec==='proxy'?'Advances the proxy coroutine':s.exec==='io'?'Completes the waiting I/O operation':s.exec==='timeout'?'Cancels the awaited operation':s.queue.length?'Ready work can be selected.':'No work is executing.');
  const queueKey=s.queue.join(',');
- if($('ready-queue').dataset.items!==queueKey){$('ready-queue').dataset.items=queueKey;$('ready-queue').replaceChildren(...s.queue.map(kind=>{const li=document.createElement('li');li.dataset.kind=kind;li.textContent=workNames[kind];return li;}));}
- text('queue-note',s.queue.length?'Ready to run ≠ executing.':s.exec==='cpu'&&s.cpu==='running'?'Empty. The occupied loop cannot collect pending I/O or timers.':'Empty');
- text('handoff',s.flow);
- if(s.server==='idle')card('server','idle','Waiting for a request','No HTTP call has arrived.');
- else if(s.server==='working')card('server','idle','Processing request',selected==='slow'?'Needs ≈700 ms':'Responds at ≈20 ms');
+ if($('ready-queue').dataset.items!==queueKey){$('ready-queue').dataset.items=queueKey;$('ready-queue').replaceChildren(...s.queue.map((kind,i)=>{const g=svgNode('g',{class:'queue-token','data-kind':kind,role:'listitem'});g.append(svgNode('rect',{x:48,y:299+i*37,width:268,height:31,rx:6}),svgNode('text',{x:61,y:319+i*37},workNames[kind]));return g;}));}
+ text('queue-note',s.queue.length?'Ready ≠ running':s.exec==='cpu'&&s.cpu==='running'?'I/O and timers cannot be collected.':'Queue empty');
+ const cpuStart=steps().find(step=>step.cpu==='running'),cpuEnd=steps().find(step=>step.cpu==='done');
+ $('cpu-progress').setAttribute('width',s.cpu==='running'?358*Math.max(0,Math.min(1,(time-cpuStart.time)/(cpuEnd.time-cpuStart.time))):0);
+ text('handoff',s.flow);text('current-code',s.exec==='proxy'?proxyStates[s.proxy][1]:s.exec==='cpu'?cpuStates[s.cpu][1]:s.exec==='io'?'# Socket callback resolves the awaited operation':s.exec==='timeout'?'# Timeout callback requests cancellation':'# No callback is executing');
+ if(s.server==='idle')card('server','idle','Waiting for a request','No request received');
+ else if(s.server==='working')card('server','idle','Processing request',selected==='slow'?'Responds at ≈700 ms':'Responds at ≈20 ms');
  else if(s.server==='headers')card('server','idle','Headers sent','Body follows at ≈20 ms');
- else card('server','done',s.server==='body'?'Body sent':'Response sent',`At ≈${selected==='slow'?'700':'20'} ms · independent of the client loop`);
- const buffer={headers:['ready','Header bytes waiting','The proxy still awaits Python processing of these bytes.'],empty:['idle','No response body yet','Network data can arrive while Python is occupied.'],ready:['ready',selected==='body'?'Body bytes waiting':'Response bytes waiting',s.exec==='cpu'?'CPU request prevents Python from reading.':'The loop can process the available bytes.'],consumed:['done','Response read','The proxy can continue.'],unused:['idle','Response unused','The timeout path cancelled the operation.'],late:['idle','Client already cancelled','The late response cannot revive the proxy request.']}[s.buffer];
+ else card('server','done',s.server==='body'?'Body sent':'Response sent',`Sent at ≈${selected==='slow'?'700':'20'} ms`);
+ const buffer={headers:['ready','Headers waiting','The proxy still awaits Python processing of these bytes.'],empty:['idle','Empty','Network data can arrive while Python is occupied.'],ready:['ready',selected==='body'?'Body waiting':'Response waiting',s.exec==='cpu'?'CPU request prevents Python from reading.':'The loop can process the available bytes.'],consumed:['done','Response read','The proxy can continue.'],unused:['idle','Response unused','The timeout path cancelled the operation.'],late:['idle','Operation cancelled','The late response cannot revive the proxy request.']}[s.buffer];
  card('buffer',...buffer);
  const timer={off:['idle','Not armed','Starts when the proxy sends its HTTP call.'],armed:['idle',fmt(Math.max(0,500-time))+' ms until deadline','The monotonic clock keeps advancing.'],overdue:['overdue','Deadline passed',fmt(Math.max(0,time-500))+' ms overdue · callback cannot run'],handling:['overdue','Timeout callback runs','The event-loop thread is available.'],raised:['overdue','Timeout delivered','The proxy receives TimeoutError.'],cleared:['done','Timer cancelled','The proxy finished before the deadline.'],resolving:['overdue','Deadline overdue','This possible path completes before effective cancellation.'],lost:['done','No effective cancellation','One possible outcome; not guaranteed.']}[s.timer];
  card('timer',...timer);
@@ -620,12 +575,14 @@ function render(){
  text('caveat',s.possible?'This late-success path depends on scheduling and HTTP state. Headers do not disable the total timeout.':'');
  $('scrub').value=time;$('scrub').setAttribute('aria-valuetext',fmt(time)+' milliseconds');$('time').value=Math.round(time);$('time').removeAttribute('aria-invalid');text('time-error','');
  $('back').disabled=index===0;$('next').disabled=index===steps().length-1;
- [...$('steps').children].forEach((b,i)=>b.setAttribute('aria-current',i===index?'step':'false'));
+ $('steps').value=String(index);text('event-count',`${index+1} / ${steps().length} events`);
+ const history=$('cpu-history');if(history){const a=steps().find(s=>s.cpu==='running').time,b=steps().find(s=>s.cpu==='done').time;history.setAttribute('width',1160*Math.max(0,Math.min(time,b)-a)/end());}
+ const cursorX=20+1160*time/end();$('time-cursor').setAttribute('x1',cursorX);$('time-cursor').setAttribute('x2',cursorX);
  updatePlay();
  updateTransfers();
 }
 
-function stopTransfers(){cancelAnimationFrame(flightRAF);flights=[];['request','response','read'].forEach(name=>$(name+'-packet').setAttribute('visibility','hidden'));}
+function stopTransfers(){cancelAnimationFrame(flightRAF);flights=[];['request','response','read','dispatch'].forEach(name=>$(name+'-packet').setAttribute('visibility','hidden'));}
 function positionPacket(name,fraction){
  const path=$(name+'-wire'),packet=$(name+'-packet');
  if(!geometryReady||typeof path.getTotalLength!=='function')return false;
@@ -642,46 +599,13 @@ function fly(plans){
    const elapsed=stamp-f.started-f.delay;
    if(elapsed<0){unfinished=true;return;}
    const fraction=Math.min(1,elapsed/f.duration);positionPacket(f.name,fraction);
-   if(fraction<1)unfinished=true;
+   if(fraction<1)unfinished=true;else if(f.name==='dispatch')$('dispatch-packet').setAttribute('visibility','hidden');
   });
   if(unfinished)flightRAF=requestAnimationFrame(advance);else flights=[];
  }
  flightRAF=requestAnimationFrame(advance);
 }
-function layoutTransfers(){
- const root=$('stage').getBoundingClientRect();geometryReady=root.width>0&&root.height>0;
- if(!geometryReady)return;
- const box=id=>{const r=$(id).getBoundingClientRect();return {left:r.left-root.left,right:r.right-root.left,top:r.top-root.top,bottom:r.bottom-root.top,width:r.width,height:r.height};};
- const client=box('client-service'),worker=box('client'),proxy=box('proxy-row'),server=box('server-card'),service=box('server-service'),buffer=box('buffer-card'),execution=box('execution-slot');
- const stacked=service.top>=client.bottom-1;
- $('wires').setAttribute('viewBox',`0 0 ${root.width} ${root.height}`);
- let request,response,requestLabel,responseLabel,networkLabel;
- const bx=execution.left+execution.width*.5,readEnd=execution.bottom;
- const read=`M${bx} ${buffer.top}V${readEnd}`;
- const readLabel=[bx-10,(buffer.top+readEnd)/2+4,'end'];
- const gate=`M${bx-10} ${readEnd+8}h20M${bx-10} ${readEnd+15}h20`;
- if(!stacked){
-  const startY=proxy.top+proxy.height/2,finishY=server.top+server.height*.3;
-  const gapX=client.right+(service.left-client.right)*.4,backX=client.right+(service.left-client.right)*.7;
-  request=`M${proxy.right} ${startY}H${gapX}V${finishY}H${server.left}`;
-  const returnY=server.top+server.height*.75,bufferY=buffer.top+buffer.height*.5;
-  response=`M${server.left} ${returnY}H${backX}V${bufferY}H${buffer.right}`;
-  requestLabel=[(client.right+service.left)/2,finishY-12,'middle'];
-  responseLabel=[(client.right+service.left)/2,bufferY-12,'middle'];
-  networkLabel=[(client.right+service.left)/2,29,'middle'];
- }else{
-  const requestX=client.left+client.width*.24,responseX=buffer.left+buffer.width*.75,midY=(client.bottom+service.top)/2;
-  // Ports attach at the service boundary on narrow screens; response terminates in the client's buffer.
-  request=`M${requestX} ${client.bottom}V${service.top}`;
-  response=`M${responseX} ${service.top}V${buffer.bottom}`;
-  requestLabel=[requestX+9,midY+22,'start'];
-  responseLabel=[responseX-9,midY-18,'end'];
-  networkLabel=[client.left+client.width/2,midY+3,'middle'];
- }
- for(const [name,path] of [['request',request],['response',response],['read',read]])$(name+'-wire').setAttribute('d',path);
- for(const [name,point] of [['request-wire',requestLabel],['response-wire',responseLabel],['read-wire',readLabel],['network',networkLabel]]){const label=$(name+'-label');label.setAttribute('x',point[0]);label.setAttribute('y',point[1]);label.setAttribute('text-anchor',point[2]);}
- $('read-gate').setAttribute('d',gate);
-}
+function layoutTransfers(){geometryReady=typeof $('request-wire').getTotalLength==='function';}
 function updateTransfers(){
  const s=current(),key=selected+':'+index;
  const cancelled=['unused','late'].includes(s.buffer)||s.proxy==='failed';
@@ -691,7 +615,7 @@ function updateTransfers(){
  $('wires').dataset.ready=String(!s.started);
  $('wires').dataset.read=readState;$('wires').dataset.response=s.buffer==='late'?'late':'normal';
  $('wires').dataset.transfer=s.transfer||'none';
- text('read-wire-label',!s.started?'Read into Python':cancelled?'Cancelled':blocked?'Loop occupied':reading?'Process I/O':'Awaiting I/O');
+ text('read-wire-label',!s.started?'Read into Python':cancelled?'Cancelled':blocked?'Thread occupied':reading?'Process I/O':s.buffer==='consumed'?'Read complete':'Awaiting I/O');
  text('response-wire-label',s.buffer==='late'?'Too late':s.buffer==='headers'?'Headers':selected==='body'?'Body bytes':'Response bytes');
  $('read-wire').setAttribute('marker-end',blocked||cancelled?'':'url(#read-tip)');
  $('read-gate').setAttribute('visibility',blocked||cancelled?'visible':'hidden');
@@ -699,7 +623,11 @@ function updateTransfers(){
  text('wire-description',!s.started?'Two independent services connected by a network. No HTTP request sent.':`The proxy sends an HTTP request to the independent server. Responses reach the client OS buffer. ${blocked?'CPU work occupies the only thread; the proxy stays Waiting.':reading?'Process response I/O is executing on the shared thread. The proxy stays Waiting until its awaited operation completes.':cancelled?'The operation was cancelled.':'Bytes arriving and a request becoming Ready are distinct events.'}`);
  if(key===transferKey)return;
  transferKey=key;layoutTransfers();
- fly(s.transfer?[{name:s.transfer,duration:850,delay:0}]:[]);
+ const previous=index?steps()[index-1]:null,dispatch=s.exec&&previous&&previous.exec!==s.exec&&previous.queue.includes(s.exec);
+ const plans=[];
+ if(dispatch){const position=previous.queue.indexOf(s.exec);$('dispatch-wire').setAttribute('d',`M182 ${314+position*37}C350 ${314+position*37} 390 336 628 336`);text('dispatch-label',workNames[s.exec]);$('dispatch-packet').dataset.kind=s.exec;plans.push({name:'dispatch',duration:650,delay:0});}
+ if(s.transfer)plans.push({name:s.transfer,duration:850,delay:dispatch?500:0});
+ fly(plans);
 }
 
 function tick(stamp){
@@ -726,6 +654,7 @@ document.addEventListener('keydown',event=>{
 $('next').addEventListener('click',()=>{stop();chooseStep(index+1);});
 $('back').addEventListener('click',()=>{stop();chooseStep(index-1);});
 $('restart').addEventListener('click',()=>{stop();chooseStep(0);});
+$('steps').addEventListener('change',e=>{stop();chooseStep(Number(e.target.value));});
 $('scrub').addEventListener('input',e=>{stop();seek(Number(e.target.value));});
 $('time').addEventListener('input',e=>{stop();const v=e.target.value,n=Number(v);if(v.trim()===''||!Number.isInteger(n)||n<0||n>end()){e.target.setAttribute('aria-invalid','true');text('time-error',`Enter a whole number from 0 to ${fmt(end())} ms. The scene stays at its previous time.`);return;}seek(n);});
 $('focus').addEventListener('click',()=>{const focused=document.body.classList.toggle('focus-view');$('focus').setAttribute('aria-pressed',String(focused));text('focus',focused?'Exit focus view':'Focus view');layoutTransfers();});
