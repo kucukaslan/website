@@ -319,6 +319,21 @@ body.focus-view .tool-masthead,body.focus-view .tool-header,body.focus-view .ref
 body.focus-view .cases { margin-top:12px; }
 .phone-hint { display:none; font-size:11px; color:var(--tool-muted); }
 @media(max-width:720px) { .tool-header p,.pace { display:none; } .cases { display:grid; grid-template-columns:1fr 1fr; } .chapter { align-items:start; } .chapter h2 { font-size:19px; } .phone-hint { display:block; } .timeline-top { flex-wrap:wrap; gap:5px; } .timeline-top label { margin-left:0; } .event-nav { flex-wrap:wrap; } }
+
+.scene .await-loop { fill:none; stroke:var(--tool-muted); stroke-width:1.5; opacity:.55; }
+.scene .await-caption { font-size:10px; fill:var(--tool-muted); paint-order:stroke; stroke:var(--tool-surface); stroke-width:4; }
+.scene .request-row[data-present=false] .await-loop,.scene .request-row[data-present=false] .await-caption { visibility:hidden; }
+.scene .causal-path { fill:none; stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.scene #wake-path,.scene #enqueue-path { stroke:var(--proxy); }
+.scene #causal-links[data-request=cpu] #wake-path,.scene #causal-links[data-request=cpu] #enqueue-path { stroke:var(--cpu); }
+.scene .cause-label { font-size:11px; font-weight:600; fill:var(--tool-text); paint-order:stroke; stroke:var(--tool-panel); stroke-width:5; }
+.scene #cause-packet { fill:var(--proxy); stroke:var(--tool-panel); stroke-width:2; }
+.scene #cause-packet[data-kind=cpu] { fill:var(--cpu); }
+.scene .timeout-route { fill:none; stroke:var(--timeout); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.scene #timeout-route[data-blocked=true] .timeout-route { stroke-dasharray:4 4; }
+.scene #timeout-label { fill:var(--timeout); font-size:11px; paint-order:stroke; stroke:var(--tool-panel); stroke-width:4; }
+.scene #timeout-gate { stroke:var(--timeout); stroke-width:3; }
+.scene #timeout-packet { fill:var(--timeout); stroke:var(--tool-panel); stroke-width:2; }
 </style>
 </head>
 <body class="tool-page"><a class="tool-skip" href="#tool-content">Skip to tool</a>
@@ -336,7 +351,7 @@ body.focus-view .cases { margin-top:12px; }
 <defs><marker id="request-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" class="request-fill"/></marker><marker id="response-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" class="response-fill"/></marker><marker id="read-tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" class="read-fill"/></marker></defs>
 <g id="client-service" role="group" aria-label="Client service and its host"><rect class="zone" x="12" y="12" width="818" height="486" rx="12"/><text class="zone-title" x="32" y="43">Client service</text><text class="muted" id="concurrency" x="32" y="65"/>
 <g id="client" role="group" aria-label="One Python worker">
-<g class="request-row proxy" id="proxy-row" role="group" aria-labelledby="proxy-name proxy-status proxy-action"><desc id="proxy-status"/><desc id="proxy-action"/><desc id="proxy-code"/><rect class="row-bg" x="32" y="84" width="778" height="62" rx="8"/><path class="identity-line" d="M43 98v34"/><text id="proxy-name" class="identity" x="56" y="111">Proxy request</text><text class="endpoint" x="56" y="130">GET /proxy</text><path class="state-link" d="M272 115H766"/><g class="state-node" data-state="Waiting"><rect x="262" y="99" width="102" height="32" rx="16"/><text x="313" y="120" text-anchor="middle">Waiting</text></g><g class="state-node" data-state="Ready"><rect x="399" y="99" width="102" height="32" rx="16"/><text x="450" y="120" text-anchor="middle">Ready</text></g><g class="state-node" data-state="Running"><rect x="536" y="99" width="102" height="32" rx="16"/><text x="587" y="120" text-anchor="middle">Running</text></g><g class="state-node" data-state="Done"><rect x="673" y="99" width="102" height="32" rx="16"/><text x="724" y="120" text-anchor="middle">Done</text></g></g><g class="request-row cpu" id="cpu-row" role="group" aria-labelledby="cpu-name cpu-status cpu-action"><desc id="cpu-status"/><desc id="cpu-action"/><desc id="cpu-code"/><rect class="row-bg" x="32" y="158" width="778" height="62" rx="8"/><path class="identity-line" d="M43 172v34"/><text id="cpu-name" class="identity" x="56" y="185">CPU request</text><text class="endpoint" x="56" y="204">GET /block</text><path class="state-link" d="M272 189H766"/><g class="state-node" data-state="Waiting"><rect x="262" y="173" width="102" height="32" rx="16"/><text x="313" y="194" text-anchor="middle">Waiting</text></g><g class="state-node" data-state="Ready"><rect x="399" y="173" width="102" height="32" rx="16"/><text x="450" y="194" text-anchor="middle">Ready</text></g><g class="state-node" data-state="Running"><rect x="536" y="173" width="102" height="32" rx="16"/><text x="587" y="194" text-anchor="middle">Running</text></g><g class="state-node" data-state="Done"><rect x="673" y="173" width="102" height="32" rx="16"/><text x="724" y="194" text-anchor="middle">Done</text></g></g>
+<g class="request-row proxy" id="proxy-row" role="group" aria-labelledby="proxy-name proxy-status proxy-action"><desc id="proxy-status"/><desc id="proxy-action"/><desc id="proxy-code"/><rect class="row-bg" x="32" y="84" width="778" height="62" rx="8"/><path class="identity-line" d="M43 98v34"/><text id="proxy-name" class="identity" x="56" y="111">Proxy request</text><text class="endpoint" x="56" y="130">GET /proxy</text><path class="state-link" d="M272 115H766"/><g class="state-node" data-state="Waiting"><rect x="262" y="99" width="102" height="32" rx="16"/><text x="313" y="120" text-anchor="middle">Waiting</text></g><g class="state-node" data-state="Ready"><rect x="399" y="99" width="102" height="32" rx="16"/><text x="450" y="120" text-anchor="middle">Ready</text></g><g class="state-node" data-state="Running"><rect x="536" y="99" width="102" height="32" rx="16"/><text x="587" y="120" text-anchor="middle">Running</text></g><g class="state-node" data-state="Done"><rect x="673" y="99" width="102" height="32" rx="16"/><text x="724" y="120" text-anchor="middle">Done</text></g><path class="await-loop" d="M587 131V144H313V132m-4 5 4-5 4 5"/><text class="await-caption" x="450" y="146" text-anchor="middle">await suspends</text></g><g class="request-row cpu" id="cpu-row" role="group" aria-labelledby="cpu-name cpu-status cpu-action"><desc id="cpu-status"/><desc id="cpu-action"/><desc id="cpu-code"/><rect class="row-bg" x="32" y="158" width="778" height="62" rx="8"/><path class="identity-line" d="M43 172v34"/><text id="cpu-name" class="identity" x="56" y="185">CPU request</text><text class="endpoint" x="56" y="204">GET /block</text><path class="state-link" d="M272 189H766"/><g class="state-node" data-state="Waiting"><rect x="262" y="173" width="102" height="32" rx="16"/><text x="313" y="194" text-anchor="middle">Waiting</text></g><g class="state-node" data-state="Ready"><rect x="399" y="173" width="102" height="32" rx="16"/><text x="450" y="194" text-anchor="middle">Ready</text></g><g class="state-node" data-state="Running"><rect x="536" y="173" width="102" height="32" rx="16"/><text x="587" y="194" text-anchor="middle">Running</text></g><g class="state-node" data-state="Done"><rect x="673" y="173" width="102" height="32" rx="16"/><text x="724" y="194" text-anchor="middle">Done</text></g><path class="await-loop" d="M587 205V218H313V206m-4 5 4-5 4 5"/><text class="await-caption" x="450" y="220" text-anchor="middle">await suspends</text></g>
 <text class="section-label" x="32" y="260">EVENT LOOP</text><path class="thread-rail" d="M130 256H810"/>
 <text class="section-label" x="48" y="286">READY QUEUE</text><g id="ready-queue" role="list" aria-label="Work ready for selection"/><text id="queue-note" class="muted" x="48" y="388"/>
 <path id="dispatch-wire" class="dispatch-path" d="M185 334H625" opacity="0"/><path class="dispatch-path" d="M338 337H430m-7-6 7 6-7 6"/><text class="muted" x="383" y="321" text-anchor="middle">select</text>
@@ -353,6 +368,11 @@ body.focus-view .cases { margin-top:12px; }
 <path id="read-wire" class="wire read-wire" d="M660 426V378" marker-end="url(#read-tip)"/><text id="read-wire-label" class="wire-label read-label" x="649" y="406" text-anchor="end"/><path id="read-gate" class="read-gate" d="M650 386H670M650 393H670" visibility="hidden"/>
 <g id="request-packet" class="wire-packet" visibility="hidden"><rect x="-18" y="-11" width="36" height="22" rx="4" class="request-fill"/><text y="4" text-anchor="middle">GET</text></g><g id="response-packet" class="wire-packet" visibility="hidden"><rect x="-12" y="-8" width="24" height="16" rx="3" class="response-fill"/><path d="M-6-3H6M-6 2H6" class="packet-lines"/></g><g id="read-packet" class="wire-packet" visibility="hidden"><rect x="-12" y="-8" width="24" height="16" rx="3" class="read-fill"/><path d="M-6-3H6M-6 2H6" class="packet-lines"/></g>
 </g>
+<g id="causal-links" visibility="hidden" aria-hidden="true"><path id="wake-path" class="causal-path"/><path id="enqueue-path" class="causal-path"/><text id="wake-label" class="cause-label" x="660" y="78" text-anchor="middle"/></g>
+<path id="cause-wire" fill="none" stroke="none"/>
+<circle id="cause-packet" r="5" visibility="hidden" aria-hidden="true"/>
+<g id="timeout-route" visibility="hidden"><path id="timeout-wire" class="timeout-route" d="M32 455H24V314H48"/><path id="timeout-gate" d="M17 398H31M17 405H31" visibility="hidden"/><text id="timeout-label" x="48" y="412"/></g>
+<circle id="timeout-packet" r="5" visibility="hidden" aria-hidden="true"/>
 <g id="dispatch-packet" visibility="hidden" aria-hidden="true"><rect x="-110" y="-16" width="220" height="32" rx="6"/><text id="dispatch-label" y="4" text-anchor="middle"/></g>
 </svg></div>
 <div class="timeline"><div class="timeline-top"><strong>Wall-clock time</strong><span>Linear scale · cursor marks now.</span><label for="time">Elapsed</label><input id="time" type="number" value="0" min="0" max="1001" step="1" aria-describedby="time-error"><span id="duration">/ 1,001 ms</span></div><svg xmlns="http://www.w3.org/2000/svg" class="wall-clock" id="wall-clock" viewBox="0 0 1200 72" role="img" aria-label="Linear wall-clock trace"><g id="time-marks"/><line class="cursor" id="time-cursor" x1="20" x2="20" y1="6" y2="66"/></svg><input type="range" id="scrub" min="0" max="1001" value="0" step="1" aria-label="Elapsed simulation time in milliseconds"><p class="error" id="time-error" role="alert"></p></div>
@@ -363,10 +383,10 @@ body.focus-view .cases { margin-top:12px; }
 <details class="reference"><summary>Timing &amp; scheduling assumptions</summary><div class="detail-body">
 <p>The proxy request and CPU request are two distinct incoming requests handled by the same client worker. The proxy calls the downstream server; the CPU request runs synchronous work. Both are in progress concurrently in the blocked cases, but at most one request coroutine executes on the thread at a time. The normal and slow-server controls omit the CPU request.</p>
 <p>An <code>await</code> that must wait suspends its coroutine. The loop can then run another task or a callback. While the CPU request runs <code>cpu_spin(1.0)</code> without yielding, neither the proxy coroutine nor I/O and timer callbacks can execute. A readable socket and an overdue timer do not themselves interrupt it.</p>
-<p>This is an explanatory simulation, not an instrumented dump of Python’s ready queue. The two request rows show coroutine state. The Ready queue contains work eligible for selection, and Executing now is the one shared thread. A request becomes Ready when its awaited operation completes (or cancellation wakes it), then Running when its resume callback is selected. The queue is a schematic selection trace, not a recording of CPython’s internal FIFO queue or every transport callback. Socket readiness and an overdue deadline are shown outside the queue while CPU work prevents the loop from collecting them. The late-success scenario illustrates an outcome; its I/O and timeout micro-ordering is not established by the PoC logs.</p>
+<p>This is an explanatory simulation, not an instrumented dump of Python’s ready queue. The two request rows show coroutine state. The Ready queue contains work eligible for selection, and Executing now is the one shared thread. A request becomes Ready when its awaited operation completes (or cancellation wakes it), then Running when its resume callback is selected. At the wake-up step, the I/O or timeout callback still occupies the thread while it queues the request’s resume. A Ready request therefore does not imply a free thread. The queue is a schematic selection trace, not a recording of CPython’s internal FIFO queue or every transport callback. Socket readiness and an overdue deadline are shown outside the queue while CPU work prevents the loop from collecting them. The late-success scenario illustrates an outcome; its I/O and timeout micro-ordering is not established by the PoC logs.</p>
 <p>Times are approximate and small gaps make the handoffs inspectable. Ready is an inert state before either request arrives. Admission, callback selection, and the first send are separate events at approximately 0 ms. Seeking to 0 or restarting returns to Ready. Some consecutive steps share the same rounded timestamp: handling a timeout and returning HTTP 504 occur around the same millisecond. Guided playback holds every step, including these, while compressing long waits. The elapsed-time slider remains linear and ends at the last event in each case.</p>
 <p>In the body-reading case, the displayed late success is only one possible ordering. Receiving headers does not disable <code>aiohttp.ClientTimeout(total=0.5)</code>. Body processing, buffering, timer cleanup and cancellation can produce a different outcome. The 500 ms timeout is below aiohttp’s default rounding threshold.</p>
-<p>The labelled work token moves from the ready queue to the single execution slot when selected. Request identity colours stay consistent across the request rows and queue. The lower wall-clock trace is linear; the walkthrough holds important events and compresses waits. Moving network packets illustrate the direction of a transfer, not measured transit time or TCP segment boundaries. A packet reaching the OS buffer is distinct from Python reading it; no read animation crosses the occupied loop while CPU work runs.</p>
+<p>A return arrow from Running to Waiting shows that awaiting can repeat. Temporary wake-up paths connect completed operations to the affected request and its queued resume; they depict causation, not another execution thread. The timeout path stops at a barrier while CPU work occupies the loop. The labelled work token moves from the ready queue to the single execution slot when selected. Request identity colours stay consistent across the request rows and queue. The lower wall-clock trace is linear; the walkthrough holds important events and compresses waits. Moving network packets illustrate the direction of a transfer, not measured transit time or TCP segment boundaries. A packet reaching the OS buffer is distinct from Python reading it; no read animation crosses the occupied loop while CPU work runs.</p>
 <p>The client and server are independent services, potentially different Kubernetes services or deployments in entirely different infrastructure. The client-side boundary includes its Python worker, its timeout, and its host operating system’s receive buffer; the buffer is outside Python, not part of the downstream server. The OS can receive TCP data while the client’s Python thread is occupied; buffer states here are illustrative, since the PoC logs sends rather than kernel occupancy. Connection pooling reuses transports and does not create independent execution threads.</p>
 </div></details>
 <details class="reference"><summary>Local PoC verification · 25 October 2026</summary><div class="detail-body">
@@ -451,7 +471,7 @@ const send={time:0,exec:'proxy',proxy:'send',queue:[],server:'working',timer:'ar
 const yieldHeaders={time:1,exec:null,proxy:'awaitHeaders',label:'Proxy waits',title:'The proxy awaits response headers and releases the thread.',flow:'Proxy: Running → Waiting. Awaiting I/O does not occupy the thread.'};
 const cpuReady={cpu:'ready',queue:['cpu'],label:'CPU request ready',title:'The trigger completes. The CPU request is ready, not running.',flow:'Trigger completes → CPU request: Waiting → Ready.'};
 const cpuRun={exec:'cpu',cpu:'running',queue:[],label:'CPU selected',title:'The thread selects the CPU request. Synchronous work takes over.',flow:'Resume CPU request leaves the queue → CPU request: Ready → Running.'};
-const timeoutReady={exec:null,proxy:'readyTimeout',queue:['proxy'],timer:'raised',buffer:'unused',label:'Proxy ready',title:'Cancellation wakes the proxy. It is ready to handle the error.',flow:'Await ends with cancellation → proxy: Waiting → Ready.'};
+const timeoutReady={exec:'timeout',proxy:'readyTimeout',queue:['proxy'],timer:'raised',buffer:'unused',label:'Proxy ready',title:'Cancellation wakes the proxy. It is ready to handle the error.',flow:'Await ends with cancellation → proxy: Waiting → Ready.'};
 const timeoutRun={exec:'proxy',proxy:'timeout',queue:[],label:'Proxy selected',title:'The thread selects the proxy to handle TimeoutError.',flow:'Resume proxy leaves the queue → proxy: Ready → Running.'};
 const failed={exec:null,proxy:'failed',queue:[],outcome:504,label:'Return 504',title:'The proxy returns HTTP 504 and releases the thread.',flow:'Proxy: Running → Done. The shared thread is free.'};
 const cases={
@@ -459,7 +479,7 @@ const cases={
   send,yieldHeaders,
   {time:20,server:'sent',buffer:'ready',queue:['io'],transfer:'response',label:'I/O ready',title:'Bytes arrive. Response I/O is ready; the proxy is still waiting.',flow:'Socket readable → Process response I/O enters the ready queue.'},
   {time:20,exec:'io',queue:[],transfer:'read',label:'Process I/O',title:'The shared thread processes response I/O.',flow:'Process response I/O leaves the queue → occupies the same thread.'},
-  {time:21,exec:null,proxy:'readyBody',buffer:'consumed',queue:['proxy'],label:'Proxy ready',title:'The awaited operation completes. The proxy becomes ready.',flow:'Response future completes → proxy: Waiting → Ready.'},
+  {time:21,exec:'io',proxy:'readyBody',buffer:'consumed',queue:['proxy'],label:'Proxy ready',title:'The awaited operation completes. The proxy becomes ready.',flow:'Response future completes → proxy: Waiting → Ready.'},
   {time:22,exec:'proxy',proxy:'read',queue:[],label:'Proxy selected',title:'The thread selects Resume proxy. Now the request is running.',flow:'Resume proxy leaves the queue → proxy: Ready → Running.'},
   {time:23,exec:null,proxy:'success',timer:'cleared',outcome:200,label:'Complete',title:'The proxy returns HTTP 200.',flow:'Proxy: Running → Done. Timeout cancelled.'}
  ]),
@@ -483,7 +503,7 @@ const cases={
   {...send,possible:true},yieldHeaders,
   {time:3,server:'headers',buffer:'headers',queue:['io'],transfer:'response',label:'Headers arrive',title:'Headers arrive. The proxy still waits for response I/O.',flow:'Headers in the receive buffer → Process response I/O becomes ready.'},
   {time:4,exec:'io',queue:[],transfer:'read',label:'Process headers',title:'The shared thread processes response headers.',flow:'Process response I/O occupies the thread; neither request is Running.'},
-  {time:5,exec:null,proxy:'readyHeaders',buffer:'empty',queue:['proxy'],label:'Proxy ready',title:'Headers are available to Python. The proxy becomes ready.',flow:'Header await completes → proxy: Waiting → Ready.'},
+  {time:5,exec:'io',proxy:'readyHeaders',buffer:'empty',queue:['proxy'],label:'Proxy ready',title:'Headers are available to Python. The proxy becomes ready.',flow:'Header await completes → proxy: Waiting → Ready.'},
   {time:5,exec:'proxy',proxy:'headers',queue:[],label:'Proxy selected',title:'The thread selects the proxy to continue after headers.',flow:'Resume proxy leaves the queue → proxy: Ready → Running.'},
   {...cpuReady,time:5},
   {time:6,exec:null,proxy:'awaitBody',label:'Await body',title:'The proxy awaits the body. The CPU request is ready.',flow:'Proxy: Running → Waiting. Resume CPU request can now be selected.'},
@@ -492,7 +512,7 @@ const cases={
   {time:500,timer:'overdue',label:'Deadline passes',title:'The deadline passes while synchronous CPU work continues.',flow:'An overdue deadline cannot preempt the running callback.'},
   {time:1006,exec:null,cpu:'done',queue:['io'],timer:'resolving',label:'Thread released',title:'CPU work ends. This possible path processes body I/O first.',flow:'CPU request: Running → Done. This is an illustrative selection order, not a measured queue trace.'},
   {time:1006,exec:'io',queue:[],transfer:'read',label:'Process body',title:'Body I/O executes on the same shared thread.',flow:'Process response I/O is selected. Proxy remains Waiting until its await completes.'},
-  {time:1007,exec:null,proxy:'readyBody',buffer:'consumed',queue:['proxy'],label:'Proxy ready',title:'The body await completes. The proxy becomes ready.',flow:'Body future completes → proxy: Waiting → Ready. Effective timeout cancellation has not won on this path.'},
+  {time:1007,exec:'io',proxy:'readyBody',buffer:'consumed',queue:['proxy'],label:'Proxy ready',title:'The body await completes. The proxy becomes ready.',flow:'Body future completes → proxy: Waiting → Ready. Effective timeout cancellation has not won on this path.'},
   {time:1008,exec:'proxy',proxy:'read',queue:[],timer:'lost',label:'Proxy selected',title:'On this possible path, Resume proxy runs before effective cancellation.',flow:'Resume proxy is selected → proxy: Ready → Running.'},
   {time:1010,exec:null,proxy:'success',outcome:200,label:'Complete',title:'Possible outcome: HTTP 200 after the deadline.',flow:'Proxy: Running → Done. This late-success ordering is not guaranteed.'}
  ])
@@ -582,7 +602,7 @@ function render(){
  updateTransfers();
 }
 
-function stopTransfers(){cancelAnimationFrame(flightRAF);flights=[];['request','response','read','dispatch'].forEach(name=>$(name+'-packet').setAttribute('visibility','hidden'));}
+function stopTransfers(){cancelAnimationFrame(flightRAF);flights=[];['request','response','read','dispatch','cause','timeout'].forEach(name=>$(name+'-packet').setAttribute('visibility','hidden'));}
 function positionPacket(name,fraction){
  const path=$(name+'-wire'),packet=$(name+'-packet');
  if(!geometryReady||typeof path.getTotalLength!=='function')return false;
@@ -599,7 +619,7 @@ function fly(plans){
    const elapsed=stamp-f.started-f.delay;
    if(elapsed<0){unfinished=true;return;}
    const fraction=Math.min(1,elapsed/f.duration);positionPacket(f.name,fraction);
-   if(fraction<1)unfinished=true;else if(f.name==='dispatch')$('dispatch-packet').setAttribute('visibility','hidden');
+   if(fraction<1)unfinished=true;else if(['dispatch','cause','timeout'].includes(f.name))$(f.name+'-packet').setAttribute('visibility','hidden');
   });
   if(unfinished)flightRAF=requestAnimationFrame(advance);else flights=[];
  }
@@ -607,7 +627,7 @@ function fly(plans){
 }
 function layoutTransfers(){geometryReady=typeof $('request-wire').getTotalLength==='function';}
 function updateTransfers(){
- const s=current(),key=selected+':'+index;
+ const s=current(),previous=index?steps()[index-1]:null,key=selected+':'+index;
  const cancelled=['unused','late'].includes(s.buffer)||s.proxy==='failed';
  const blocked=s.exec==='cpu'&&s.cpu==='running';
  const reading=!cancelled&&!blocked&&s.exec==='io';
@@ -621,11 +641,31 @@ function updateTransfers(){
  $('read-gate').setAttribute('visibility',blocked||cancelled?'visible':'hidden');
  $('response-wire').setAttribute('marker-end',s.buffer==='late'?'':'url(#response-tip)');
  text('wire-description',!s.started?'Two independent services connected by a network. No HTTP request sent.':`The proxy sends an HTTP request to the independent server. Responses reach the client OS buffer. ${blocked?'CPU work occupies the only thread; the proxy stays Waiting.':reading?'Process response I/O is executing on the shared thread. The proxy stays Waiting until its awaited operation completes.':cancelled?'The operation was cancelled.':'Bytes arriving and a request becoming Ready are distinct events.'}`);
+ const wakeRequest=previous&&proxyStates[previous.proxy][2]==='Waiting'&&proxyStates[s.proxy][2]==='Ready'&&s.proxy!=='readyStart'?'proxy':previous&&cpuStates[previous.cpu][2]==='Waiting'&&cpuStates[s.cpu][2]==='Ready'&&s.cpu!=='readyStart'?'cpu':null;
+ $('causal-links').setAttribute('visibility',wakeRequest?'visible':'hidden');
+ if(wakeRequest){
+  $('causal-links').dataset.request=wakeRequest;
+  const top=wakeRequest==='proxy'?78:150,bottom=wakeRequest==='proxy'?131:205,below=wakeRequest==='proxy'?151:236;
+  const wake=`M810 338H822V${top}H450V${top+21}m-4-5 4 5 4-5`;
+  const enqueue=`M450 ${bottom}V${below}H244V240H24V314H48m-5-4 5 4-5 4`;
+  $('wake-path').setAttribute('d',wake);$('enqueue-path').setAttribute('d',enqueue);
+  $('cause-wire').setAttribute('d',`M810 338H822V${top}H450V${bottom}V${below}H244V240H24V314H48`);
+  text('wake-label',wakeRequest==='cpu'?'Trigger completes':s.proxy==='readyTimeout'?'Cancellation wakes proxy':'I/O completes the await');
+  $('wake-label').setAttribute('y',top-3);$('cause-packet').dataset.kind=wakeRequest;
+ }
+ const timeoutPending=blocked&&s.timer==='overdue',timeoutQueued=s.queue.includes('timeout'),timeoutSelected=s.exec==='timeout';
+ $('timeout-route').setAttribute('visibility',timeoutPending||timeoutQueued||timeoutSelected?'visible':'hidden');
+ $('timeout-route').dataset.blocked=String(timeoutPending);
+ $('timeout-wire').setAttribute('d',timeoutPending?'M32 455H24V410':'M32 455H24V314H48m-5-4 5 4-5 4');
+ $('timeout-gate').setAttribute('visibility',timeoutPending?'visible':'hidden');
+ text('timeout-label',timeoutPending?'Due · cannot run':timeoutQueued?'Handle timeout queued':'Timeout selected');
  if(key===transferKey)return;
  transferKey=key;layoutTransfers();
- const previous=index?steps()[index-1]:null,dispatch=s.exec&&previous&&previous.exec!==s.exec&&previous.queue.includes(s.exec);
+ const dispatch=s.exec&&previous&&previous.exec!==s.exec&&previous.queue.includes(s.exec);
  const plans=[];
  if(dispatch){const position=previous.queue.indexOf(s.exec);$('dispatch-wire').setAttribute('d',`M182 ${314+position*37}C350 ${314+position*37} 390 336 628 336`);text('dispatch-label',workNames[s.exec]);$('dispatch-packet').dataset.kind=s.exec;plans.push({name:'dispatch',duration:650,delay:0});}
+ if(wakeRequest)plans.push({name:'cause',duration:1300,delay:0});
+ if(timeoutQueued&&previous&&!previous.queue.includes('timeout'))plans.push({name:'timeout',duration:850,delay:0});
  if(s.transfer)plans.push({name:s.transfer,duration:850,delay:dispatch?500:0});
  fly(plans);
 }
