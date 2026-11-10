@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What does a PR diff actually show?</title>
+  <meta name="description" content="Explore branch snapshots, conventional PR diffs, and the provisional changes a merge would introduce into main.">
+<!-- standalone-theme:start -->
+<style>
+/* Shared source. Run python3 scripts/sync-tool-theme.py to embed in each tool. */
+:root {
+  color-scheme: light;
+  --tool-bg: #faf7f2;
+  --tool-text: #2c2c2c;
+  --tool-muted: #6b6560;
+  --tool-accent: #2a7f6f;
+  --tool-accent-hover: #236b5e;
+  --tool-accent-soft: #e9f2ed;
+  --tool-surface: #f3efe8;
+  --tool-panel: #ffffff;
+  --tool-border: #e0dad0;
+  --tool-blue: #3d6f9f;
+  --tool-blue-soft: #eaf0f6;
+  --tool-orange: #a9582b;
+  --tool-orange-soft: #faf0e5;
+  --tool-violet: #735e98;
+  --tool-violet-soft: #f0ecf5;
+  --tool-red: #b04440;
+  --tool-red-soft: #f8eae7;
+  --tool-line: #b5b1a9;
+  --tool-grid: #e9e4db;
+  --tool-shadow: 0 2px 8px rgb(44 44 44 / 3%);
+  --tool-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --tool-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tool-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --tool-width: 1480px;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --tool-bg: #1a1a1a;
+  --tool-text: #e8e4df;
+  --tool-muted: #aaa49c;
+  --tool-accent: #53b8a1;
+  --tool-accent-hover: #75ceb9;
+  --tool-accent-soft: #233b34;
+  --tool-surface: #242424;
+  --tool-panel: #2a2a2a;
+  --tool-border: #41403c;
+  --tool-blue: #7ba8d2;
+  --tool-blue-soft: #283540;
+  --tool-orange: #e09a6b;
+  --tool-orange-soft: #3d3026;
+  --tool-violet: #b19dd2;
+  --tool-violet-soft: #36303f;
+  --tool-red: #ed9990;
+  --tool-red-soft: #412d2b;
+  --tool-line: #79766f;
+  --tool-grid: #34332f;
+  --tool-shadow: none;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--tool-bg); -webkit-text-size-adjust: 100%; }
+body.tool-page {
+  margin: 0;
+  padding: 0 clamp(16px, 3vw, 48px) 40px;
+  max-width: none;
+  min-height: 100vh;
+  background: var(--tool-bg);
+  color: var(--tool-text);
+  font-family: var(--tool-ui);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.tool-main, .tool-masthead { width: 100%; max-width: var(--tool-width); margin-inline: auto; }
+.tool-main { min-width: 0; }
+.tool-masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  border-bottom: 1px solid var(--tool-border);
+}
+.tool-brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tool-brand a { color: var(--tool-text); text-decoration: none; }
+.tool-brand .tool-author { font: 19px var(--tool-display); letter-spacing: -.03em; }
+.tool-brand .tool-back { color: var(--tool-muted); font-size: 12px; }
+.tool-brand .tool-back::before { content: "/"; margin-right: 14px; color: var(--tool-line); }
+.tool-brand a:hover { color: var(--tool-accent); }
+.tool-appearance { display: flex; flex-direction: row; align-items: center; gap: 8px; margin: 0; color: var(--tool-muted); font: 12px var(--tool-ui); }
+.tool-appearance select {
+  width: auto;
+  min-height: 36px;
+  padding: 6px 26px 6px 10px;
+  border: 1px solid var(--tool-border);
+  border-radius: 6px;
+  background: var(--tool-surface);
+  color: var(--tool-text);
+  font: 12px var(--tool-ui);
+}
+.tool-header { padding: 34px 0 28px; }
+.tool-header h1 { margin: 0; color: var(--tool-text); font: 400 clamp(30px, 3.3vw, 48px)/1.13 var(--tool-display); letter-spacing: -.035em; text-wrap: balance; }
+.tool-page :where(button, input, select, textarea) { font-family: var(--tool-ui); }
+.tool-page :where(input, select, textarea) { accent-color: var(--tool-accent); }
+.tool-page :where(button, a, input, select, textarea, [tabindex]):focus-visible { outline: 3px solid var(--tool-accent); outline-offset: 3px; }
+.tool-page :where(button) { touch-action: manipulation; }
+.tool-page :where(button:disabled) { cursor: not-allowed; }
+.tool-skip { position: fixed; top: 8px; left: 16px; z-index: 2000; padding: 10px 16px; border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); transform: translateY(-160%); }
+.tool-skip:focus { transform: translateY(0); }
+.tool-panel { min-width: 0; padding: 22px; border: 1px solid var(--tool-border); border-radius: 10px; background: var(--tool-panel); box-shadow: var(--tool-shadow); }
+.tool-panel h2 { margin: 0 0 12px; color: var(--tool-text); font-size: 16px; font-weight: 650; }
+.tool-help { color: var(--tool-muted); font-size: 12px; line-height: 1.6; }
+.tool-button { min-height: 44px; padding: 10px 16px; border: 1px solid var(--tool-accent); border-radius: 6px; background: var(--tool-accent); color: var(--tool-bg); font-size: 13px; font-weight: 600; cursor: pointer; }
+.tool-button:hover { background: var(--tool-accent-hover); }
+.tool-button.secondary { background: var(--tool-panel); border-color: var(--tool-border); color: var(--tool-text); }
+.tool-button.secondary:hover { background: var(--tool-surface); }
+.tool-page .leaflet-container { background: var(--tool-surface); font-family: var(--tool-ui); }
+.tool-page .leaflet-bar a { background: var(--tool-panel); color: var(--tool-text); border-color: var(--tool-border); }
+.tool-page .leaflet-control-attribution { background: var(--tool-panel); color: var(--tool-muted); }
+.tool-page .leaflet-control-attribution a { color: var(--tool-blue); }
+@media (max-width: 600px) {
+  .tool-masthead { min-height: 68px; gap: 10px; }
+  .tool-brand { gap: 4px; flex-direction: column; align-items: flex-start; }
+  .tool-brand .tool-author { font-size: 17px; }
+  .tool-brand .tool-back::before { content: none; }
+  .tool-appearance { gap: 5px; }
+  .tool-header { padding: 26px 0 24px; }
+  .tool-panel { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-page *, .tool-page *::before, .tool-page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+<script>
+/* Embedded before paint; shares the parent site's theme preference. */
+(() => {
+  const root = document.documentElement;
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+  let preference = 'system';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') preference = saved;
+  } catch (_) { /* Local files and private contexts may deny storage. */ }
+
+  function apply() {
+    root.dataset.theme = preference === 'system' ? (system.matches ? 'dark' : 'light') : preference;
+    const select = document.getElementById('tool-theme');
+    if (select) select.value = preference;
+    document.dispatchEvent(new Event('tool-theme-change'));
+  }
+  apply();
+  system.addEventListener('change', () => {
+    if (preference === 'system') apply();
+  });
+  window.addEventListener('storage', (event) => {
+    if (event.key !== 'theme' && event.key !== null) return;
+    preference = event.newValue === 'light' || event.newValue === 'dark' ? event.newValue : 'system';
+    apply();
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('tool-theme');
+    if (!select) return;
+    select.value = preference;
+    select.addEventListener('change', () => {
+      preference = select.value;
+      try {
+        if (preference === 'system') localStorage.removeItem('theme');
+        else localStorage.setItem('theme', preference);
+      } catch (_) { /* Theme switching still works without persistence. */ }
+      apply();
+    });
+  });
+})();
+</script>
+<!-- standalone-theme:end -->
+  <style>
+    /* Adapt this layout to the requested tool. Keep custom rules here. */
+    .work-area { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    .field label { color: var(--tool-text); font-weight: 600; }
+    .field :is(input, select, textarea) { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--tool-border); border-radius: 6px; background: var(--tool-bg); color: var(--tool-text); font-size: 14px; }
+    .field textarea { min-height: 180px; font: 13px/1.7 var(--tool-mono); }
+    .field-error { color: var(--tool-red); }
+    .data-scroll { overflow: auto; max-width: 100%; }
+    .result { overflow-wrap: anywhere; color: var(--tool-text); }
+    @media (max-width: 700px) { .work-area { grid-template-columns: 1fr; } }
+  </style>
+<style>.controls,.legend{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}select{padding:12px;background:var(--tool-panel);color:var(--tool-text);border:1px solid var(--tool-border);border-radius:6px}.feature{color:var(--tool-orange)}.target{color:var(--tool-blue)}.merged{color:var(--tool-violet)}.scroll{overflow:auto}.graph{display:grid;grid-template-columns:1fr 35px 1fr 35px 1fr;align-items:center;min-width:850px;gap:12px}.branches{display:grid;gap:16px}.feature.tool-panel{border-top:3px solid var(--tool-orange)}.target.tool-panel{border-top:3px solid var(--tool-blue)}.merged.tool-panel{border:2px dashed var(--tool-violet)}.fork{font-size:34px;color:var(--tool-line);line-height:3}.tool-panel pre{font:13px/1.8 var(--tool-mono);white-space:pre-wrap;overflow-wrap:anywhere}.tool-panel h2{color:inherit}.comparisons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:26px}.number{font-size:11px;letter-spacing:.12em;color:var(--tool-muted);margin-bottom:14px}.comparisons code{font-size:12px}.comparisons pre{background:var(--tool-surface);padding:14px;border-radius:6px;min-height:155px}.integration{border-color:var(--tool-violet)}.note{padding:16px 20px;background:var(--tool-accent-soft);border-radius:8px}blockquote{margin:38px 0;font:24px/1.6 var(--tool-display);max-width:1000px}blockquote strong{font-size:20px}details{border-top:1px solid var(--tool-border);padding:18px 0}summary{cursor:pointer;font-weight:600}a{color:var(--tool-accent)}.minus{color:var(--tool-red)}.plus{color:var(--tool-accent)}.hidden-preview{opacity:.35}.legend{font-size:12px}@media(max-width:850px){.comparisons{grid-template-columns:1fr}.comparisons pre{min-height:0}} </style></head>
+<body class="tool-page">
+  <a class="tool-skip" href="#tool-content">Skip to tool</a>
+  <nav class="tool-masthead" aria-label="Site and appearance">
+    <div class="tool-brand">
+      <a class="tool-author" href="https://kucukaslan.com.tr/">Muhammed</a>
+      <a class="tool-back" href="https://kucukaslan.com.tr/tools/">All tools ↗</a>
+    </div>
+    <label class="tool-appearance" for="tool-theme">Theme
+      <select id="tool-theme">
+        <option value="system">System</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+  </nav>
+  <main class="tool-main" id="tool-content">
+    <header class="tool-header">
+      <h1>What does a PR diff actually show?</h1>
+    </header>
+    <!-- tool-body:start -->
+    <div class="controls"><label for="scenario">Scenario</label> <select id="scenario"><option value="independent">Independent changes</option><option value="same">Already present on main</option><option value="conflict">Adjacent edits conflict</option></select><button class="tool-button" id="next">Show merge preview →</button></div>
+<div class="legend"><span class="feature">● Feature change</span><span class="target">● Target change</span><span class="merged">◌ Hypothetical result</span></div>
+<div class="scroll" tabindex="0" role="region" aria-label="Branch divergence and hypothetical merge"><div class="graph"><article class="tool-panel ancestor"><h2>A · Common ancestor</h2><pre id="base"></pre></article><div class="fork" aria-hidden="true">↗<br>↘</div><div class="branches"><article class="tool-panel feature"><h2>F · feature HEAD</h2><pre id="feature"></pre></article><article class="tool-panel target"><h2>M · main now</h2><pre id="target"></pre></article></div><div class="fork" aria-hidden="true">↘<br>↗</div><article class="tool-panel merged result"><h2>R · Merge preview</h2><pre id="result"></pre><small>Provisional tree · no merge performed</small></article></div></div>
+<p id="explanation" class="note" aria-live="polite"></p>
+<div class="comparisons"><article class="tool-panel"><div class="number">01 / SNAPSHOTS</div><h2>How do the tips differ?</h2><code>git diff main feature</code><pre id="direct"></pre><p id="direct-note"></p></article><article class="tool-panel"><div class="number">02 / CONTRIBUTION</div><h2>What did feature change?</h2><code>git diff main...feature</code><pre id="conventional"></pre><p>Merge base → feature. The conventional PR view, with context from the ancestor.</p></article><article class="tool-panel integration"><div class="number">03 / INTEGRATION</div><h2>What would main gain?</h2><code>git diff main &lt;merged-tree&gt;</code><pre id="delta"></pre><p id="delta-note"></p></article></div>
+<blockquote>A conventional PR diff shows what a branch changed. A post-merge diff shows what accepting the PR would change.<br><strong>For integration-focused review, shouldn’t the latter be the primary view?</strong></blockquote>
+<details><summary>The trade-off, and how to reproduce it</summary><p>Contribution diffs are useful for reviewing author intent and keeping comments tied to the source. Integration previews answer a different question, must be recomputed when either tip changes, and need conflict resolution before a final result exists. A preview is provisional; it is not evidence that the code is correct.</p><p>This illustration models a normal three-way merge with one merge base, text files and no custom merge drivers. Rebase, cherry-pick, merge options and repository configuration can change the outcome. It is a set of Git-verified examples, not a Git engine running in your browser.</p><pre>git merge-tree --write-tree main feature
+# Only if successful: use the returned tree ID below.
+git diff main &lt;tree-id&gt;</pre><p>The independent example contains four unchanged separator lines between settings. Without that separation, the original adjacent-line edits conflict in Git even though they affect different settings.</p></details>
+<details><summary>What Git hosts display · sources</summary><p><a href="https://docs.github.com/en/pull-requests/reference/branches">GitHub</a> documents three-dot PR diffs. <a href="https://support.atlassian.com/bitbucket-cloud/kb/why-pull-request-diff-shows-files-that-were-already-merged-in-destination-branch/">Bitbucket Cloud</a> also compares the merge base to the source. <a href="https://support.atlassian.com/bitbucket-data-center/kb/comparison-of-a-pull-request-diff-between-bitbucket-server-and-data-center-versions-up-to-6x-and-from-7x-onwards/">Bitbucket Server / Data Center</a> switched from simulated-merge diffs in 6.x to merge-base diffs in 7.x. Host and version matter; this is not a claim about every review system.</p></details>
+    <!-- tool-body:end -->
+  </main>
+  <script>
+    (() => {
+      'use strict';
+      // Implement the requested behavior here, after its DOM elements exist.
+      const $=id=>document.getElementById(id);let reveal=false;
+const gap=['# Connection settings','# Shared configuration','# Values in seconds','# Retry policy'];
+function draw(){const mode=$('scenario').value;const same=mode==='same',conflict=mode==='conflict';const lines=(t,r)=>same?['feature_enabled = '+t]:['timeout = '+t,...(conflict?[]:gap),'retries = '+r];const b=lines(same?'False':10,3),f=lines(same?'True':20,3),m=lines(same?'True':10,5),r=lines(same?'True':20,5);
+for(const [id,v] of [['base',b],['feature',f],['target',m]])$(id).textContent=v.join('\n');
+$('result').textContent=!reveal?'Reveal the hypothetical tree →':conflict?'CONFLICT in config.py\nResolution required':r.join('\n');document.querySelector('.result').classList.toggle('hidden-preview',!reveal);
+function diff(id,a,z){const el=$(id);el.replaceChildren();if(a.join()===z.join()){el.textContent='No changes';return}for(let i=0;i<a.length;i++){for(const [prefix,value,cls] of a[i]===z[i]?[[' ',a[i],'']]:[['−',a[i],'minus'],['+',z[i],'plus']]){const span=document.createElement('span');span.className=cls;span.textContent=prefix+' '+value+'\n';el.append(span)}}}
+diff('direct',m,f);diff('conventional',b,f);if(!reveal)$('delta').textContent='Reveal the merge preview first';else if(conflict)$('delta').textContent='No resolved merge tree.\nNo definitive integration delta.';else diff('delta',m,r);
+$('explanation').textContent=same?'Both branches independently enabled the feature. The histories diverge, but their final content agrees.':conflict?'These adjacent-line edits conflict with Git’s default text merge. Separate semantic settings do not guarantee a clean textual merge.':'Follow A to both branch tips: feature raises timeout; main raises retries. Unchanged lines separate the edits so Git can combine them cleanly.';
+$('direct-note').textContent=same?'Identical snapshots, despite separate commits.':'This shows retries falling from 5 to 3. A snapshot comparison is not a prediction of merging.';
+$('delta-note').textContent=conflict?'A human must resolve the conflict before the final delta is known.':same?'Main already contains this change. Accepting the PR adds no content.':'Main → preview. Timeout changes; retries = 5 is preserved.';
+$('next').textContent=reveal?'Hide merge preview':'Show merge preview →';}
+$('next').onclick=()=>{reveal=!reveal;draw()};$('scenario').onchange=draw;draw();
+    })();
+  </script>
+</body>
+</html>
