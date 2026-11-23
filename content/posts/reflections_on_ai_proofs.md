@@ -8,15 +8,13 @@ content_type: opinion
 # series: ['series-name']
 ---
 
-There are two main axes by which to evaluate the difficulty ([un]solvability) of a problem: first one is **simple–complex** and the other one is **easy–hard**.
+There are two main axes by which to evaluate the difficulty ([un]solvability) of a problem: the first one is **simple–complex** and the other one is **easy–hard**.
 
 These axes correlate strongly, but neither necessarily independent of nor related to each other.
 
 The easy–hard axis, on the other hand, is usually related to how much work/effort is required to achieve something. This usually includes (human-)time and memory (keeping things in mind, remembering),
 
-Calculating 
-`3 + 3`
-is both simple and easy.
+Calculating `3 + 3` is both simple and easy.
 
 What if we encounter a problem that isn't quite as easy and simple? Let's say adding 3 for 1260 times.
 
@@ -32,26 +30,23 @@ In this case, the invention of multiplication suffices to make the problem suffi
 
 When problems became even harder, e.g. calculating `325 × 642` (more like `34278113 × 13478891`), we invented logarithms/exponentials and other mechanisms to make problems easier to solve, at the expense of the complexity of these new tools.
 
-Yes, using logarithms for multiplication was [a thing](https://www.open.edu/openlearn/science-maths-technology/mathematics-statistics/john-napier/content-section-5#:~:text=to%20replace%20the%20wearisome%20task%20of%20multiplying%20two%20numbers%20by%20the%20simpler%20task%20of%20adding%20together%20two%20other%20numbers), infact logarithms was invented exactly for this reason.
+Yes, using logarithms for multiplication was [a thing](https://www.open.edu/openlearn/science-maths-technology/mathematics-statistics/john-napier/content-section-5#:~:text=to%20replace%20the%20wearisome%20task%20of%20multiplying%20two%20numbers%20by%20the%20simpler%20task%20of%20adding%20together%20two%20other%20numbers). In fact, logarithms were invented exactly for this reason.
 
 <!--### The Previous Paradigm Shift: Computers-->
 
 Computers and calculators themselves were physical machinery that made hard problems easier to solve.
 
-From this point of view, the invention of computers represented a deviation from the methods traditionaly we used to employ to tackle new problems. It was a major paradigm shift.
+From this point of view, the invention of computers represented a deviation from the methods we traditionally used to employ to tackle new problems. It was a major paradigm shift.
 
 <!--### The Next Paradigm Shift: AI-->
 
-AI is the next step in of the paradigm shift.
+AI is the next step in the paradigm shift.
 
 Before AI, we were limited to predefined, deterministic, algorithmic methods for using computers to make hard problems easier.
 
 **AI broke through this limitation.**
 
-Before AI, it was generally accepted that, with our existing tools, a human lifetime wouldn't suffice to solve problems like the Riemann Hypothesis the hard way. We therefore needed to invent more complex tools to make their solutions manageable—less hard.
-
 Before AI, it was given (with the existing tools) that a human lifetime wouldn't suffice to solve problems like the Riemann Hypothesis the hard way. We therefore needed to invent more complex tools/machinery/abstractions to make their solutions manageably less hard.
-
 
 (modern) Mathematics increasingly became the study of inventing these tools and mechanisms to apply to problems.
 
@@ -65,7 +60,7 @@ I do enjoy the jokes made about mathematics. They're all just jokes, though.
 
 Mathematicians' reactions, [including those of Terence Tao](https://mathstodon.xyz/@tao/117395267721642920), are more or less attempts to explain the difference between the value of solutions and the value of answers.
 
-Our incentives belonged to an era where the value of an answer was a very strong indicator of the value of its solution.
+Our incentives belonged to an era when the value of an answer was a very strong indicator of the value of its solution.
 
 Clearly, that era is over.
 
@@ -79,7 +74,7 @@ Most of our best practices belong to a time when coding was hard/time-consuming 
 
 But that era is undoubtedly over.
 
-The design patterns, code reviews, rule of thumbs like DRY/KISS was more valuable back then.
+Design patterns, code reviews, and rules of thumb like DRY/KISS were more valuable back then.
 
 Now, it is inevitable that **we must go against some of the tenets and conventions we held so highly**.
 
