@@ -78,6 +78,20 @@ Design patterns, code reviews, and rules of thumb like DRY/KISS were more valuab
 
 Now, it is inevitable that **we must go against some of the tenets and conventions we held so highly**.
 
+### Further Reading:
+_Simple Complex Easy Hard_ by Sam Rose https://samwho.dev/blog/simple-complex-easy-hard  
+Terence Tao's recent commentary (before the proof): https://mathstodon.xyz/@tao/117395268889583356  
+Terence Tao's commentary on potential proof of Riemann hypothesis in an interview with Dwarkesh in March 2026 https://x.com/dwarkesh_sp/status/2123966918688403756?a=olWttJAqK28nYSsobR4&s=20  
+“What if AI solved the Riemann Hypothesis?” https://youtu.be/zqzk43bSdDI  
+
+The infamous announcement of the proof: https://alpo.ge/remark.pdf  
+Alessandro Masullo's GRH announcement: https://math216.wordpress.com/2026/11/20/hurried-announcement-alessandro-masullo-grh/  
+the book: https://drive.google.com/file/d/1wZYdHF0j63xRTlt0-MDTctX0xhuiBXp3/view
+and an overview https://johncarlosbaez.wordpress.com/2026/11/22/masullo-on-the-riemann-hypothesis/  
+
+Chau Ngo's Post Regarding the proof https://www.facebook.com/share/p/1F5U9gtVBQ/  
+Matematik Köyü([Ali Nesin](https://www.alinesin.org/)?)'s commentary https://x.com/Mat_Koyu/status/2124263330844139782  
+
 [^pedantic]: I assume implicit addition operation `0+3` for the first 3 just to piss off pedantic mathematicians
     ```
     total = 0
