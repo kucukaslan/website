@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <title>Muhammed Can Küçükaslan</title>
+  <rect width="1200" height="630" fill="#194f46"/>
+  <rect x="32" y="32" width="1136" height="566" fill="none" stroke="#89aa95" stroke-width="2"/>
+  <g fill="none" stroke="#ccbea0" stroke-width="5" stroke-linejoin="round" transform="translate(0 12)">
+    <path d="M551 108 Q578 103 600 118 Q622 103 649 108 L649 149 Q621 145 600 160 Q579 145 551 149 Z M600 118 V160"/>
+  </g>
+  <g fill="#faf7f2" font-family="Georgia,serif" text-anchor="middle">
+    <text x="600" y="290" font-size="78">Muhammed Can</text>
+    <text x="600" y="405" font-size="116">Küçükaslan</text>
+  </g>
+  <path d="M547 462 H653" stroke="#ccbea0" stroke-width="4"/>
+  <text x="600" y="514" fill="#ccbea0" font-family="Georgia,serif" font-size="26" letter-spacing="3" text-anchor="middle">kucukaslan.com.tr</text>
+</svg>
